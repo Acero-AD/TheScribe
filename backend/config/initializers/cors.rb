@@ -1,16 +1,25 @@
-# Be sure to restart your server when you modify this file.
-
-# Avoid CORS issues when API is called from the frontend app.
-# Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin Ajax requests.
-
-# Read more: https://github.com/cyu/rack-cors
-
-# Rails.application.config.middleware.insert_before 0, Rack::Cors do
-#   allow do
-#     origins "example.com"
+# Cross-Origin Resource Sharing for the frontend (Vite dev server, etc.).
 #
-#     resource "*",
-#       headers: :any,
-#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
-#   end
-# end
+# Allows the frontend origin to call the API with credentials so the
+# session cookie is sent on every authenticated request.
+
+allowed_origins =
+  case Rails.env
+  when "development", "test"
+    [ "http://localhost:5173", "http://127.0.0.1:5173" ]
+  else
+    Array(ENV["FRONTEND_URL"]).reject(&:blank?)
+  end
+
+if allowed_origins.any?
+  Rails.application.config.middleware.insert_before 0, Rack::Cors do
+    allow do
+      origins(*allowed_origins)
+
+      resource "*",
+        headers: :any,
+        credentials: true,
+        methods: [ :get, :post, :put, :patch, :delete, :options, :head ]
+    end
+  end
+end
