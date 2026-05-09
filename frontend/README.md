@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# Scoreboard frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript + Vite. Talks to the Rails backend over a credentialed
+`fetch` so the session cookie is sent on every authenticated request.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Run
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```sh
+npm run dev   # http://localhost:5173
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The dev server expects the backend at `http://localhost:3000`. Override with
+`VITE_BACKEND_URL` if needed:
+
+```sh
+VITE_BACKEND_URL=http://localhost:4000 npm run dev
+```
+
+## Sign-in flow
+
+1. Visit any route — `RequireAuth` (`src/auth/RequireAuth.tsx`) calls
+   `GET /me` via `useCurrentUser` and redirects to `/sign-in` if 401.
+2. The sign-in screen (`src/screens/SignInScreen.tsx`) POSTs the email to
+   `/magic_links` and swaps to a "check your email" confirmation.
+3. The user clicks the link in the email (use the dev mailbox at
+   `http://localhost:3000/letter_opener`); the backend verifies the token and
+   redirects to `http://localhost:5173/`.
+4. The home screen (`src/screens/HomeScreen.tsx`) shows the signed-in email
+   and a "Sign out" button that calls `DELETE /sessions/current`.
+
+If the link is invalid/expired/used, the backend redirects to
+`/sign-in?error=invalid|expired|consumed` and the sign-in screen surfaces a
+matching message above the form.
+
+## CORS / cookies (dev)
+
+The API client (`src/api/client.ts`) sends `credentials: 'include'` on every
+request. The backend allows `http://localhost:5173` with `credentials: true`
+and sets the session cookie `SameSite=None; Secure; HttpOnly`. In production,
+the cookie flips to `SameSite=Lax` (assumes same-origin); revisit the CORS
+allowlist if the production deploy is split-origin.
+
+## Tests
+
+```sh
+npm test          # one-shot
+npm run test:watch
+```
+
+## Type-check / build
+
+```sh
+npx tsc -b
+npm run build
 ```
