@@ -28,5 +28,19 @@ module Backend
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # The frontend that magic-link verification redirects back to.
+    config.frontend_url = ENV.fetch("FRONTEND_URL", "http://localhost:5173")
+
+    # Re-enable cookies + session for API-only mode (needed for cookie-based auth).
+    # In dev, the frontend (:5173) and backend (:3000) are cross-origin, so the
+    # cookie must be SameSite=None; Secure. Chrome treats localhost as a secure
+    # context, so Secure cookies work over plain HTTP on localhost.
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore,
+                          key: "_scoreboard_session",
+                          same_site: Rails.env.production? ? :lax : :none,
+                          secure: !Rails.env.test?,
+                          httponly: true
   end
 end
