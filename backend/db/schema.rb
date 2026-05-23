@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_09_060536) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_23_062740) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "daily_logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.text "note"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.boolean "wrote", default: false, null: false
+    t.datetime "wrote_at"
+    t.index ["user_id", "date"], name: "index_daily_logs_on_user_id_and_date", unique: true
+    t.index ["user_id", "date"], name: "index_daily_logs_on_user_id_and_date_desc", order: { date: :desc }
+    t.index ["user_id"], name: "index_daily_logs_on_user_id"
+  end
 
   create_table "magic_links", force: :cascade do |t|
     t.datetime "consumed_at"
@@ -33,5 +46,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_09_060536) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "daily_logs", "users"
   add_foreign_key "magic_links", "users"
 end

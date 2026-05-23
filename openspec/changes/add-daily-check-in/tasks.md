@@ -1,11 +1,11 @@
 ## 1. Backend — Schema & model
 
-- [ ] 1.1 Generate migration creating `daily_logs` with `user:references`, `date:date`, `wrote:boolean default false`, `wrote_at:datetime`, `note:text`
-- [ ] 1.2 Add unique composite index on `(user_id, date)` and a non-unique index on `user_id, date desc` for range queries
-- [ ] 1.3 Run migration; verify schema
-- [ ] 1.4 Add `DailyLog` model with `belongs_to :user`, validations (date present, wrote present), and `note` allowed nil
-- [ ] 1.5 Add an instance method `DailyLog#mark_wrote!(value)` that toggles `wrote` and sets/clears `wrote_at` atomically
-- [ ] 1.6 Add a class method `DailyLog.for(user:, date:)` returning the row or a new unpersisted instance with defaults
+- [x] 1.1 Generate migration creating `daily_logs` with `user:references`, `date:date`, `wrote:boolean default false`, `wrote_at:datetime`, `note:text`
+- [x] 1.2 Add unique composite index on `(user_id, date)` and a non-unique index on `user_id, date desc` for range queries
+- [x] 1.3 Run migration; verify schema
+- [x] 1.4 Add `DailyLog` model with `belongs_to :user`, validations (date present, wrote present), and `note` allowed nil
+- [x] 1.5 Add an instance method `DailyLog#mark_wrote!(value)` that toggles `wrote` and sets/clears `wrote_at` atomically
+- [x] 1.6 Add a class method `DailyLog.for(user:, date:)` returning the row or a new unpersisted instance with defaults
 
 ## 2. Backend — Time-for-user helper
 
@@ -26,7 +26,7 @@
 
 ## 4. Backend — Tests
 
-- [ ] 4.1 Model spec: validations, uniqueness, `mark_wrote!` semantics
+- [x] 4.1 Model spec: validations, uniqueness, `mark_wrote!` semantics
 - [ ] 4.2 Helper spec: `Time::ForUser.today` across timezones, around midnight, with null timezone
 - [ ] 4.3 Request specs covering every scenario in `specs/daily-check-in/spec.md`: today happy path, past-date rejection, future-date rejection, partial body, idempotent toggle, note normalization, range index defaults and limits, cross-user isolation, unauthenticated 401
 

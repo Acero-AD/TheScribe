@@ -2,6 +2,7 @@ class User < ApplicationRecord
   EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
 
   has_many :magic_links, dependent: :destroy
+  has_many :daily_logs, dependent: :destroy
 
   before_validation :normalize_email
 
