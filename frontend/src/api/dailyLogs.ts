@@ -17,7 +17,7 @@ export function getDailyLog(date: string, signal?: AbortSignal): Promise<DailyLo
 }
 
 export function putDailyLog(date: string, patch: DailyLogPatch): Promise<DailyLog> {
-  return api<DailyLog>(`/daily_logs/${date}`, { method: 'PUT', body: patch })
+  return api<DailyLog>(`/daily_logs/${date}`, { method: 'PUT', body: { ...patch } })
 }
 
 export interface DailyLogRange {
