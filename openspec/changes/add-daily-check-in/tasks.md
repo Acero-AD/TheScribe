@@ -9,8 +9,8 @@
 
 ## 2. Backend — Time-for-user helper
 
-- [ ] 2.1 Add `Time::ForUser.today(user)` returning a `Date` in the user's `timezone` (fallback `Time.zone` / UTC if `timezone` is null)
-- [ ] 2.2 Unit-test against fixed instants and several timezones, including a 23:30 NY-local test crossing midnight
+- [x] 2.1 Add `Time::ForUser.today(user)` returning a `Date` in the user's `timezone` (fallback `Time.zone` / UTC if `timezone` is null)
+- [x] 2.2 Unit-test against fixed instants and several timezones, including a 23:30 NY-local test crossing midnight
 
 ## 3. Backend — Daily logs controller
 
@@ -27,7 +27,7 @@
 ## 4. Backend — Tests
 
 - [x] 4.1 Model spec: validations, uniqueness, `mark_wrote!` semantics
-- [ ] 4.2 Helper spec: `Time::ForUser.today` across timezones, around midnight, with null timezone
+- [x] 4.2 Helper spec: `Time::ForUser.today` across timezones, around midnight, with null timezone
 - [ ] 4.3 Request specs covering every scenario in `specs/daily-check-in/spec.md`: today happy path, past-date rejection, future-date rejection, partial body, idempotent toggle, note normalization, range index defaults and limits, cross-user isolation, unauthenticated 401
 
 ## 5. Frontend — API helpers & date utilities
