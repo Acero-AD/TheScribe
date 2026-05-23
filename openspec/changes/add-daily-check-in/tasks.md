@@ -40,10 +40,10 @@
 
 ## 6. Frontend — Today route shell
 
-- [ ] 6.1 Add `/` route gated by `RequireAuth`
-- [ ] 6.2 Build a `TodayScreen` component with a date header (formatted `MON · APR 28 · 2026` style per design), an "Today." headline, and a vertical stack slot for cards
-- [ ] 6.3 Stub the bottom tab bar with `Today` and `Settings` links (no `History` until that capability lands)
-- [ ] 6.4 Port the warm-tone shared styles (`SB.*`, `SBfont.*`) from `docs/design/today.jsx` into the frontend's style tokens
+- [x] 6.1 Add `/` route gated by `RequireAuth`
+- [x] 6.2 Build a `TodayScreen` component with a date header (formatted `MON · APR 28 · 2026` style per design), an "Today." headline, and a vertical stack slot for cards
+- [x] 6.3 Stub the bottom tab bar with `Today` and `Settings` links (no `History` until that capability lands)
+- [x] 6.4 Port the warm-tone shared styles (`SB.*`, `SBfont.*`) from `docs/design/today.jsx` into the frontend's style tokens
 
 ## 7. Frontend — Writing check-in card
 

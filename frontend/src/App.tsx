@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
 import { SignInScreen } from './screens/SignInScreen'
-import { HomeScreen } from './screens/HomeScreen'
+import { TodayScreen } from './screens/TodayScreen'
 import './App.css'
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <HomeScreen />
+                <TodayScreen />
               </RequireAuth>
             }
           />
