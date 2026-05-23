@@ -55,11 +55,37 @@ sign-in screen surfaces the matching message.
 | ------ | ---- | ----------- |
 | POST   | `/magic_links` | Request a magic link for an email. Always responds 200 with a generic message (or 422 on a malformed email). Rate-limited to 5 per email per 60 minutes. |
 | GET    | `/magic_links/:token` | Verify a magic link, set the session cookie, redirect into the app. |
-| GET    | `/me` | Return `{ id, email }` for the signed-in user, or 401. |
+| GET    | `/me` | Return `{ id, email, settings }` for the signed-in user, or 401. |
+| PATCH  | `/me/settings` | Partial update of the four user settings fields. Returns the full updated settings on success, 422 on validation failure (transactional — no field is updated). Unknown keys are silently ignored. |
 | DELETE | `/sessions/current` | Sign out (idempotent). |
 | GET    | `/daily_logs/:date` | Return the user's row for that date, or defaults (`wrote: false, wrote_at: null, note: null`) if absent. Future dates → 422. |
 | PUT    | `/daily_logs/:date` | Partial update with `{ wrote?, note? }`. Idempotent — re-asserting the same `wrote` is a no-op. Allowed only when `:date` equals the user's local today. |
 | GET    | `/daily_logs?from=&to=` | Range read. Defaults: `from = today − 90 days`, `to = today`. Inverted or >366-day ranges → 422. |
+
+### User settings
+
+The `User` record carries four configuration fields, surfaced by `GET /me` as a
+`settings` sub-object and updated via `PATCH /me/settings`:
+
+| Field | Type | Default | Validation | Consumers |
+| ----- | ---- | ------- | ---------- | --------- |
+| `reminder_time` | `string \| null` | `null` | Matches `HH:MM` (24-hour, `HH` ∈ `00..23`, `MM` ∈ `00..59`) or is null | `daily-reminder` (fire time of the daily nudge) |
+| `week_starts_on` | `integer` | `1` | `0` (Sunday) or `1` (Monday) | `weekly-publishing`, history views |
+| `publishing_cadence` | `string` | `'weekly'` | `weekly` or `biweekly` | `streaks` (publish-streak window) |
+| `timezone` | `string \| null` | `null` | Recognized IANA name (via `ActiveSupport::TimeZone[…]`) or null | `daily-reminder`, `Time::ForUser.today` |
+
+- **Single source of truth.** Other capabilities should *read* these fields,
+  never duplicate them. Adding a new per-user preference column is the V1
+  guideline only for fields shared across more than one capability.
+- **Atomic validation.** `PATCH /me/settings` validates the whole update
+  before persisting anything — if any field fails, the response is 422 and no
+  field is changed.
+- **Timezone contract.** The frontend sends `timezone` on every PATCH (auto-
+  detected from `Intl.DateTimeFormat().resolvedOptions().timeZone`); the user
+  does not pick it explicitly. `timezone` together with `reminder_time` is the
+  contract that `daily-reminder` will rely on to compute each user's UTC fire
+  instant — any change to these two fields (rename, type change, validation
+  shape) must be coordinated with that capability.
 
 ### Daily logs
 
