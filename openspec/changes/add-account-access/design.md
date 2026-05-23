@@ -35,7 +35,7 @@ The repo uses Framing C: a single `openspec/` at the root, and each spec carries
 
 ### 3. Cookie-based session, not a token in localStorage
 
-**Choice:** Rails encrypted, signed, `HttpOnly`, `SameSite=Lax` (or `None` in cross-origin dev) cookie. Frontend uses `fetch(..., { credentials: 'include' })`.
+**Choice:** Rails encrypted, signed, `HttpOnly`, `SameSite=Lax` cookie. Frontend uses `fetch(..., { credentials: 'include' })`. See Decision 7 for the dev-vs-prod transport attributes.
 **Why:** Cookies survive XSS better than localStorage (the JS context can't read `HttpOnly`). Rails session cookies are a well-trodden path; CSRF is handled with a per-session token included in non-GET requests.
 **Alternative considered:** JWT in `Authorization: Bearer` header, stored in localStorage. Rejected for XSS exposure and the extra ceremony of refresh-token rotation we don't actually need.
 
@@ -56,15 +56,16 @@ The repo uses Framing C: a single `openspec/` at the root, and each spec carries
 
 ### 7. Origin model for dev vs prod
 
-**Dev:** Frontend on `:5173` (Vite), backend on `:3000` (Rails). CORS configured to allow the frontend origin with credentials. Cookie `SameSite=None; Secure=false` over `localhost`.
-**Prod:** Decision deferred (split origin with proper CORS, or Rails serving the built SPA from the same origin). Whichever we pick, it's a config change, not a code change.
+**Dev:** Frontend on `:5173` (Vite), backend on `:3000` (Rails). CORS configured to allow the frontend origin with credentials. Session cookie is `SameSite=Lax; Secure=false`. `localhost:3000` and `localhost:5173` are different *origins* but the **same site** under SameSite's eTLD+1 rule (`localhost` has no registrable domain, so the spec falls back to host equality — both are `localhost`). `Lax` is sent on top-level navigations (covers the magic-link click) and on same-site credentialed fetches (covers `/me` from the React app), which is everything the dev flow needs. `Secure=false` is required: Rack's session middleware refuses to emit a `Secure` cookie over a plain-HTTP request, so leaving it `true` in dev silently strips the `Set-Cookie` header from the response and breaks sign-in. The "Chrome accepts Secure cookies on localhost" relaxation is a *browser-side* rule and doesn't help when the server never emits the cookie.
+
+**Prod:** Decision deferred (split origin with proper CORS, or Rails serving the built SPA from the same origin). Whichever we pick, it's a config change, not a code change. Same-origin prod stays on `Lax`; split-origin prod needs `SameSite=None; Secure` (and HTTPS, which prod has anyway).
 
 ## Risks / Trade-offs
 
 - **Email deliverability** → Magic-link emails are notorious for landing in spam. Mitigation: nothing to do at this stage; revisit when configuring the prod mail provider, including SPF/DKIM/DMARC.
 - **Token in URL leaks via referer/history** → Mitigation: 15-minute TTL + single-use + plain link (no query string carrying the token after consumption — verify endpoint redirects to a clean URL post-consume).
 - **User on a different device than where they requested** → Web link works anywhere, so this is by design and a feature. The session lands on whatever device clicked the link.
-- **Cross-origin cookies in dev** → Easy to misconfigure (CORS without `credentials: true`, missing `SameSite=None`). Mitigation: bake the working config into the change; document it in the README.
+- **Cross-origin cookies in dev** → Easy to misconfigure. Two specific failure modes are worth calling out: (a) `Secure=true` with HTTP dev transport → Rack drops `Set-Cookie` entirely; (b) `SameSite=None` without `Secure` → browser rejects the cookie. Both fail silently with `ActionDispatch::IntegrationTest`, which carries the session jar in-process and so can't catch a missing `Set-Cookie` header on the response. Mitigation: bake the working config (`Lax`, `Secure=false` in dev) into the change, and assert on the actual `Set-Cookie` header in the magic-link verify integration test so a regression here is caught at the wire level.
 - **Generic "we sent a link" response can mask typos** → Users who fat-finger their email get no feedback. Acceptable trade-off for not enumerating accounts.
 
 ## Migration Plan

@@ -60,11 +60,17 @@ sign-in screen surfaces the matching message.
 
 ## CORS, cookies, CSRF (dev vs prod)
 
-**Development** (frontend `:5173`, backend `:3000` — cross-origin):
+**Development** (frontend `:5173`, backend `:3000`):
 
 - `rack-cors` allows `http://localhost:5173` with `credentials: true`.
-- Session cookie: `HttpOnly`, `SameSite=None`, `Secure` (Chrome treats
-  `localhost` as a secure context, so `Secure` cookies work over plain HTTP).
+- Session cookie: `HttpOnly`, `SameSite=Lax`, `Secure=false`. The two ports
+  are different origins but the *same site* under SameSite's eTLD+1 rule
+  (`localhost` has no registrable domain, so host equality applies — both are
+  `localhost`), so `Lax` is sent on top-level navigations (the magic-link
+  click) and on same-site credentialed fetches (`/me` from React). `Secure`
+  must be `false` because Rack's session middleware refuses to emit a
+  `Secure` cookie over plain HTTP and would silently drop the `Set-Cookie`
+  header.
 - CSRF tokens are not used. Defense-in-depth comes from the CORS allowlist
   plus same-site cookies; see `app/controllers/application_controller.rb`.
 
@@ -73,9 +79,10 @@ sign-in screen surfaces the matching message.
 - Decide same-origin (Rails serves the SPA) vs split-origin (separate CORS).
 - Set `FRONTEND_URL` so `rack-cors` and post-verification redirects point at
   the right host.
-- Session cookie should be `SameSite=Lax` if same-origin, `None; Secure` if
-  split-origin. The current config flips to `Lax` automatically in
-  `Rails.env.production?`.
+- Session cookie defaults to `SameSite=Lax; Secure=true` in production
+  (config in `config/application.rb`). Same-origin can leave that as-is;
+  split-origin needs `SameSite=None; Secure` so the cookie crosses origins
+  on credentialed fetches.
 - Force HTTPS (`config.force_ssl = true`).
 - Configure a real mail provider (`config.action_mailer.smtp_settings`).
 - Provision four databases on the production Postgres
