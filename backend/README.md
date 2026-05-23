@@ -57,6 +57,19 @@ sign-in screen surfaces the matching message.
 | GET    | `/magic_links/:token` | Verify a magic link, set the session cookie, redirect into the app. |
 | GET    | `/me` | Return `{ id, email }` for the signed-in user, or 401. |
 | DELETE | `/sessions/current` | Sign out (idempotent). |
+| GET    | `/daily_logs/:date` | Return the user's row for that date, or defaults (`wrote: false, wrote_at: null, note: null`) if absent. Future dates → 422. |
+| PUT    | `/daily_logs/:date` | Partial update with `{ wrote?, note? }`. Idempotent — re-asserting the same `wrote` is a no-op. Allowed only when `:date` equals the user's local today. |
+| GET    | `/daily_logs?from=&to=` | Range read. Defaults: `from = today − 90 days`, `to = today`. Inverted or >366-day ranges → 422. |
+
+### Daily logs
+
+- **One row per (user, date)**, created lazily on first interaction. Absent rows are treated as "no activity," not missing data.
+- **Today-only mutability.** `PUT /daily_logs/:date` is rejected with `{ error: { code: "date_not_editable" } }` unless `:date` matches `Time::ForUser.today(current_user)`. Past entries are read-only by product rule ("what happened, happened"). Future dates are also rejected on read (`date_not_readable`) and write.
+- **Today is per-user.** `Time::ForUser.today` resolves `Time.current` against the user's `timezone` setting (falls back to UTC if null, blank, or unrecognized). At 23:59 NY-local on 2026-05-08, `:date = 2026-05-08` is still valid even though UTC is already 2026-05-09.
+- **`wrote_at` tracks the flip.** It is set when `wrote` transitions false → true and cleared when it transitions true → false. Re-asserting the same value does not move it. A note-only update never touches `wrote` or `wrote_at`.
+- **Blank notes normalize.** A whitespace-only or empty `note` is persisted as `NULL`.
+- **Range read limits.** `(to − from)` is capped at **366 days**; longer ranges respond 422 with `range_too_large`. Inverted (`from > to`) responds 422 with `invalid_range`. The cap prevents accidental full-table scans from downstream consumers (`history-view`, `streaks`).
+- **All queries are scoped to `current_user.daily_logs`.** Unauthenticated requests get 401; cross-user reads or writes are impossible via these endpoints.
 
 ## CORS, cookies, CSRF (dev vs prod)
 

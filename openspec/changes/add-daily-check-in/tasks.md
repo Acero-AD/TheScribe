@@ -89,5 +89,5 @@
 
 ## 12. Documentation
 
-- [ ] 12.1 In `backend/README.md`, document the `daily_logs` API: endpoints, idempotency, the today-only mutability rule, and the range index limits
+- [x] 12.1 In `backend/README.md`, document the `daily_logs` API: endpoints, idempotency, the today-only mutability rule, and the range index limits
 - [ ] 12.2 In `frontend/README.md`, document the optimistic-toggle pattern and the note-on-blur autosave so later contributors can mirror it for `weekly-publishing`
