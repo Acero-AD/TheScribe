@@ -28,7 +28,7 @@
 
 - [x] 4.1 Model spec: validations, uniqueness, `mark_wrote!` semantics
 - [x] 4.2 Helper spec: `Time::ForUser.today` across timezones, around midnight, with null timezone
-- [ ] 4.3 Request specs covering every scenario in `specs/daily-check-in/spec.md`: today happy path, past-date rejection, future-date rejection, partial body, idempotent toggle, note normalization, range index defaults and limits, cross-user isolation, unauthenticated 401
+- [x] 4.3 Request specs covering every scenario in `specs/daily-check-in/spec.md`: today happy path, past-date rejection, future-date rejection, partial body, idempotent toggle, note normalization, range index defaults and limits, cross-user isolation, unauthenticated 401
 
 ## 5. Frontend — API helpers & date utilities
 
