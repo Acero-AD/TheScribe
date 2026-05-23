@@ -30,11 +30,15 @@ The backend SHALL allow at most 5 magic-link requests per email address per roll
 
 ### Requirement: Backend SHALL verify magic links and establish a session
 
-The backend SHALL accept the raw token from a magic-link URL, look up the matching `MagicLink` by token digest, reject the request if the link is missing, expired, or already consumed, mark the link as consumed on success, set a session cookie identifying the user, and redirect to the app's authenticated landing path.
+The backend SHALL accept the raw token from a magic-link URL, look up the matching `MagicLink` by token digest, reject the request if the link is missing, expired, or already consumed, mark the link as consumed on success, and redirect to the app's authenticated landing path. On success the verify response SHALL carry a session `Set-Cookie` header that identifies the user to subsequent requests; the cookie's transport attributes (`Secure`, `SameSite`) SHALL be chosen so the header is actually emitted and accepted under the current environment's transport (HTTP in local development, HTTPS elsewhere), not just written to in-process session state.
 
 #### Scenario: Valid, unconsumed, unexpired link
 - **WHEN** the user GETs `/magic_links/<token>` for a `MagicLink` whose `expires_at` is in the future and `consumed_at` is null
 - **THEN** the backend sets `consumed_at = now`, establishes a session for the link's user, and redirects to the app
+
+#### Scenario: Verify response carries the session cookie on the wire
+- **WHEN** the user GETs `/magic_links/<token>` for a valid, unconsumed, unexpired link over the environment's normal transport (HTTP in local development)
+- **THEN** the response includes a `Set-Cookie` header naming the configured session key, so a real browser receives the session
 
 #### Scenario: Expired link
 - **WHEN** the link's `expires_at` is in the past

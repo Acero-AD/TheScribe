@@ -33,14 +33,16 @@ module Backend
     config.frontend_url = ENV.fetch("FRONTEND_URL", "http://localhost:5173")
 
     # Re-enable cookies + session for API-only mode (needed for cookie-based auth).
-    # In dev, the frontend (:5173) and backend (:3000) are cross-origin, so the
-    # cookie must be SameSite=None; Secure. Chrome treats localhost as a secure
-    # context, so Secure cookies work over plain HTTP on localhost.
+    # Dev uses SameSite=Lax: `:3000` and `:5173` are same-site under SameSite's
+    # eTLD+1 rule (localhost has no registrable domain, so host equality applies).
+    # Secure=false in dev is required — Rack's session middleware refuses to emit
+    # a Secure cookie over plain HTTP, which would silently drop the Set-Cookie
+    # header and break sign-in.
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore,
                           key: "_scoreboard_session",
-                          same_site: Rails.env.production? ? :lax : :none,
-                          secure: !Rails.env.test?,
+                          same_site: :lax,
+                          secure: Rails.env.production?,
                           httponly: true
   end
 end
