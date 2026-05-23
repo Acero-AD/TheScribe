@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get  "magic_links/:token" => "magic_links#show", as: :magic_link
 
   get    "me" => "sessions#show", as: :current_user
+  patch  "me/settings" => "me/settings#update", as: :current_user_settings
   delete "sessions/current" => "sessions#destroy", as: :current_session
 
   # daily_logs: PUT only for update (no PATCH alias). The :date param accepts
