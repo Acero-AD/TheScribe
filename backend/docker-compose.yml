@@ -1,13 +1,15 @@
 # Local development infrastructure for the Scoreboard backend.
 #
-#   docker compose up -d   # start Postgres in the background
-#   docker compose ps      # see status
-#   docker compose down    # stop (data persists in the postgres-data volume)
-#   docker compose down -v # stop and wipe the database
+#   docker compose up -d           # start Postgres + Rails in the background
+#   docker compose logs -f web     # tail the Rails server
+#   docker compose ps              # see status
+#   docker compose down            # stop (data persists in named volumes)
+#   docker compose down -v         # stop and wipe the database + bundle cache
 #
-# Rails connects via the env vars in config/database.yml. Defaults below match
-# the values Rails uses when no env is set, so `bin/rails db:prepare` works
-# out of the box once this stack is up.
+# The `web` service builds from `Dockerfile.dev`, bind-mounts the
+# application source so edits hot-reload, and connects to `postgres`
+# over the compose network. Rails reads DATABASE_HOST/USER/PASSWORD
+# from the environment below (see config/database.yml).
 
 services:
   postgres:
@@ -28,5 +30,35 @@ services:
       timeout: 5s
       retries: 10
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: scoreboard-web
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: scoreboard
+      DATABASE_PASSWORD: scoreboard
+      DATABASE_NAME: scoreboard_development
+      BINDING: 0.0.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+      - bundle-cache:/usr/local/bundle
+      - rails-tmp:/rails/tmp
+    command: >
+      bash -c "rm -f tmp/pids/server.pid &&
+               bin/rails db:prepare &&
+               bin/rails server -b 0.0.0.0 -p 3000"
+
 volumes:
   postgres-data:
+  bundle-cache:
+  rails-tmp:
