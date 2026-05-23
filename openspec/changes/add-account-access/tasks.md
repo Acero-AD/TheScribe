@@ -35,7 +35,7 @@
 - [x] 5.1 Configure session cookie: `HttpOnly`, signed/encrypted, `SameSite=Lax` in same-origin / `None; Secure` in cross-origin contexts
 - [x] 5.2 Confirm CSRF protection is enabled and the frontend can fetch a CSRF token (or use Rails' `protect_from_forgery with: :null_session` for JSON if simpler — pick one and document)
 - [x] 5.3 Add `rack-cors` config allowing the dev frontend origin (`http://localhost:5173`) with `credentials: true` and the methods used here
-- [ ] 5.4 Verify in dev: `fetch('/me', { credentials: 'include' })` from the Vite dev server returns 200 once signed in
+- [x] 5.4 Verify in dev: `fetch('/me', { credentials: 'include' })` from the Vite dev server returns 200 once signed in
 
 ## 6. Backend — Tests
 
@@ -71,14 +71,25 @@
 
 ## 11. End-to-end verification (manual)
 
-- [ ] 11.1 Start backend and frontend dev servers; from a fresh browser, request a link with a new email, click the link from `letter_opener`, land in the authenticated app
-- [ ] 11.2 Reload the app and confirm the session persists
-- [ ] 11.3 Sign out and confirm subsequent requests to `/me` return 401
-- [ ] 11.4 Click an already-consumed link and confirm the user is redirected to `/sign-in` with the correct error
-- [ ] 11.5 Wait past 15 minutes (or fake the clock) and confirm an expired link is rejected with the correct error
+- [x] 11.1 Start backend and frontend dev servers; from a fresh browser, request a link with a new email, click the link from `letter_opener`, land in the authenticated app
+- [x] 11.2 Reload the app and confirm the session persists
+- [x] 11.3 Sign out and confirm subsequent requests to `/me` return 401
+- [x] 11.4 Click an already-consumed link and confirm the user is redirected to `/sign-in` with the correct error
+- [x] 11.5 Wait past 15 minutes (or fake the clock) and confirm an expired link is rejected with the correct error
 
 ## 12. Documentation
 
 - [x] 12.1 Add a brief `backend/README.md` section on running the magic-link flow in dev (incl. `letter_opener` URL)
 - [x] 12.2 Add a brief `frontend/README.md` section on the env var pointing at the backend, and the sign-in flow
 - [x] 12.3 Note the dev-only CORS / cookie config and what changes for prod
+
+## 13. Fix the dev session cookie not reaching the browser
+
+The integration test passed but the real-browser flow silently broke: `GET /magic_links/:token` returned 302 with no `Set-Cookie` header, so the React app's `/me` always saw 401 and `RequireAuth` bounced back to `/sign-in`. Cause: Rack's session middleware refuses to emit a `Secure` cookie over plain-HTTP, and the dev session cookie was `Secure=true`. The integration test hid this because `ActionDispatch::IntegrationTest` carries the session jar in-process and never asserts on the response's `Set-Cookie`. See Decision 7 in `design.md`.
+
+- [x] 13.1 In `backend/config/application.rb`, change the `Session::CookieStore` options so `same_site` is `:lax` in all environments and `secure` is `false` in development (production stays `Secure=true`; test keeps its existing behavior).
+- [x] 13.2 Replace the inline "Chrome treats localhost as a secure context" comment near the session config with a short, accurate note: dev uses `Lax` because `:3000` and `:5173` are same-site under SameSite's eTLD+1 rule, and `Secure=false` is required so Rack actually emits the cookie over plain HTTP.
+- [x] 13.3 Extend the "valid link consumes itself…" test in `backend/test/integration/magic_links_show_test.rb` to assert that `response.headers["Set-Cookie"]` is present and contains the configured session key (`_scoreboard_session`).
+- [x] 13.4 Run `docker compose exec web bin/rails test` and confirm the suite is green, including the new assertion.
+- [x] 13.5 Update the "CORS, cookies, CSRF (dev vs prod)" section of `backend/README.md`: dev cookie is `SameSite=Lax; Secure=false` (not `None; Secure`), drop the misleading "Chrome treats localhost as a secure context" sentence, and keep the existing note that split-origin prod will need `SameSite=None; Secure`.
+- [x] 13.6 Re-run the manual end-to-end checks now unblocked by this fix: 11.1 (fresh browser request → click → land in app), 11.2 (reload preserves session), 11.3 (sign out → `/me` returns 401). Mark each completed in section 11.
