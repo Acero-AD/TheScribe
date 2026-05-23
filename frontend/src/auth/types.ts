@@ -1,5 +1,11 @@
+export type PublishingCadence = 'weekly' | 'biweekly'
+export type WeekStartsOn = 0 | 1
+
 export interface UserSettings {
-  timezone?: string
+  reminder_time: string | null
+  week_starts_on: WeekStartsOn
+  publishing_cadence: PublishingCadence
+  timezone: string | null
 }
 
 export interface CurrentUser {

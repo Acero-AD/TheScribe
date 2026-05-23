@@ -6,6 +6,8 @@ export function detectBrowserTimezone(): string {
   }
 }
 
+export const detectTimezone = detectBrowserTimezone
+
 export function todayInTimezone(timezone: string, now: Date = new Date()): string {
   const fmt = new Intl.DateTimeFormat('en-CA', {
     timeZone: timezone,
