@@ -32,9 +32,9 @@
 
 ## 5. Frontend — API helpers & date utilities
 
-- [ ] 5.1 `getDailyLog(date)` → `GET /daily_logs/:date` with credentials
-- [ ] 5.2 `putDailyLog(date, partial)` → `PUT /daily_logs/:date` with credentials, returns updated row or throws on non-2xx
-- [ ] 5.3 `listDailyLogs({ from, to })` → `GET /daily_logs` (used here for hydration; `history-view` will be the heavier consumer later)
+- [x] 5.1 `getDailyLog(date)` → `GET /daily_logs/:date` with credentials
+- [x] 5.2 `putDailyLog(date, partial)` → `PUT /daily_logs/:date` with credentials, returns updated row or throws on non-2xx
+- [x] 5.3 `listDailyLogs({ from, to })` → `GET /daily_logs` (used here for hydration; `history-view` will be the heavier consumer later)
 - [ ] 5.4 `useTodayDate()` hook: derives today's `YYYY-MM-DD` from `useCurrentUser().settings.timezone` (fallback `Intl` detection); exposes a value that updates on window focus and via a 60-second interval
 - [ ] 5.5 `formatTimeOfDay(date, timezone)` utility that formats `HH:MM` in the user's tz for the "Logged · 9:14" label
 
