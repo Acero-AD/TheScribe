@@ -47,47 +47,47 @@
 
 ## 7. Frontend — Writing check-in card
 
-- [ ] 7.1 Build `WritingCheckInCard` component receiving `{ wrote, wroteAt, onToggle, error }`
-- [ ] 7.2 Visual states: unchecked (surface bg, ink text), checked (accent bg, white text); transition with `cubic-bezier(.2,.7,.3,1)` per design
-- [ ] 7.3 Reserve a streak slot (large display number) that renders an em-dash placeholder for now — `add-streaks` will populate it
-- [ ] 7.4 "Logged · HH:MM" label rendered when checked, using `formatTimeOfDay(wroteAt, timezone)`
-- [ ] 7.5 On tap, call parent's `onToggle(nextValue)`; parent owns the optimistic update + reconciliation
-- [ ] 7.6 Error state: when `error` is true, render an inline indicator beneath the card (compact, accessible)
+- [x] 7.1 Build `WritingCheckInCard` component receiving `{ wrote, wroteAt, onToggle, error }`
+- [x] 7.2 Visual states: unchecked (surface bg, ink text), checked (accent bg, white text); transition with `cubic-bezier(.2,.7,.3,1)` per design
+- [x] 7.3 Reserve a streak slot (large display number) that renders an em-dash placeholder for now — `add-streaks` will populate it
+- [x] 7.4 "Logged · HH:MM" label rendered when checked, using `formatTimeOfDay(wroteAt, timezone)`
+- [x] 7.5 On tap, call parent's `onToggle(nextValue)`; parent owns the optimistic update + reconciliation
+- [x] 7.6 Error state: when `error` is true, render an inline indicator beneath the card (compact, accessible)
 
 ## 8. Frontend — Optimistic toggle plumbing
 
-- [ ] 8.1 In `TodayScreen`, fetch `getDailyLog(today)` on mount and on `today` rollover
-- [ ] 8.2 Maintain local state `{ wrote, wroteAt, note }` derived from the fetch
-- [ ] 8.3 `handleToggle(next)`: optimistically update local state, fire `putDailyLog(today, { wrote: next })`, on success replace local state with server's row, on error revert to prior state and set an error flag
-- [ ] 8.4 Coalesce rapid taps so only one in-flight request exists at a time; if a second tap occurs before the first resolves, queue the latest value and fire after resolution
+- [x] 8.1 In `TodayScreen`, fetch `getDailyLog(today)` on mount and on `today` rollover
+- [x] 8.2 Maintain local state `{ wrote, wroteAt, note }` derived from the fetch
+- [x] 8.3 `handleToggle(next)`: optimistically update local state, fire `putDailyLog(today, { wrote: next })`, on success replace local state with server's row, on error revert to prior state and set an error flag
+- [x] 8.4 Coalesce rapid taps so only one in-flight request exists at a time; if a second tap occurs before the first resolves, queue the latest value and fire after resolution
 
 ## 9. Frontend — Note card
 
-- [ ] 9.1 Build `NoteCard` component with a textarea, label "Today's note · optional", placeholder "What did you write about?"
-- [ ] 9.2 Initialize textarea value from local `note` state
-- [ ] 9.3 On `blur`, if the current value differs from the last persisted value, call `putDailyLog(today, { note: value })`
-- [ ] 9.4 On success, update last-persisted reference; on error, keep the textarea content and render an inline error with a retry control
-- [ ] 9.5 Empty string is allowed and clears the note (server normalizes to null)
+- [x] 9.1 Build `NoteCard` component with a textarea, label "Today's note · optional", placeholder "What did you write about?"
+- [x] 9.2 Initialize textarea value from local `note` state
+- [x] 9.3 On `blur`, if the current value differs from the last persisted value, call `putDailyLog(today, { note: value })`
+- [x] 9.4 On success, update last-persisted reference; on error, keep the textarea content and render an inline error with a retry control
+- [x] 9.5 Empty string is allowed and clears the note (server normalizes to null)
 
 ## 10. Frontend — Tests
 
-- [ ] 10.1 Component test: `WritingCheckInCard` renders both visual states and emits `onToggle` on click
-- [ ] 10.2 Integration test: tapping the card optimistically flips state, calls `putDailyLog`, persists on success
-- [ ] 10.3 Integration test: failed PUT reverts the toggle state and shows the error indicator
-- [ ] 10.4 Integration test: typing into the note and blurring fires one PUT; blurring without changes fires nothing
-- [ ] 10.5 Integration test: clearing the note value and blurring fires PUT with `{ note: "" }`
-- [ ] 10.6 Hook test: `useTodayDate()` updates on focus and interval given a fixed timezone
+- [x] 10.1 Component test: `WritingCheckInCard` renders both visual states and emits `onToggle` on click
+- [x] 10.2 Integration test: tapping the card optimistically flips state, calls `putDailyLog`, persists on success
+- [x] 10.3 Integration test: failed PUT reverts the toggle state and shows the error indicator
+- [x] 10.4 Integration test: typing into the note and blurring fires one PUT; blurring without changes fires nothing
+- [x] 10.5 Integration test: clearing the note value and blurring fires PUT with `{ note: "" }`
+- [x] 10.6 Hook test: `useTodayDate()` updates on focus and interval given a fixed timezone
 
 ## 11. End-to-end verification (manual)
 
-- [ ] 11.1 Sign in, open `/`, see today's date with no check-in → tap card → it stays checked → reload → still checked
-- [ ] 11.2 Tap to uncheck → reload → still unchecked
-- [ ] 11.3 Type a note, click outside the textarea, reload → note persists
-- [ ] 11.4 Clear the note, blur, reload → empty
-- [ ] 11.5 Use DevTools to artificially slow the network → tap card → verify optimistic flip + later confirm or revert (test both)
-- [ ] 11.6 Set the system clock forward past midnight (or wait through one) and confirm the date header rolls and the card resets
+- [x] 11.1 Sign in, open `/`, see today's date with no check-in → tap card → it stays checked → reload → still checked
+- [x] 11.2 Tap to uncheck → reload → still unchecked
+- [x] 11.3 Type a note, click outside the textarea, reload → note persists
+- [x] 11.4 Clear the note, blur, reload → empty
+- [x] 11.5 Use DevTools to artificially slow the network → tap card → verify optimistic flip + later confirm or revert (test both)
+- [x] 11.6 Set the system clock forward past midnight (or wait through one) and confirm the date header rolls and the card resets
 
 ## 12. Documentation
 
 - [x] 12.1 In `backend/README.md`, document the `daily_logs` API: endpoints, idempotency, the today-only mutability rule, and the range index limits
-- [ ] 12.2 In `frontend/README.md`, document the optimistic-toggle pattern and the note-on-blur autosave so later contributors can mirror it for `weekly-publishing`
+- [x] 12.2 In `frontend/README.md`, document the optimistic-toggle pattern and the note-on-blur autosave so later contributors can mirror it for `weekly-publishing`
