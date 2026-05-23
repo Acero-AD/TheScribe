@@ -46,6 +46,54 @@ and sets the session cookie `SameSite=None; Secure; HttpOnly`. In production,
 the cookie flips to `SameSite=Lax` (assumes same-origin); revisit the CORS
 allowlist if the production deploy is split-origin.
 
+## Today screen patterns
+
+The Today screen (`src/screens/TodayScreen.tsx`) establishes two write patterns
+that later capabilities (`weekly-publishing`, `streaks`, etc.) should mirror.
+
+### Optimistic toggle with revert-on-error
+
+The writing check-in card (`src/components/WritingCheckInCard.tsx`) is a "tap
+and trust" control. The parent owns the request lifecycle:
+
+1. On tap, the local state flips immediately so the UI reacts in the same
+   frame.
+2. `putDailyLog(today, { wrote: next })` fires in the background.
+3. On 2xx, the server's row replaces local state (the timestamps come from
+   the server, not the client).
+4. On error, local state is reverted to the prior snapshot and an inline
+   error indicator is rendered on the card.
+5. Rapid taps are coalesced: only one PUT is in flight at a time. A second
+   tap while a request is pending queues the latest value and fires it after
+   the first request resolves. This keeps the server in sync without piling
+   up requests.
+
+When you add another check-in card (e.g. the weekly publish toggle), mirror
+this contract: the card is presentational and receives `{ value, onToggle,
+error }` from the screen; the screen owns the optimistic update, the
+in-flight ref, and the queued-value ref.
+
+### Note-on-blur autosave
+
+The note card (`src/components/NoteCard.tsx`) saves on blur, not on every
+keystroke. The pattern:
+
+1. The textarea is a controlled input over local component state.
+2. On `blur`, the current value is compared against a `persistedRef` of the
+   last value the server confirmed.
+3. If they differ, `onSave(value)` is fired; otherwise no request is made.
+4. On success, the parent updates the source-of-truth `note` prop and the
+   ref re-syncs via effect.
+5. On error, the textarea content is preserved (never silently discarded)
+   and an inline error with a Retry control is shown.
+6. An empty string is a valid save value — the backend normalizes it to
+   `null`.
+
+When you add another freeform-text field on the Today screen, follow the
+same shape: don't add a debounced per-keystroke save; rely on blur. The
+backend writes are idempotent, so this stays correct under quick focus
+changes.
+
 ## Tests
 
 ```sh
