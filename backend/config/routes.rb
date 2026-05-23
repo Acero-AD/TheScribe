@@ -8,6 +8,15 @@ Rails.application.routes.draw do
   get    "me" => "sessions#show", as: :current_user
   delete "sessions/current" => "sessions#destroy", as: :current_session
 
+  # daily_logs: PUT only for update (no PATCH alias). The :date param accepts
+  # YYYY-MM-DD; the constraint relaxes the default Rails :id matcher which
+  # would otherwise strip the dots/dashes.
+  get "daily_logs"       => "daily_logs#index",  as: :daily_logs
+  get "daily_logs/:date" => "daily_logs#show",   as: :daily_log,
+      constraints: { date: %r{\d{4}-\d{2}-\d{2}} }
+  put "daily_logs/:date" => "daily_logs#update",
+      constraints: { date: %r{\d{4}-\d{2}-\d{2}} }
+
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end

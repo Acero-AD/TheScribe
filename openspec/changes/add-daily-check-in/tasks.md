@@ -14,15 +14,15 @@
 
 ## 3. Backend — Daily logs controller
 
-- [ ] 3.1 Create `DailyLogsController` requiring authentication
-- [ ] 3.2 `#show` — accepts `:date`, returns the row's representation or default `{ date, wrote: false, wrote_at: null, note: null }`
-- [ ] 3.3 `#update` — accepts `:date` and a partial body `{ wrote?, note? }`, validates `:date == Time::ForUser.today(current_user)`, finds-or-builds the row, applies changes, persists, returns 200 with the row
-- [ ] 3.4 In `#update`, when `wrote` flips true→false set `wrote_at = nil`; when false→true set `wrote_at = Time.current`; when unchanged, leave alone
-- [ ] 3.5 In `#update`, normalize blank string note to `nil` before persisting
-- [ ] 3.6 Past or future dates (relative to user's today) → 422 with a clear error code (`date_not_editable`)
-- [ ] 3.7 `#index` — accepts `from` / `to` params, defaults `from = today − 90`, `to = today`, validates `from <= to` and `(to − from) <= 366`, returns `[{...}]`
-- [ ] 3.8 Routes: `resources :daily_logs, param: :date, only: [:show, :update, :index]` (PUT only — disable PATCH alias if Rails generates both)
-- [ ] 3.9 Scope every query to `current_user.daily_logs`
+- [x] 3.1 Create `DailyLogsController` requiring authentication
+- [x] 3.2 `#show` — accepts `:date`, returns the row's representation or default `{ date, wrote: false, wrote_at: null, note: null }`
+- [x] 3.3 `#update` — accepts `:date` and a partial body `{ wrote?, note? }`, validates `:date == Time::ForUser.today(current_user)`, finds-or-builds the row, applies changes, persists, returns 200 with the row
+- [x] 3.4 In `#update`, when `wrote` flips true→false set `wrote_at = nil`; when false→true set `wrote_at = Time.current`; when unchanged, leave alone
+- [x] 3.5 In `#update`, normalize blank string note to `nil` before persisting
+- [x] 3.6 Past or future dates (relative to user's today) → 422 with a clear error code (`date_not_editable`)
+- [x] 3.7 `#index` — accepts `from` / `to` params, defaults `from = today − 90`, `to = today`, validates `from <= to` and `(to − from) <= 366`, returns `[{...}]`
+- [x] 3.8 Routes: `resources :daily_logs, param: :date, only: [:show, :update, :index]` (PUT only — disable PATCH alias if Rails generates both)
+- [x] 3.9 Scope every query to `current_user.daily_logs`
 
 ## 4. Backend — Tests
 
