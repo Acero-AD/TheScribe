@@ -1,11 +1,109 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTodayDate } from '../hooks/useTodayDate'
 import { formatDateHeader } from '../lib/dateHeader'
 import { SB, SBfont } from '../lib/tokens'
 import { TabBar } from '../components/TabBar'
+import { WritingCheckInCard } from '../components/WritingCheckInCard'
+import { NoteCard } from '../components/NoteCard'
+import { getDailyLog, putDailyLog, type DailyLog } from '../api/dailyLogs'
+
+interface LocalState {
+  wrote: boolean
+  wroteAt: string | null
+  note: string | null
+}
+
+function toLocal(log: DailyLog): LocalState {
+  return { wrote: log.wrote, wroteAt: log.wrote_at, note: log.note }
+}
+
+const EMPTY: LocalState = { wrote: false, wroteAt: null, note: null }
 
 export function TodayScreen() {
   const { date, timezone } = useTodayDate()
   const dateLabel = formatDateHeader(date, timezone)
+
+  const [state, setState] = useState<LocalState>(EMPTY)
+  const [toggleError, setToggleError] = useState(false)
+  const [noteError, setNoteError] = useState(false)
+
+  const inFlightRef = useRef(false)
+  const queuedToggleRef = useRef<boolean | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setToggleError(false)
+    setNoteError(false)
+    const controller = new AbortController()
+
+    getDailyLog(date, controller.signal)
+      .then((log) => {
+        if (!cancelled) setState(toLocal(log))
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        setState(EMPTY)
+      })
+
+    return () => {
+      cancelled = true
+      controller.abort()
+    }
+  }, [date])
+
+  const runToggle = useCallback(
+    async (next: boolean) => {
+      inFlightRef.current = true
+      const previous = state
+      setState((current) => ({ ...current, wrote: next }))
+      setToggleError(false)
+      try {
+        const updated = await putDailyLog(date, { wrote: next })
+        setState((current) => ({ ...current, wrote: updated.wrote, wroteAt: updated.wrote_at }))
+      } catch {
+        setState(previous)
+        setToggleError(true)
+      } finally {
+        inFlightRef.current = false
+        const queued = queuedToggleRef.current
+        if (queued !== null) {
+          queuedToggleRef.current = null
+          void runToggle(queued)
+        }
+      }
+    },
+    [date, state],
+  )
+
+  const handleToggle = useCallback(
+    (next: boolean) => {
+      if (inFlightRef.current) {
+        queuedToggleRef.current = next
+        setState((current) => ({ ...current, wrote: next }))
+        return
+      }
+      void runToggle(next)
+    },
+    [runToggle],
+  )
+
+  const handleNoteSave = useCallback(
+    async (value: string) => {
+      setNoteError(false)
+      try {
+        const updated = await putDailyLog(date, { note: value })
+        setState((current) => ({ ...current, note: updated.note }))
+      } catch {
+        setNoteError(true)
+      }
+    },
+    [date],
+  )
+
+  const handleNoteRetry = useCallback(() => {
+    setNoteError(false)
+  }, [])
 
   return (
     <main
@@ -64,7 +162,19 @@ export function TodayScreen() {
         aria-label="Daily check-in cards"
         style={{ padding: '20px 16px 0', display: 'flex', flexDirection: 'column', gap: 12 }}
       >
-        {/* WritingCheckInCard and NoteCard land in subsequent commits. */}
+        <WritingCheckInCard
+          wrote={state.wrote}
+          wroteAt={state.wroteAt}
+          timezone={timezone}
+          onToggle={handleToggle}
+          error={toggleError}
+        />
+        <NoteCard
+          note={state.note}
+          onSave={handleNoteSave}
+          error={noteError}
+          onRetry={handleNoteRetry}
+        />
       </section>
 
       <TabBar />
