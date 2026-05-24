@@ -71,7 +71,26 @@ and trust" control. The parent owns the request lifecycle:
 When you add another check-in card (e.g. the weekly publish toggle), mirror
 this contract: the card is presentational and receives `{ value, onToggle,
 error }` from the screen; the screen owns the optimistic update, the
-in-flight ref, and the queued-value ref.
+in-flight ref, and the queued-value ref. The `WeeklyPublishCard` follows
+this contract — see `src/components/WeeklyPublishCard.tsx` and the publish-
+toggle handlers in `TodayScreen.tsx`.
+
+### Local-clock-driven date hooks
+
+The Today screen uses two hooks that derive a calendar date from the user's
+timezone and refresh as the local clock crosses a boundary:
+
+- `useTodayDate()` (`src/hooks/useTodayDate.ts`) returns today's date for the
+  daily card.
+- `useThisWeekStart()` (`src/hooks/useThisWeekStart.ts`) returns the first
+  day of the user's current week for the publish card, derived from
+  `useCurrentUser().settings.timezone` and `week_starts_on`.
+
+Both follow the same refresh pattern: recompute on a 60-second interval,
+on `window focus`, and on `document visibilitychange`. This lets the cards
+roll forward at midnight (and at the user's chosen week-start day) without
+a manual refresh. Any future card whose visible state depends on the local
+clock should use the same pattern rather than rolling its own.
 
 ### Note-on-blur autosave
 
