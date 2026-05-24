@@ -18,6 +18,15 @@ Rails.application.routes.draw do
   put "daily_logs/:date" => "daily_logs#update",
       constraints: { date: %r{\d{4}-\d{2}-\d{2}} }
 
+  # week_logs: same shape as daily_logs but keyed on the week-start Date
+  # (`YYYY-MM-DD`). The server validates the date is the user's current
+  # week-start under their `week_starts_on` setting.
+  get "week_logs"                  => "week_logs#index", as: :week_logs
+  get "week_logs/:week_start_date" => "week_logs#show",  as: :week_log,
+      constraints: { week_start_date: %r{\d{4}-\d{2}-\d{2}} }
+  put "week_logs/:week_start_date" => "week_logs#update",
+      constraints: { week_start_date: %r{\d{4}-\d{2}-\d{2}} }
+
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
