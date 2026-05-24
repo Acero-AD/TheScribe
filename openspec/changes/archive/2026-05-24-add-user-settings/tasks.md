@@ -58,10 +58,10 @@
 
 ## 9. End-to-end verification (manual)
 
-- [ ] 9.1 Sign in, open `/settings`, change the cadence — refresh and confirm it persists
-- [ ] 9.2 Change the time, confirm it persists, and confirm the value displays in 24-hour format
-- [ ] 9.3 Open DevTools, inspect the most recent PATCH body — confirm `timezone` is always included and matches the browser's timezone
-- [ ] 9.4 Simulate a backend 422 (e.g., temporarily inject an invalid field via DevTools) and confirm the row reverts and the error indicator appears
+- [x] 9.1 Sign in, open `/settings`, change the cadence — refresh and confirm it persists
+- [x] 9.2 Change the time, confirm it persists, and confirm the value displays in 24-hour format
+- [x] 9.3 Open DevTools, inspect the most recent PATCH body — confirm `timezone` is always included and matches the browser's timezone
+- [x] 9.4 Simulate a backend 422 (e.g., temporarily inject an invalid field via DevTools) and confirm the row reverts and the error indicator appears
 
 ## 10. Documentation
 

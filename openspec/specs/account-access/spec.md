@@ -57,11 +57,11 @@ The backend SHALL accept the raw token from a magic-link URL, look up the matchi
 
 ### Requirement: Backend SHALL expose the current user to authenticated requests
 
-The backend SHALL provide a `/me` endpoint returning the authenticated user's id and email, and SHALL reject the request with 401 when no valid session is present. Other capabilities depending on identity SHALL use the same session mechanism.
+The backend SHALL provide a `/me` endpoint returning the authenticated user's id, email, and a `settings` object containing `reminder_time`, `week_starts_on`, `publishing_cadence`, and `timezone`. The endpoint SHALL reject the request with 401 when no valid session is present. Other capabilities depending on identity SHALL use the same session mechanism.
 
 #### Scenario: Authenticated request
 - **WHEN** the client GETs `/me` with a valid session cookie
-- **THEN** the backend responds 200 with `{ id, email }` for the session's user
+- **THEN** the backend responds 200 with `{ id, email, settings: { reminder_time, week_starts_on, publishing_cadence, timezone } }` for the session's user
 
 #### Scenario: Unauthenticated request
 - **WHEN** the client GETs `/me` with no session cookie or an invalid one
