@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTodayDate } from '../hooks/useTodayDate'
+import { useThisWeekStart } from '../hooks/useThisWeekStart'
 import { formatDateHeader } from '../lib/dateHeader'
 import { SB, SBfont } from '../lib/tokens'
 import { TabBar } from '../components/TabBar'
 import { WritingCheckInCard } from '../components/WritingCheckInCard'
+import { WeeklyPublishCard } from '../components/WeeklyPublishCard'
 import { NoteCard } from '../components/NoteCard'
 import { getDailyLog, putDailyLog, type DailyLog } from '../api/dailyLogs'
+import { getWeekLog, putWeekLog, type WeekLog } from '../api/weekLogs'
 
 interface LocalState {
   wrote: boolean
@@ -21,14 +24,20 @@ const EMPTY: LocalState = { wrote: false, wroteAt: null, note: null }
 
 export function TodayScreen() {
   const { date, timezone } = useTodayDate()
+  const { weekStartDate } = useThisWeekStart()
   const dateLabel = formatDateHeader(date, timezone)
 
   const [state, setState] = useState<LocalState>(EMPTY)
   const [toggleError, setToggleError] = useState(false)
   const [noteError, setNoteError] = useState(false)
 
+  const [published, setPublished] = useState(false)
+  const [publishError, setPublishError] = useState(false)
+
   const inFlightRef = useRef(false)
   const queuedToggleRef = useRef<boolean | null>(null)
+  const publishInFlightRef = useRef(false)
+  const queuedPublishRef = useRef<boolean | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -105,6 +114,63 @@ export function TodayScreen() {
     setNoteError(false)
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+    setPublishError(false)
+    const controller = new AbortController()
+
+    getWeekLog(weekStartDate, controller.signal)
+      .then((log: WeekLog) => {
+        if (!cancelled) setPublished(log.published)
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        setPublished(false)
+      })
+
+    return () => {
+      cancelled = true
+      controller.abort()
+    }
+  }, [weekStartDate])
+
+  const runPublish = useCallback(
+    async (next: boolean) => {
+      publishInFlightRef.current = true
+      const previous = published
+      setPublished(next)
+      setPublishError(false)
+      try {
+        const updated = await putWeekLog(weekStartDate, { published: next })
+        setPublished(updated.published)
+      } catch {
+        setPublished(previous)
+        setPublishError(true)
+      } finally {
+        publishInFlightRef.current = false
+        const queued = queuedPublishRef.current
+        if (queued !== null) {
+          queuedPublishRef.current = null
+          void runPublish(queued)
+        }
+      }
+    },
+    [weekStartDate, published],
+  )
+
+  const handlePublishToggle = useCallback(
+    (next: boolean) => {
+      if (publishInFlightRef.current) {
+        queuedPublishRef.current = next
+        setPublished(next)
+        return
+      }
+      void runPublish(next)
+    },
+    [runPublish],
+  )
+
   return (
     <main
       style={{
@@ -168,6 +234,11 @@ export function TodayScreen() {
           timezone={timezone}
           onToggle={handleToggle}
           error={toggleError}
+        />
+        <WeeklyPublishCard
+          published={published}
+          onToggle={handlePublishToggle}
+          error={publishError}
         />
         <NoteCard
           note={state.note}

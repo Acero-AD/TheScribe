@@ -5,9 +5,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TodayScreen } from '../TodayScreen'
 import * as AuthContext from '../../auth/AuthContext'
 import * as dailyLogsApi from '../../api/dailyLogs'
+import * as weekLogsApi from '../../api/weekLogs'
 import type { DailyLog } from '../../api/dailyLogs'
+import type { WeekLog } from '../../api/weekLogs'
 
 const TODAY = '2026-05-23'
+const WEEK_START = '2026-05-18'
 const TIMEZONE = 'UTC'
 
 function defaultLog(overrides: Partial<DailyLog> = {}): DailyLog {
@@ -16,6 +19,14 @@ function defaultLog(overrides: Partial<DailyLog> = {}): DailyLog {
     wrote: false,
     wrote_at: null,
     note: null,
+    ...overrides,
+  }
+}
+
+function defaultWeekLog(overrides: Partial<WeekLog> = {}): WeekLog {
+  return {
+    week_start_date: WEEK_START,
+    published: false,
     ...overrides,
   }
 }
@@ -50,6 +61,9 @@ function renderScreen() {
 beforeEach(() => {
   vi.setSystemTime(new Date('2026-05-23T12:00:00Z'))
   mockCurrentUser()
+  // Default week-log fetch to the unchecked default so tests that don't care
+  // about the publish card don't have to wire it up themselves.
+  vi.spyOn(weekLogsApi, 'getWeekLog').mockResolvedValue(defaultWeekLog())
 })
 
 afterEach(() => {
@@ -150,5 +164,56 @@ describe('TodayScreen — note autosave', () => {
     await waitFor(() => {
       expect(put).toHaveBeenCalledWith(TODAY, { note: '' })
     })
+  })
+})
+
+describe('TodayScreen — weekly publish toggle', () => {
+  it('flips state immediately, calls putWeekLog, and persists on success', async () => {
+    vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog())
+    vi.spyOn(weekLogsApi, 'getWeekLog').mockResolvedValue(defaultWeekLog())
+    const put = vi
+      .spyOn(weekLogsApi, 'putWeekLog')
+      .mockResolvedValue(defaultWeekLog({ published: true }))
+
+    const user = userEvent.setup()
+    renderScreen()
+
+    const button = await screen.findByRole('button', {
+      name: /mark as published this week/i,
+    })
+    await user.click(button)
+
+    // Optimistically pressed immediately
+    expect(button).toHaveAttribute('aria-pressed', 'true')
+
+    await waitFor(() => {
+      expect(put).toHaveBeenCalledWith(WEEK_START, { published: true })
+    })
+
+    expect(
+      await screen.findByRole('button', { name: /mark as not published this week/i }),
+    ).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('reverts the publish state and shows the error indicator on a failed PUT', async () => {
+    vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog())
+    vi.spyOn(weekLogsApi, 'getWeekLog').mockResolvedValue(defaultWeekLog())
+    vi.spyOn(weekLogsApi, 'putWeekLog').mockRejectedValue(new Error('boom'))
+
+    const user = userEvent.setup()
+    renderScreen()
+
+    const button = await screen.findByRole('button', {
+      name: /mark as published this week/i,
+    })
+    await user.click(button)
+
+    await waitFor(() => {
+      const alerts = screen.getAllByRole('alert')
+      expect(alerts.some((node) => /couldn't save/i.test(node.textContent ?? ''))).toBe(
+        true,
+      )
+    })
+    expect(button).toHaveAttribute('aria-pressed', 'false')
   })
 })
