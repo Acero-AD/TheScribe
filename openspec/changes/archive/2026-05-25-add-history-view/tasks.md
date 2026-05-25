@@ -106,14 +106,14 @@
 
 ## 13. End-to-end verification (manual)
 
-- [ ] 13.1 Sign in, populate the current month with a mix of wrote/published data via the rails console, navigate to `/history`
-- [ ] 13.2 Confirm the chips show correct current/best/published values
-- [ ] 13.3 Confirm cells render correctly: wrote (soft accent), wrote+published-week (deep accent ring), no activity (neutral)
-- [ ] 13.4 Tap a day with a note → note shows below; tap a day without → "— no note —"
-- [ ] 13.5 Confirm the recent-notes list appears, excludes the selected day, ordered descending by date
-- [ ] 13.6 Click prev → previous month loads; click next repeatedly → eventually the next button is disabled at current month
-- [ ] 13.7 Open `/settings`, change `Week starts on` → return to `/history` → confirm the calendar reflows (header order, leading-blank count)
-- [ ] 13.8 Use the tab bar to navigate Today ↔ History ↔ Settings; active state always reflects the current route
+- [x] 13.1 Sign in, populate the current month with a mix of wrote/published data via the rails console, navigate to `/history`
+- [x] 13.2 Confirm the chips show correct current/best/published values
+- [x] 13.3 Confirm cells render correctly: wrote (soft accent), wrote+published-week (deep accent ring), no activity (neutral)
+- [x] 13.4 Tap a day with a note → note shows below; tap a day without → "— no note —"
+- [x] 13.5 Confirm the recent-notes list appears, excludes the selected day, ordered descending by date
+- [x] 13.6 Click prev → previous month loads; click next repeatedly → eventually the next button is disabled at current month
+- [x] 13.7 Open `/settings`, change `Week starts on` → return to `/history` → confirm the calendar reflows (header order, leading-blank count)
+- [x] 13.8 Use the tab bar to navigate Today ↔ History ↔ Settings; active state always reflects the current route
 
 ## 14. Documentation
 
