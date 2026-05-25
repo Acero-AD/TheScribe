@@ -116,6 +116,53 @@ class StreakCalculatorTest < ActiveSupport::TestCase
     assert_equal 3, StreakCalculator.publishing_streak(biweekly_user)
   end
 
+  # ---- best_writing_streak ----------------------------------------------
+
+  test "best_writing_streak: brand-new user is 0" do
+    assert_equal 0, StreakCalculator.best_writing_streak(@user)
+  end
+
+  test "best_writing_streak: a single wrote=true day is 1" do
+    daily(@today, true)
+    assert_equal 1, StreakCalculator.best_writing_streak(@user)
+  end
+
+  test "best_writing_streak: runs of 3, 7, 2 with current run of 4 returns 7" do
+    # Run of 3 (oldest), then gap, then 7, gap, 2, gap, current 4.
+    base = @today - 60
+    3.times { |i| daily(base + i, true) }
+    7.times { |i| daily(base + 10 + i, true) }
+    2.times { |i| daily(base + 25 + i, true) }
+    4.times { |i| daily(@today - 3 + i, true) }
+    assert_equal 7, StreakCalculator.best_writing_streak(@user)
+  end
+
+  test "best_writing_streak: still-active run of 9 beats prior best of 5" do
+    base = @today - 40
+    5.times { |i| daily(base + i, true) }
+    9.times { |i| daily(@today - 8 + i, true) }
+    assert_equal 9, StreakCalculator.best_writing_streak(@user)
+  end
+
+  test "best_writing_streak: a wrote=false row breaks the run" do
+    daily(@today - 4, true)
+    daily(@today - 3, true)
+    daily(@today - 2, false)
+    daily(@today - 1, true)
+    daily(@today, true)
+    assert_equal 2, StreakCalculator.best_writing_streak(@user)
+  end
+
+  test "best_writing_streak: a missing date breaks the run" do
+    daily(@today - 5, true)
+    daily(@today - 4, true)
+    # gap at @today - 3
+    daily(@today - 2, true)
+    daily(@today - 1, true)
+    daily(@today, true)
+    assert_equal 3, StreakCalculator.best_writing_streak(@user)
+  end
+
   # ---- timezone / per-user "today" --------------------------------------
 
   test "writing_streak computes against the user's local 'today' not system time" do

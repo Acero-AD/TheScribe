@@ -26,6 +26,10 @@ class StreakCalculator
     new(user).publishing_streak
   end
 
+  def self.best_writing_streak(user)
+    new(user).best_writing_streak
+  end
+
   def initialize(user)
     @user = user
   end
@@ -55,6 +59,25 @@ class StreakCalculator
     when "biweekly" then publishing_streak_biweekly
     else 0
     end
+  end
+
+  # Longest-ever run of consecutive `wrote = true` dates. A run is broken by
+  # either a missing day in the date sequence or a row with `wrote = false`.
+  # The still-active current run is a natural candidate for the maximum.
+  def best_writing_streak
+    rows = @user.daily_logs.where(wrote: true).order(:date).pluck(:date)
+    return 0 if rows.empty?
+
+    best = 1
+    current = 1
+    prev = rows.first
+
+    rows.drop(1).each do |date|
+      current = (date == prev + 1) ? current + 1 : 1
+      best = current if current > best
+      prev = date
+    end
+    best
   end
 
   private
