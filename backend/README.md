@@ -64,6 +64,7 @@ sign-in screen surfaces the matching message.
 | GET    | `/week_logs/:week_start_date` | Return the user's row for that week-start, or defaults (`published: false`) if absent. Future weeks → 422. |
 | PUT    | `/week_logs/:week_start_date` | Partial update with `{ published? }`. Idempotent. Allowed only when `:week_start_date` equals the user's current week-start. |
 | GET    | `/week_logs?from=&to=` | Range read. Defaults: `from = this_week_start − 12 weeks`, `to = this_week_start`. Inverted or >728-day ranges → 422. |
+| GET    | `/history?month=YYYY-MM` | Bundled read for the History screen. Returns the user's `daily_logs` for that month, `week_logs` whose 7-day span overlaps the month, and three streak numbers (`writing_streak_current`, `writing_streak_best`, `publishing_streak_current`). Future months → 422; malformed `month` → 422. |
 
 `GET` and `PUT` responses for the per-day and per-week endpoints also include a
 streak field — `writing_streak` and `publishing_streak` respectively —
@@ -142,6 +143,15 @@ two streaks on demand from existing rows.
   observed slow requests or query counts), not the default — the current
   walk is bounded to the last four years and does a single indexed query
   per streak.
+- **Best writing streak.** `StreakCalculator.best_writing_streak(user)` scans
+  every `DailyLog` with `wrote = true` ordered by date and returns the longest
+  run of consecutive dates seen. The walk is unbounded (no four-year lookback)
+  so the all-time best is correct even for long-tenured users. Compute happens
+  on every `/history` fetch — fast at v1 scale because the `(user_id, date)`
+  index makes the scan cheap, and the bundled history endpoint is the only
+  caller. If measurement later shows this scan dominating history latency,
+  the obvious next step is a denormalized `users.best_writing_streak` column
+  refreshed on `DailyLog` write.
 
 ## CORS, cookies, CSRF (dev vs prod)
 

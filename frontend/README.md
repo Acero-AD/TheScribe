@@ -129,6 +129,48 @@ The `WeeklyPublishCard` picks its label based on the user's
 itself means "weeks" for weekly users and "2-week buckets" for biweekly
 users; the calculation lives on the backend (`StreakCalculator`).
 
+## History screen
+
+The History screen (`src/screens/HistoryScreen.tsx`) is the app's first read-
+only view. It fetches a bundled month payload from `GET /history?month=YYYY-MM`
+via `useHistory` (`src/hooks/useHistory.ts`) and composes it into three pieces:
+the streak chips (`StreakChip`), the calendar grid (`CalendarMonth`), and the
+selected-day note + recent-notes list. There are no write controls anywhere on
+the screen — tapping a day only updates the local `selectedDay` state.
+
+### `CalendarMonth` cell-state derivation
+
+`CalendarMonth` (`src/components/CalendarMonth.tsx`) renders each day in one
+of three states, derived per-cell by `cellStateFor` in `src/lib/calendar.ts`:
+
+1. **`wrote-published-week`** — `dailyLogs[date].wrote === true` AND the
+   `WeekLog` covering that date (anchored at `weekStartForDate(date, weekStartsOn)`)
+   has `published === true`. Rendered with the deep accent fill and an outer
+   ring.
+2. **`wrote`** — `dailyLogs[date].wrote === true` (and not the above).
+   Rendered with the soft accent fill.
+3. **`no-activity`** — no row for that date, or `wrote === false`. Rendered
+   with just the hairline ring.
+
+Notes for future contributors extending this:
+
+- **Per-day, not per-week.** The "published week" signal is applied only to
+  the days the user actually wrote. A week with `published = true` but no
+  `wrote = true` days has no visual cell-state marker on the calendar (the
+  Published streak chip still reflects it). If you ever want to surface
+  published weeks where the user didn't write, that's a new state — don't
+  bend the existing three.
+- **`weekStartsOn` is load-bearing.** The week anchor used for the
+  "published-week" lookup is computed via `weekStartForDate(date, weekStartsOn)`,
+  not pulled from the `WeekLog` row. Historical rows may have been written
+  under a different `week_starts_on` setting; the current frontend rule is
+  "show the user the grid they currently have configured." If exact-anchor
+  fidelity becomes important, swap the per-week map lookup for the tolerant
+  7-day-window lookup the backend `StreakCalculator` already uses.
+- **Future days.** Cells in the current month with `date > currentDay` get
+  reduced opacity when they have no activity (so the calendar fades into the
+  future). Past months never apply this fade.
+
 ## Tests
 
 ```sh
