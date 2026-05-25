@@ -1,20 +1,20 @@
 ## 1. Backend — StreakCalculator service
 
-- [ ] 1.1 Create `app/services/streak_calculator.rb` with two class methods: `.writing_streak(user)` and `.publishing_streak(user)`
-- [ ] 1.2 `.writing_streak(user)` implements the algorithm from `design.md`: capture today via `Time::ForUser.today(user)`, walk back through `DailyLog` rows, with one-day tolerance for an unmarked today
-- [ ] 1.3 `.publishing_streak(user)` reads `user.publishing_cadence` and dispatches to either `.publishing_streak_weekly(user)` or `.publishing_streak_biweekly(user)`
-- [ ] 1.4 Implement weekly variant: walk back in 7-day steps from `Time::ForUser.this_week_start(user)`, with one-week tolerance
-- [ ] 1.5 Implement biweekly variant: bucket-walk per the design, with one-bucket tolerance for the current bucket
-- [ ] 1.6 Implement the tolerant `WeekLog.published_in_week?(user, anchor_date)` lookup: returns true if any `WeekLog` row falls in the 7-day window `[anchor_date, anchor_date + 6 days]` with `published = true` (handles historical rows from a prior `week_starts_on` setting)
-- [ ] 1.7 Optimize the writing-streak walk to fetch all candidate `DailyLog` rows in a single query bounded by some upper limit (e.g., last 366 days), indexed into a hash for O(1) day lookups during the walk
-- [ ] 1.8 Same single-query optimization for the publishing-streak walks
+- [x] 1.1 Create `app/services/streak_calculator.rb` with two class methods: `.writing_streak(user)` and `.publishing_streak(user)`
+- [x] 1.2 `.writing_streak(user)` implements the algorithm from `design.md`: capture today via `Time::ForUser.today(user)`, walk back through `DailyLog` rows, with one-day tolerance for an unmarked today
+- [x] 1.3 `.publishing_streak(user)` reads `user.publishing_cadence` and dispatches to either `.publishing_streak_weekly(user)` or `.publishing_streak_biweekly(user)`
+- [x] 1.4 Implement weekly variant: walk back in 7-day steps from `Time::ForUser.this_week_start(user)`, with one-week tolerance
+- [x] 1.5 Implement biweekly variant: bucket-walk per the design, with one-bucket tolerance for the current bucket
+- [x] 1.6 Implement the tolerant `WeekLog.published_in_week?(user, anchor_date)` lookup: returns true if any `WeekLog` row falls in the 7-day window `[anchor_date, anchor_date + 6 days]` with `published = true` (handles historical rows from a prior `week_starts_on` setting)
+- [x] 1.7 Optimize the writing-streak walk to fetch all candidate `DailyLog` rows in a single query bounded by some upper limit (e.g., last 366 days), indexed into a hash for O(1) day lookups during the walk
+- [x] 1.8 Same single-query optimization for the publishing-streak walks
 
 ## 2. Backend — Service tests
 
-- [ ] 2.1 Spec for `StreakCalculator.writing_streak`: every scenario from `specs/streaks/spec.md` (today-with-run, today-not-yet, today-then-yesterday-missed, today-and-yesterday-missed, today-toggled-off-with-yesterday-true, broken-by-gap, brand-new-user)
-- [ ] 2.2 Spec for `StreakCalculator.publishing_streak` (weekly): consecutive weeks, this-week-not-yet, both-unmarked, gap-broken, tolerant lookup across `week_starts_on` change
-- [ ] 2.3 Spec for `StreakCalculator.publishing_streak` (biweekly): consecutive buckets, current-bucket-empty-prior-not, both-buckets-empty, every-week-publishes-still-counts-once-per-bucket
-- [ ] 2.4 Spec confirming streaks are computed against the user's `Time::ForUser.today` / `this_week_start`, not against system time, including a non-UTC user
+- [x] 2.1 Spec for `StreakCalculator.writing_streak`: every scenario from `specs/streaks/spec.md` (today-with-run, today-not-yet, today-then-yesterday-missed, today-and-yesterday-missed, today-toggled-off-with-yesterday-true, broken-by-gap, brand-new-user)
+- [x] 2.2 Spec for `StreakCalculator.publishing_streak` (weekly): consecutive weeks, this-week-not-yet, both-unmarked, gap-broken, tolerant lookup across `week_starts_on` change
+- [x] 2.3 Spec for `StreakCalculator.publishing_streak` (biweekly): consecutive buckets, current-bucket-empty-prior-not, both-buckets-empty, every-week-publishes-still-counts-once-per-bucket
+- [x] 2.4 Spec confirming streaks are computed against the user's `Time::ForUser.today` / `this_week_start`, not against system time, including a non-UTC user
 
 ## 3. Backend — Controller integration: daily logs
 
