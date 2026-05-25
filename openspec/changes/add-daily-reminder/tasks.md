@@ -31,28 +31,28 @@
 
 ## 5. Backend — Send reminder job
 
-- [ ] 5.1 Create `SendReminderJob` (ActiveJob, queue: `:reminders`)
-- [ ] 5.2 Pre-flight: `return if DailyLog.exists?(user_id: user.id, date: Time::ForUser.today(user), wrote: true)`
-- [ ] 5.3 Idempotency: `ReminderLog.create!(user_id: user.id, date: Time::ForUser.today(user), sent_at: Time.current)`; rescue `ActiveRecord::RecordNotUnique` → return (already sent)
-- [ ] 5.4 For each `PushSubscription` of the user, call `WebPush.payload_send(...)` with the VAPID keys, the subscription's endpoint+keys, and a JSON payload `{ title: "Did you write today?", body: "A nudge from Scoreboard." }`
-- [ ] 5.5 Per-subscription error handling:
+- [x] 5.1 Create `SendReminderJob` (ActiveJob, queue: `:reminders`)
+- [x] 5.2 Pre-flight: `return if DailyLog.exists?(user_id: user.id, date: Time::ForUser.today(user), wrote: true)`
+- [x] 5.3 Idempotency: `ReminderLog.create!(user_id: user.id, date: Time::ForUser.today(user), sent_at: Time.current)`; rescue `ActiveRecord::RecordNotUnique` → return (already sent)
+- [x] 5.4 For each `PushSubscription` of the user, call `WebPush.payload_send(...)` with the VAPID keys, the subscription's endpoint+keys, and a JSON payload `{ title: "Did you write today?", body: "A nudge from Scoreboard." }`
+- [x] 5.5 Per-subscription error handling:
    - `WebPush::ExpiredSubscription` (410), `WebPush::InvalidSubscription` (404) → `subscription.destroy`
    - Other transient errors → re-raise to trigger Solid Queue retry; cap retries via `retry_on` with a small budget
    - Unknown / persistent errors → log and swallow after retries exhausted
-- [ ] 5.6 Make the job idempotent across retries: if the `ReminderLog` row was already created on a prior attempt, the next attempt's `find_or_create_by!` short-circuits before any sends
+- [x] 5.6 Make the job idempotent across retries: if the `ReminderLog` row was already created on a prior attempt, the next attempt's `find_or_create_by!` short-circuits before any sends
 
 ## 6. Backend — Dispatcher job
 
-- [ ] 6.1 Create `ReminderDispatcherJob` (ActiveJob, queue: `:dispatcher`)
-- [ ] 6.2 Implementation: scope users to those with non-null `reminder_time`, non-null `timezone`, an existing `PushSubscription`, no `DailyLog(today, wrote: true)`, no `ReminderLog(today)`
-- [ ] 6.3 For each candidate, format `Time.current.in_time_zone(user.timezone).strftime("%H:%M")` and compare to `user.reminder_time`; skip if not matching
-- [ ] 6.4 For each match, `SendReminderJob.perform_later(user.id)`
-- [ ] 6.5 Optimize: the candidate set is small (likely tens to thousands of users); a single SQL query with the subquery filters is sufficient. Document a query plan in a comment near the job
+- [x] 6.1 Create `ReminderDispatcherJob` (ActiveJob, queue: `:dispatcher`)
+- [x] 6.2 Implementation: scope users to those with non-null `reminder_time`, non-null `timezone`, an existing `PushSubscription`, no `DailyLog(today, wrote: true)`, no `ReminderLog(today)`
+- [x] 6.3 For each candidate, format `Time.current.in_time_zone(user.timezone).strftime("%H:%M")` and compare to `user.reminder_time`; skip if not matching
+- [x] 6.4 For each match, `SendReminderJob.perform_later(user.id)`
+- [x] 6.5 Optimize: the candidate set is small (likely tens to thousands of users); a single SQL query with the subquery filters is sufficient. Document a query plan in a comment near the job
 
 ## 7. Backend — Solid Queue recurring config
 
-- [ ] 7.1 Create `config/recurring.yml` (or v8 equivalent) with an entry for `ReminderDispatcherJob` running every minute (cron `* * * * *`)
-- [ ] 7.2 Verify recurring jobs are loaded by Solid Queue in dev (start the workers, observe the dispatcher firing)
+- [x] 7.1 Create `config/recurring.yml` (or v8 equivalent) with an entry for `ReminderDispatcherJob` running every minute (cron `* * * * *`)
+- [x] 7.2 Verify recurring jobs are loaded by Solid Queue in dev (start the workers, observe the dispatcher firing)
 - [ ] 7.3 Document the recurring config in `backend/README.md`
 
 ## 8. Backend — Tests
