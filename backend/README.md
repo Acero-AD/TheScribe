@@ -153,6 +153,63 @@ two streaks on demand from existing rows.
   the obvious next step is a denormalized `users.best_writing_streak` column
   refreshed on `DailyLog` write.
 
+## VAPID keys (for the daily reminder push channel)
+
+The `daily-reminder` capability sends Web Push notifications via the `web-push`
+gem; deliveries are signed with a VAPID keypair the server holds. The keys are
+loaded by `config/initializers/vapid.rb` into `Rails.application.config.x.vapid`
+with two source paths (credentials wins over ENV):
+
+```yaml
+# Rails credentials (preferred, esp. in production)
+vapid:
+  public_key:  "<base64url-encoded EC P-256 public key>"
+  private_key: "<base64url-encoded EC P-256 private key>"
+  subject:     "mailto:reminders@your-domain.example"
+```
+
+```
+# ENV fallback (handy in dev/CI)
+VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:reminders@your-domain.example
+```
+
+### Generate a keypair
+
+```sh
+docker compose exec web bin/rails runner \
+  'k = WebPush.generate_key; puts "PUBLIC=#{k.public_key}"; puts "PRIVATE=#{k.private_key}"'
+```
+
+The output is base64url-encoded EC P-256, which is what `pushManager.subscribe`
+expects on the browser side (the frontend converts the public key to a
+`Uint8Array` before passing it to `applicationServerKey`).
+
+### Where to put the keys
+
+- **Production**: in Rails credentials. Edit with
+  `EDITOR="vim --wait" docker compose exec web bin/rails credentials:edit -e production`
+  (interactive). The `master.key` is the only thing that decrypts them.
+- **Development**: either credentials (same pattern, `-e development`) or
+  ENV vars in your shell / a local `.env`. ENV avoids touching the encrypted
+  file when you're iterating.
+- **Test**: the test suite stubs `WebPush.payload_send` so test-env keys are
+  never used over the wire — leave them blank or stub them in `test_helper`.
+
+### Rotation
+
+The push protocol identifies subscriptions by the server's `applicationServerKey`,
+so rotating VAPID keys invalidates every existing subscription. The flow:
+
+1. Generate a new keypair.
+2. Deploy the new keys to credentials.
+3. The next dispatch round will fail with 410 Gone for old subscriptions and
+   the send job's cleanup step will delete them.
+4. Users re-subscribe by toggling the Settings row off and on again.
+
+Treat rotation as a heavy operation and avoid it unless a key was compromised.
+
 ## CORS, cookies, CSRF (dev vs prod)
 
 **Development** (frontend `:5173`, backend `:3000`):

@@ -1,10 +1,10 @@
 ## 1. Backend — Gem and VAPID setup
 
-- [ ] 1.1 Add `gem "web-push"` to the Gemfile; `bundle install`
-- [ ] 1.2 Generate VAPID keys: `bin/rails runner "puts WebPush.generate_key.to_pem"` (or the gem's idiomatic helper)
-- [ ] 1.3 Store the public and private keys in Rails credentials under `vapid: { public_key: ..., private_key: ..., subject: "mailto:<contact>" }`
-- [ ] 1.4 Add a small `Rails.application.config.x.vapid` accessor that pulls from credentials, used by the send job and the config endpoint
-- [ ] 1.5 Document VAPID setup in `backend/README.md`: how to generate, where to store, how to rotate
+- [x] 1.1 Add `gem "web-push"` to the Gemfile; `bundle install`
+- [x] 1.2 Generate VAPID keys: `bin/rails runner "puts WebPush.generate_key.to_pem"` (or the gem's idiomatic helper)
+- [x] 1.3 Store the public and private keys in Rails credentials under `vapid: { public_key: ..., private_key: ..., subject: "mailto:<contact>" }`
+- [x] 1.4 Add a small `Rails.application.config.x.vapid` accessor that pulls from credentials, used by the send job and the config endpoint
+- [x] 1.5 Document VAPID setup in `backend/README.md`: how to generate, where to store, how to rotate
 
 ## 2. Backend — Schema & models
 
