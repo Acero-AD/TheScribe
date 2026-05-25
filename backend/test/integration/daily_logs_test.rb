@@ -41,6 +41,7 @@ class DailyLogsTest < ActionDispatch::IntegrationTest
     assert_equal false, json["wrote"]
     assert_nil json["wrote_at"]
     assert_nil json["note"]
+    assert_equal 0, json["writing_streak"]
   end
 
   test "GET show returns the persisted row when present" do
@@ -91,6 +92,45 @@ class DailyLogsTest < ActionDispatch::IntegrationTest
     assert_response :ok
     assert_equal false, json["wrote"]
     assert_nil json["wrote_at"]
+  end
+
+  # ---- writing_streak field ---------------------------------------------
+
+  test "GET show includes writing_streak reflecting current state" do
+    sign_in_as(@user)
+    DailyLog.create!(user: @user, date: @today, wrote: true, wrote_at: Time.current)
+    DailyLog.create!(user: @user, date: @yesterday, wrote: true, wrote_at: 1.day.ago)
+    get "/daily_logs/#{@today.iso8601}"
+    assert_response :ok
+    assert_equal 2, json["writing_streak"]
+  end
+
+  test "PUT toggling on returns the post-mutation streak including today" do
+    sign_in_as(@user)
+    DailyLog.create!(user: @user, date: @yesterday, wrote: true, wrote_at: 1.day.ago)
+    DailyLog.create!(user: @user, date: @yesterday - 1, wrote: true, wrote_at: 2.days.ago)
+    put "/daily_logs/#{@today.iso8601}", params: { wrote: true }, as: :json
+    assert_response :ok
+    assert_equal 3, json["writing_streak"]
+  end
+
+  test "PUT toggling off returns the post-mutation streak excluding today" do
+    sign_in_as(@user)
+    DailyLog.create!(user: @user, date: @today, wrote: true, wrote_at: Time.current)
+    DailyLog.create!(user: @user, date: @yesterday, wrote: true, wrote_at: 1.day.ago)
+    DailyLog.create!(user: @user, date: @yesterday - 1, wrote: true, wrote_at: 2.days.ago)
+    put "/daily_logs/#{@today.iso8601}", params: { wrote: false }, as: :json
+    assert_response :ok
+    assert_equal 2, json["writing_streak"]
+  end
+
+  test "GET index does not include writing_streak" do
+    sign_in_as(@user)
+    DailyLog.create!(user: @user, date: @today, wrote: true, wrote_at: Time.current)
+    get "/daily_logs"
+    assert_response :ok
+    assert_kind_of Array, json
+    json.each { |row| refute row.key?("writing_streak"), "row should not include writing_streak" }
   end
 
   test "PUT update re-asserting the same wrote value is idempotent" do

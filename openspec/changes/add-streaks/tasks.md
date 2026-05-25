@@ -18,10 +18,10 @@
 
 ## 3. Backend — Controller integration: daily logs
 
-- [ ] 3.1 In `DailyLogsController#show`, after fetching/defaulting the row, compute `StreakCalculator.writing_streak(current_user)` and include it in the response as a top-level `writing_streak` field
-- [ ] 3.2 In `DailyLogsController#update`, compute the streak *after* persisting the change in the same controller action; include in response
-- [ ] 3.3 Ensure `DailyLogsController#index` (range endpoint) does NOT include the streak field
-- [ ] 3.4 Update existing controller specs (from `add-daily-check-in`) to assert the `writing_streak` field is present on `show`/`update` responses with correct values across toggle scenarios
+- [x] 3.1 In `DailyLogsController#show`, after fetching/defaulting the row, compute `StreakCalculator.writing_streak(current_user)` and include it in the response as a top-level `writing_streak` field
+- [x] 3.2 In `DailyLogsController#update`, compute the streak *after* persisting the change in the same controller action; include in response
+- [x] 3.3 Ensure `DailyLogsController#index` (range endpoint) does NOT include the streak field
+- [x] 3.4 Update existing controller specs (from `add-daily-check-in`) to assert the `writing_streak` field is present on `show`/`update` responses with correct values across toggle scenarios
 
 ## 4. Backend — Controller integration: week logs
 
