@@ -54,13 +54,13 @@
 
 ## 8. End-to-end verification (manual)
 
-- [ ] 8.1 Sign in as a fresh user, open `/`, both cards display "00"
-- [ ] 8.2 Toggle the writing card on → number jumps to "01"; reload → still "01"
-- [ ] 8.3 Toggle the publish card on → number jumps to "01"; reload → still "01"
-- [ ] 8.4 Toggle writing off → "00"; toggle back on → "01"
-- [ ] 8.5 Use the rails console to insert prior days' `wrote = true` rows for the last 5 days, then reload → writing streak shows "06" (5 prior + today)
-- [ ] 8.6 Switch `publishing_cadence` to `biweekly` in `/settings`, return to `/` → publish card label changes to "Cycle streak" and the number may shift to reflect bucket counting
-- [ ] 8.7 With biweekly cadence and `published = true` only in last week (not this week, not 3 weeks ago) → cycle streak is "01"
+- [x] 8.1 Sign in as a fresh user, open `/`, both cards display "00"
+- [x] 8.2 Toggle the writing card on → number jumps to "01"; reload → still "01"
+- [x] 8.3 Toggle the publish card on → number jumps to "01"; reload → still "01"
+- [x] 8.4 Toggle writing off → "00"; toggle back on → "01"
+- [x] 8.5 Use the rails console to insert prior days' `wrote = true` rows for the last 5 days, then reload → writing streak shows "06" (5 prior + today)
+- [x] 8.6 Switch `publishing_cadence` to `biweekly` in `/settings`, return to `/` → publish card label changes to "Cycle streak" and the number may shift to reflect bucket counting
+- [x] 8.7 With biweekly cadence and `published = true` only in last week (not this week, not 3 weeks ago) → cycle streak is "01"
 
 ## 9. Documentation
 
