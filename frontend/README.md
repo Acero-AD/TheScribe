@@ -113,6 +113,22 @@ same shape: don't add a debounced per-keystroke save; rely on blur. The
 backend writes are idempotent, so this stays correct under quick focus
 changes.
 
+### Streak rendering
+
+Both check-in cards render a zero-padded streak number sourced from the
+per-row endpoint response (`writing_streak` on `/daily_logs/:date`,
+`publishing_streak` on `/week_logs/:week_start_date`). The Today screen
+threads the value through to the card and treats it as server-authoritative:
+the optimistic toggle flips `wrote`/`published` immediately, but the streak
+slot keeps the prior value until the PUT resolves rather than guessing the
+new number.
+
+The `WeeklyPublishCard` picks its label based on the user's
+`publishing_cadence` setting (read via `useCurrentUser()`):
+`weekly` → "Week streak", `biweekly` → "Cycle streak". The streak number
+itself means "weeks" for weekly users and "2-week buckets" for biweekly
+users; the calculation lives on the backend (`StreakCalculator`).
+
 ## Tests
 
 ```sh

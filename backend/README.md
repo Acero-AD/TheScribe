@@ -65,6 +65,11 @@ sign-in screen surfaces the matching message.
 | PUT    | `/week_logs/:week_start_date` | Partial update with `{ published? }`. Idempotent. Allowed only when `:week_start_date` equals the user's current week-start. |
 | GET    | `/week_logs?from=&to=` | Range read. Defaults: `from = this_week_start − 12 weeks`, `to = this_week_start`. Inverted or >728-day ranges → 422. |
 
+`GET` and `PUT` responses for the per-day and per-week endpoints also include a
+streak field — `writing_streak` and `publishing_streak` respectively —
+computed freshly from the database state after any mutation in the same
+request. Range (`index`) responses do not include these fields.
+
 ### User settings
 
 The `User` record carries four configuration fields, surfaced by `GET /me` as a
@@ -108,6 +113,35 @@ The `User` record carries four configuration fields, surfaced by `GET /me` as a
 - **Changing `week_starts_on` does NOT re-align historical rows.** A user who flips between Sunday- and Monday-anchored keeps existing `WeekLog` rows on whichever grid they were written. Streak computation (lands with `add-streaks`) must therefore tolerate slightly off-grid historical rows — window by date range rather than exact-match lookup against the user's current anchor.
 - **Range read limits.** `(to − from)` is capped at **728 days** (≈ 104 weeks); longer ranges respond 422 with `range_too_large`. Inverted (`from > to`) responds 422 with `invalid_range`. The cap protects against accidental full-table scans from `history-view` and `streaks`.
 - **All queries are scoped to `current_user.week_logs`.** Unauthenticated requests get 401; cross-user reads or writes are impossible via these endpoints.
+
+### Streaks
+
+The `StreakCalculator` service (`app/services/streak_calculator.rb`) computes
+two streaks on demand from existing rows.
+
+- **Writing streak.** Walks back day-by-day from `Time::ForUser.today(user)`
+  over `DailyLog` rows with `wrote = true`. The walk tolerates an unmarked
+  "today" by falling back to "yesterday" as the anchor — so a streak survives
+  through the morning before the user has checked in. Returns `0` if neither
+  today nor yesterday is `wrote = true`. A `wrote = false` row at today is
+  treated the same as a missing row (the user toggled it off; the streak walks
+  from yesterday).
+- **Publishing streak.** Cadence-aware via `user.publishing_cadence`. The
+  `weekly` variant is symmetric to the writing streak but stepped in 7-day
+  chunks against `WeekLog`. The `biweekly` variant counts consecutive 2-week
+  buckets sliding back from the current bucket `[this_week_start, this_week_start − 7]`,
+  where a bucket counts if at least one of its two weeks has `published = true`.
+  Both variants tolerate one period of grace before "this period" is checked.
+- **Tolerant week lookup.** Because changing `week_starts_on` does not realign
+  historical `WeekLog` rows, the calculator checks "is week W published?" by
+  asking whether any row falls in the 7-day window `[anchor, anchor + 6 days]`
+  with `published = true` — not by exact-match anchor lookup.
+- **On-demand by design.** Streaks are recomputed per request from the rows
+  themselves; there is no `users.current_writing_streak` cache column.
+  Introducing a denormalized cache should be a measured decision (driven by
+  observed slow requests or query counts), not the default — the current
+  walk is bounded to the last 366 days and does a single indexed query per
+  streak.
 
 ## CORS, cookies, CSRF (dev vs prod)
 

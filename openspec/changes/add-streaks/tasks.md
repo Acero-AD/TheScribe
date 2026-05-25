@@ -64,6 +64,6 @@
 
 ## 9. Documentation
 
-- [ ] 9.1 In `backend/README.md`, document the streak algorithms (one paragraph each) with a link to `app/services/streak_calculator.rb`
-- [ ] 9.2 Note the cadence-aware label on the publish card in `frontend/README.md`
-- [ ] 9.3 Add a brief note that streaks are computed on demand and that introducing a denormalized cache should be a measured decision, not a default
+- [x] 9.1 In `backend/README.md`, document the streak algorithms (one paragraph each) with a link to `app/services/streak_calculator.rb`
+- [x] 9.2 Note the cadence-aware label on the publish card in `frontend/README.md`
+- [x] 9.3 Add a brief note that streaks are computed on demand and that introducing a denormalized cache should be a measured decision, not a default
