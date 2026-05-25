@@ -3,6 +3,7 @@ import { SB, SBfont } from '../lib/tokens'
 
 const tabs = [
   { to: '/', label: 'Today' },
+  { to: '/history', label: 'History' },
   { to: '/settings', label: 'Settings' },
 ] as const
 

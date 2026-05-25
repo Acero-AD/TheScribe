@@ -3,6 +3,7 @@ import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
 import { SignInScreen } from './screens/SignInScreen'
 import { TodayScreen } from './screens/TodayScreen'
+import { HistoryScreen } from './screens/HistoryScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import './App.css'
 
@@ -17,6 +18,14 @@ function App() {
             element={
               <RequireAuth>
                 <TodayScreen />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <RequireAuth>
+                <HistoryScreen />
               </RequireAuth>
             }
           />
