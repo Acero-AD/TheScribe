@@ -18,16 +18,16 @@
 
 ## 3. Backend — Push subscription controller
 
-- [ ] 3.1 Create `PushSubscriptionsController` requiring authentication
-- [ ] 3.2 `#create` accepts `{ endpoint, p256dh_key, auth_key }`; uses `find_or_initialize_by(endpoint:)` scoped to current_user; updates the keys; saves; responds 201 (created) or 200 (updated)
-- [ ] 3.3 `#destroy_current` (`DELETE /push_subscriptions/current`) accepts an `endpoint` body or param; deletes the matching row scoped to current_user; idempotent (always 200)
-- [ ] 3.4 Routes: `post '/push_subscriptions', to: 'push_subscriptions#create'`, `delete '/push_subscriptions/current', to: 'push_subscriptions#destroy_current'`
+- [x] 3.1 Create `PushSubscriptionsController` requiring authentication
+- [x] 3.2 `#create` accepts `{ endpoint, p256dh_key, auth_key }`; uses `find_or_initialize_by(endpoint:)` scoped to current_user; updates the keys; saves; responds 201 (created) or 200 (updated)
+- [x] 3.3 `#destroy_current` (`DELETE /push_subscriptions/current`) accepts an `endpoint` body or param; deletes the matching row scoped to current_user; idempotent (always 200)
+- [x] 3.4 Routes: `post '/push_subscriptions', to: 'push_subscriptions#create'`, `delete '/push_subscriptions/current', to: 'push_subscriptions#destroy_current'`
 
 ## 4. Backend — Push config controller
 
-- [ ] 4.1 Create `PushConfigController#show` returning `{ vapid_public_key: Rails.application.config.x.vapid.public_key }`
-- [ ] 4.2 Require authentication
-- [ ] 4.3 Route: `get '/push_config', to: 'push_config#show'`
+- [x] 4.1 Create `PushConfigController#show` returning `{ vapid_public_key: Rails.application.config.x.vapid.public_key }`
+- [x] 4.2 Require authentication
+- [x] 4.3 Route: `get '/push_config', to: 'push_config#show'`
 
 ## 5. Backend — Send reminder job
 
