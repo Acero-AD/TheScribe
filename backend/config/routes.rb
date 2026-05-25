@@ -27,6 +27,9 @@ Rails.application.routes.draw do
   put "week_logs/:week_start_date" => "week_logs#update",
       constraints: { week_start_date: %r{\d{4}-\d{2}-\d{2}} }
 
+  # history: bundled read endpoint for the History screen.
+  get "history" => "history#show", as: :history
+
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
