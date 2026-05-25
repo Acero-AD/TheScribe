@@ -52,4 +52,15 @@ describe('WritingCheckInCard', () => {
     renderCard()
     expect(screen.getByLabelText(/day streak/i)).toHaveTextContent('—')
   })
+
+  it.each([
+    [0, '00'],
+    [1, '01'],
+    [9, '09'],
+    [10, '10'],
+    [99, '99'],
+  ])('renders writingStreak=%i as %s zero-padded to two digits', (value, expected) => {
+    renderCard({ writingStreak: value })
+    expect(screen.getByLabelText(/day streak/i)).toHaveTextContent(expected)
+  })
 })

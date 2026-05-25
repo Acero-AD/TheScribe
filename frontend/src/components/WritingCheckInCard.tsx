@@ -8,6 +8,7 @@ interface WritingCheckInCardProps {
   onToggle: (next: boolean) => void
   error?: boolean
   disabled?: boolean
+  writingStreak?: number | null
 }
 
 const STREAK_PLACEHOLDER = '—'
@@ -19,10 +20,14 @@ export function WritingCheckInCard({
   onToggle,
   error = false,
   disabled = false,
+  writingStreak = null,
 }: WritingCheckInCardProps) {
   const loggedLabel = wrote
     ? `Logged · ${formatTimeOfDay(wroteAt, timezone) || '—'}`
     : 'Tap to log'
+
+  const streakLabel =
+    writingStreak == null ? STREAK_PLACEHOLDER : String(writingStreak).padStart(2, '0')
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -100,7 +105,7 @@ export function WritingCheckInCard({
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
-              {STREAK_PLACEHOLDER}
+              {streakLabel}
             </div>
             <div
               style={{

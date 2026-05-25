@@ -94,6 +94,38 @@ describe('TodayScreen — optimistic toggle', () => {
     expect(button).toHaveAttribute('aria-pressed', 'true')
   })
 
+  it('shows the prior streak during the in-flight window then the server value', async () => {
+    vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog({ writing_streak: 4 }))
+
+    let resolvePut: ((value: DailyLog) => void) | null = null
+    vi.spyOn(dailyLogsApi, 'putDailyLog').mockImplementation(
+      () =>
+        new Promise<DailyLog>((resolve) => {
+          resolvePut = resolve
+        }),
+    )
+
+    const user = userEvent.setup()
+    renderScreen()
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/day streak/i)).toHaveTextContent('04')
+    })
+
+    const button = screen.getByRole('button', { name: /mark as written today/i })
+    await user.click(button)
+
+    // Mid-flight: pressed optimistically, but the streak stays at the prior value.
+    expect(button).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByLabelText(/day streak/i)).toHaveTextContent('04')
+
+    resolvePut?.(defaultLog({ wrote: true, wrote_at: '2026-05-23T12:00:00Z', writing_streak: 5 }))
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/day streak/i)).toHaveTextContent('05')
+    })
+  })
+
   it('reverts the toggle state and shows the error indicator on a failed PUT', async () => {
     vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog())
     vi.spyOn(dailyLogsApi, 'putDailyLog').mockRejectedValue(new Error('boom'))

@@ -5,6 +5,7 @@ export interface DailyLog {
   wrote: boolean
   wrote_at: string | null
   note: string | null
+  writing_streak?: number
 }
 
 export interface DailyLogPatch {

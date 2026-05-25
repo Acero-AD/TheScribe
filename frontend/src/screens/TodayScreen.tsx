@@ -14,13 +14,19 @@ interface LocalState {
   wrote: boolean
   wroteAt: string | null
   note: string | null
+  writingStreak: number | null
 }
 
 function toLocal(log: DailyLog): LocalState {
-  return { wrote: log.wrote, wroteAt: log.wrote_at, note: log.note }
+  return {
+    wrote: log.wrote,
+    wroteAt: log.wrote_at,
+    note: log.note,
+    writingStreak: log.writing_streak ?? null,
+  }
 }
 
-const EMPTY: LocalState = { wrote: false, wroteAt: null, note: null }
+const EMPTY: LocalState = { wrote: false, wroteAt: null, note: null, writingStreak: null }
 
 export function TodayScreen() {
   const { date, timezone } = useTodayDate()
@@ -69,7 +75,12 @@ export function TodayScreen() {
       setToggleError(false)
       try {
         const updated = await putDailyLog(date, { wrote: next })
-        setState((current) => ({ ...current, wrote: updated.wrote, wroteAt: updated.wrote_at }))
+        setState((current) => ({
+          ...current,
+          wrote: updated.wrote,
+          wroteAt: updated.wrote_at,
+          writingStreak: updated.writing_streak ?? current.writingStreak,
+        }))
       } catch {
         setState(previous)
         setToggleError(true)
@@ -234,6 +245,7 @@ export function TodayScreen() {
           timezone={timezone}
           onToggle={handleToggle}
           error={toggleError}
+          writingStreak={state.writingStreak}
         />
         <WeeklyPublishCard
           published={published}

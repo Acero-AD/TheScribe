@@ -32,10 +32,10 @@
 
 ## 5. Frontend — Wire streak into the writing card
 
-- [ ] 5.1 Update `WritingCheckInCard` to render the `writingStreak` prop in its big-number slot, zero-padded to 2 digits via `String(n).padStart(2, '0')` per the design
-- [ ] 5.2 Replace the em-dash placeholder logic with the real streak rendering
-- [ ] 5.3 In `TodayScreen`, when a daily-log fetch or PUT response arrives, store `writing_streak` alongside `wrote`/`note` and pass it down to `WritingCheckInCard`
-- [ ] 5.4 Optimistic-update interaction with streak: the optimistic flip changes `wrote` immediately but waits for the server response to update the streak number — the streak slot during the brief in-flight window can show the prior value (do not optimistically guess the new streak)
+- [x] 5.1 Update `WritingCheckInCard` to render the `writingStreak` prop in its big-number slot, zero-padded to 2 digits via `String(n).padStart(2, '0')` per the design
+- [x] 5.2 Replace the em-dash placeholder logic with the real streak rendering
+- [x] 5.3 In `TodayScreen`, when a daily-log fetch or PUT response arrives, store `writing_streak` alongside `wrote`/`note` and pass it down to `WritingCheckInCard`
+- [x] 5.4 Optimistic-update interaction with streak: the optimistic flip changes `wrote` immediately but waits for the server response to update the streak number — the streak slot during the brief in-flight window can show the prior value (do not optimistically guess the new streak)
 
 ## 6. Frontend — Wire streak into the publish card
 
@@ -46,9 +46,9 @@
 
 ## 7. Frontend — Tests
 
-- [ ] 7.1 Component test: `WritingCheckInCard` renders the streak number from props with zero-padding (covers values 0, 1, 9, 10, 99)
+- [x] 7.1 Component test: `WritingCheckInCard` renders the streak number from props with zero-padding (covers values 0, 1, 9, 10, 99)
 - [ ] 7.2 Component test: `WeeklyPublishCard` renders "Week streak" label for `cadence: weekly` and "Cycle streak" for `cadence: biweekly`
-- [ ] 7.3 Integration test: tapping the writing card optimistically flips state, the streak number stays at prior value until the PUT resolves, then updates to server's value
+- [x] 7.3 Integration test: tapping the writing card optimistically flips state, the streak number stays at prior value until the PUT resolves, then updates to server's value
 - [ ] 7.4 Integration test: same for the publish card
 - [ ] 7.5 Integration test: changing cadence in `/settings` and returning to `/` updates the publish card label on next render
 
