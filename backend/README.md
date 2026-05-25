@@ -140,8 +140,8 @@ two streaks on demand from existing rows.
   themselves; there is no `users.current_writing_streak` cache column.
   Introducing a denormalized cache should be a measured decision (driven by
   observed slow requests or query counts), not the default — the current
-  walk is bounded to the last 366 days and does a single indexed query per
-  streak.
+  walk is bounded to the last four years and does a single indexed query
+  per streak.
 
 ## CORS, cookies, CSRF (dev vs prod)
 

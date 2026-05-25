@@ -13,9 +13,10 @@
 # Lookups against `WeekLog` use a 7-day window starting at the anchor date so
 # rows created under a previous `week_starts_on` setting still resolve.
 class StreakCalculator
-  # Bound the walk; nobody plausibly streaks past a year and we don't want
-  # a single user with corrupt data to chew on the whole table.
-  LOOKBACK_DAYS = 366
+  # Bound the walk at four years (one leap day included). Generous enough that
+  # nobody we serve will hit it in practice, small enough that a corrupt-data
+  # user can't drag the whole table into memory.
+  LOOKBACK_DAYS = 1461
 
   def self.writing_streak(user)
     new(user).writing_streak
