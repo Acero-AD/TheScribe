@@ -39,18 +39,18 @@
 
 ## 6. Frontend — Wire streak into the publish card
 
-- [ ] 6.1 Update `WeeklyPublishCard` to render the `publishingStreak` prop in its number slot, zero-padded to 2 digits
-- [ ] 6.2 Add a `cadence` prop (or read it via a hook from `useCurrentUser().settings.publishing_cadence`); render label as `"Week streak"` for `weekly`, `"Cycle streak"` for `biweekly`
-- [ ] 6.3 In `TodayScreen`, when a week-log fetch or PUT response arrives, store `publishing_streak` and pass it to the publish card
-- [ ] 6.4 Same optimistic-update treatment as the writing card: don't predict the new streak; show prior value until server confirms
+- [x] 6.1 Update `WeeklyPublishCard` to render the `publishingStreak` prop in its number slot, zero-padded to 2 digits
+- [x] 6.2 Add a `cadence` prop (or read it via a hook from `useCurrentUser().settings.publishing_cadence`); render label as `"Week streak"` for `weekly`, `"Cycle streak"` for `biweekly`
+- [x] 6.3 In `TodayScreen`, when a week-log fetch or PUT response arrives, store `publishing_streak` and pass it to the publish card
+- [x] 6.4 Same optimistic-update treatment as the writing card: don't predict the new streak; show prior value until server confirms
 
 ## 7. Frontend — Tests
 
 - [x] 7.1 Component test: `WritingCheckInCard` renders the streak number from props with zero-padding (covers values 0, 1, 9, 10, 99)
-- [ ] 7.2 Component test: `WeeklyPublishCard` renders "Week streak" label for `cadence: weekly` and "Cycle streak" for `cadence: biweekly`
+- [x] 7.2 Component test: `WeeklyPublishCard` renders "Week streak" label for `cadence: weekly` and "Cycle streak" for `cadence: biweekly`
 - [x] 7.3 Integration test: tapping the writing card optimistically flips state, the streak number stays at prior value until the PUT resolves, then updates to server's value
-- [ ] 7.4 Integration test: same for the publish card
-- [ ] 7.5 Integration test: changing cadence in `/settings` and returning to `/` updates the publish card label on next render
+- [x] 7.4 Integration test: same for the publish card
+- [x] 7.5 Integration test: changing cadence in `/settings` and returning to `/` updates the publish card label on next render
 
 ## 8. End-to-end verification (manual)
 

@@ -3,6 +3,7 @@ import { api } from './client'
 export interface WeekLog {
   week_start_date: string
   published: boolean
+  publishing_streak?: number
 }
 
 export interface WeekLogPatch {

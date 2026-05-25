@@ -45,4 +45,27 @@ describe('WeeklyPublishCard', () => {
     renderCard()
     expect(screen.getByLabelText(/week streak/i)).toHaveTextContent('—')
   })
+
+  it.each([
+    [0, '00'],
+    [1, '01'],
+    [9, '09'],
+    [10, '10'],
+    [99, '99'],
+  ])('renders publishingStreak=%i as %s zero-padded', (value, expected) => {
+    renderCard({ publishingStreak: value })
+    expect(screen.getByLabelText(/week streak/i)).toHaveTextContent(expected)
+  })
+
+  it('uses "Week streak" label for weekly cadence', () => {
+    renderCard({ cadence: 'weekly', publishingStreak: 3 })
+    expect(screen.getByLabelText('Week streak')).toBeInTheDocument()
+    expect(screen.getByText(/week streak/i)).toBeInTheDocument()
+  })
+
+  it('uses "Cycle streak" label for biweekly cadence', () => {
+    renderCard({ cadence: 'biweekly', publishingStreak: 2 })
+    expect(screen.getByLabelText('Cycle streak')).toBeInTheDocument()
+    expect(screen.getByText(/cycle streak/i)).toBeInTheDocument()
+  })
 })

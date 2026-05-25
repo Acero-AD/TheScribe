@@ -1,10 +1,12 @@
 import { SB, SBfont } from '../lib/tokens'
+import type { PublishingCadence } from '../auth/types'
 
 interface WeeklyPublishCardProps {
   published: boolean
   onToggle: (next: boolean) => void
   error?: boolean
-  weekStreak?: number | null
+  publishingStreak?: number | null
+  cadence?: PublishingCadence
   disabled?: boolean
 }
 
@@ -14,11 +16,13 @@ export function WeeklyPublishCard({
   published,
   onToggle,
   error = false,
-  weekStreak = null,
+  publishingStreak = null,
+  cadence = 'weekly',
   disabled = false,
 }: WeeklyPublishCardProps) {
-  const streakLabel =
-    weekStreak == null ? STREAK_PLACEHOLDER : String(weekStreak).padStart(2, '0')
+  const streakValue =
+    publishingStreak == null ? STREAK_PLACEHOLDER : String(publishingStreak).padStart(2, '0')
+  const streakLabel = cadence === 'biweekly' ? 'Cycle streak' : 'Week streak'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -64,7 +68,7 @@ export function WeeklyPublishCard({
             Did you publish this week?
           </div>
           <div
-            aria-label="Week streak"
+            aria-label={streakLabel}
             style={{
               fontFamily: SBfont.mono,
               fontSize: 11,
@@ -75,10 +79,10 @@ export function WeeklyPublishCard({
             }}
           >
             <span style={{ fontWeight: 600, color: SB.ink, fontSize: 13 }}>
-              {streakLabel}
+              {streakValue}
             </span>
             <span style={{ marginLeft: 6, textTransform: 'uppercase', letterSpacing: 1.2 }}>
-              Week streak
+              {streakLabel}
             </span>
           </div>
         </div>

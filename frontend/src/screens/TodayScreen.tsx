@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTodayDate } from '../hooks/useTodayDate'
 import { useThisWeekStart } from '../hooks/useThisWeekStart'
+import { useCurrentUser } from '../auth/AuthContext'
 import { formatDateHeader } from '../lib/dateHeader'
 import { SB, SBfont } from '../lib/tokens'
 import { TabBar } from '../components/TabBar'
@@ -31,6 +32,8 @@ const EMPTY: LocalState = { wrote: false, wroteAt: null, note: null, writingStre
 export function TodayScreen() {
   const { date, timezone } = useTodayDate()
   const { weekStartDate } = useThisWeekStart()
+  const { user } = useCurrentUser()
+  const cadence = user?.settings?.publishing_cadence ?? 'weekly'
   const dateLabel = formatDateHeader(date, timezone)
 
   const [state, setState] = useState<LocalState>(EMPTY)
@@ -38,6 +41,7 @@ export function TodayScreen() {
   const [noteError, setNoteError] = useState(false)
 
   const [published, setPublished] = useState(false)
+  const [publishingStreak, setPublishingStreak] = useState<number | null>(null)
   const [publishError, setPublishError] = useState(false)
 
   const inFlightRef = useRef(false)
@@ -132,12 +136,15 @@ export function TodayScreen() {
 
     getWeekLog(weekStartDate, controller.signal)
       .then((log: WeekLog) => {
-        if (!cancelled) setPublished(log.published)
+        if (cancelled) return
+        setPublished(log.published)
+        setPublishingStreak(log.publishing_streak ?? null)
       })
       .catch((error: unknown) => {
         if (cancelled) return
         if (error instanceof DOMException && error.name === 'AbortError') return
         setPublished(false)
+        setPublishingStreak(null)
       })
 
     return () => {
@@ -155,6 +162,9 @@ export function TodayScreen() {
       try {
         const updated = await putWeekLog(weekStartDate, { published: next })
         setPublished(updated.published)
+        if (updated.publishing_streak !== undefined) {
+          setPublishingStreak(updated.publishing_streak)
+        }
       } catch {
         setPublished(previous)
         setPublishError(true)
@@ -251,6 +261,8 @@ export function TodayScreen() {
           published={published}
           onToggle={handlePublishToggle}
           error={publishError}
+          publishingStreak={publishingStreak}
+          cadence={cadence}
         />
         <NoteCard
           note={state.note}

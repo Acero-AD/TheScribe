@@ -8,6 +8,7 @@ import * as dailyLogsApi from '../../api/dailyLogs'
 import * as weekLogsApi from '../../api/weekLogs'
 import type { DailyLog } from '../../api/dailyLogs'
 import type { WeekLog } from '../../api/weekLogs'
+import type { PublishingCadence } from '../../auth/types'
 
 const TODAY = '2026-05-23'
 const WEEK_START = '2026-05-18'
@@ -31,7 +32,7 @@ function defaultWeekLog(overrides: Partial<WeekLog> = {}): WeekLog {
   }
 }
 
-function mockCurrentUser() {
+function mockCurrentUser(cadence: PublishingCadence = 'weekly') {
   vi.spyOn(AuthContext, 'useCurrentUser').mockReturnValue({
     user: {
       id: 1,
@@ -39,7 +40,7 @@ function mockCurrentUser() {
       settings: {
         reminder_time: null,
         week_starts_on: 1,
-        publishing_cadence: 'weekly',
+        publishing_cadence: cadence,
         timezone: TIMEZONE,
       },
     },
@@ -247,5 +248,61 @@ describe('TodayScreen — weekly publish toggle', () => {
       )
     })
     expect(button).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('shows the prior publishing streak during the in-flight window then the server value', async () => {
+    vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog())
+    vi.spyOn(weekLogsApi, 'getWeekLog').mockResolvedValue(
+      defaultWeekLog({ publishing_streak: 2 }),
+    )
+
+    let resolvePut: ((value: WeekLog) => void) | null = null
+    vi.spyOn(weekLogsApi, 'putWeekLog').mockImplementation(
+      () =>
+        new Promise<WeekLog>((resolve) => {
+          resolvePut = resolve
+        }),
+    )
+
+    const user = userEvent.setup()
+    renderScreen()
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/week streak/i)).toHaveTextContent('02')
+    })
+
+    const button = screen.getByRole('button', {
+      name: /mark as published this week/i,
+    })
+    await user.click(button)
+
+    expect(button).toHaveAttribute('aria-pressed', 'true')
+    // Prior streak is preserved mid-flight.
+    expect(screen.getByLabelText(/week streak/i)).toHaveTextContent('02')
+
+    resolvePut?.(defaultWeekLog({ published: true, publishing_streak: 3 }))
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/week streak/i)).toHaveTextContent('03')
+    })
+  })
+})
+
+describe('TodayScreen — cadence-aware publish label', () => {
+  it('renders "Week streak" for a weekly user', async () => {
+    vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog())
+    vi.spyOn(weekLogsApi, 'getWeekLog').mockResolvedValue(defaultWeekLog({ publishing_streak: 1 }))
+    renderScreen()
+    expect(await screen.findByLabelText('Week streak')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Cycle streak')).not.toBeInTheDocument()
+  })
+
+  it('renders "Cycle streak" for a biweekly user', async () => {
+    mockCurrentUser('biweekly')
+    vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog())
+    vi.spyOn(weekLogsApi, 'getWeekLog').mockResolvedValue(defaultWeekLog({ publishing_streak: 1 }))
+    renderScreen()
+    expect(await screen.findByLabelText('Cycle streak')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Week streak')).not.toBeInTheDocument()
   })
 })
