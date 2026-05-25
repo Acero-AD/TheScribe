@@ -47,6 +47,7 @@ class WeekLogsTest < ActionDispatch::IntegrationTest
     assert_response :ok
     assert_equal @this_week.iso8601, json["week_start_date"]
     assert_equal false, json["published"]
+    assert_equal 0, json["publishing_streak"]
   end
 
   test "GET show returns the persisted row when present" do
@@ -98,6 +99,46 @@ class WeekLogsTest < ActionDispatch::IntegrationTest
     put "/week_logs/#{@this_week.iso8601}", params: { published: false }, as: :json
     assert_response :ok
     assert_equal false, json["published"]
+  end
+
+  # ---- publishing_streak field ------------------------------------------
+
+  test "GET show includes publishing_streak for a weekly user" do
+    sign_in_as(@user)
+    WeekLog.create!(user: @user, week_start_date: @this_week, published: true)
+    WeekLog.create!(user: @user, week_start_date: @last_week, published: true)
+    get "/week_logs/#{@this_week.iso8601}"
+    assert_response :ok
+    assert_equal 2, json["publishing_streak"]
+  end
+
+  test "PUT toggling on returns the post-mutation publishing_streak (weekly)" do
+    sign_in_as(@user)
+    WeekLog.create!(user: @user, week_start_date: @last_week, published: true)
+    WeekLog.create!(user: @user, week_start_date: @last_week - 7, published: true)
+    put "/week_logs/#{@this_week.iso8601}", params: { published: true }, as: :json
+    assert_response :ok
+    assert_equal 3, json["publishing_streak"]
+  end
+
+  test "GET show includes publishing_streak for a biweekly user" do
+    biweekly = User.create!(email: "biweekly-int@example.com", publishing_cadence: "biweekly")
+    sign_in_as(biweekly)
+    # Publish last week (bucket 0) and three weeks back (bucket 1).
+    WeekLog.create!(user: biweekly, week_start_date: @last_week, published: true)
+    WeekLog.create!(user: biweekly, week_start_date: @last_week - 14, published: true)
+    get "/week_logs/#{@this_week.iso8601}"
+    assert_response :ok
+    assert_equal 2, json["publishing_streak"]
+  end
+
+  test "GET index does not include publishing_streak" do
+    sign_in_as(@user)
+    WeekLog.create!(user: @user, week_start_date: @this_week, published: true)
+    get "/week_logs"
+    assert_response :ok
+    assert_kind_of Array, json
+    json.each { |row| refute row.key?("publishing_streak"), "row should not include publishing_streak" }
   end
 
   test "PUT update re-asserting the same published value is idempotent" do

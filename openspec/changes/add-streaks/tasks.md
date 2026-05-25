@@ -25,10 +25,10 @@
 
 ## 4. Backend — Controller integration: week logs
 
-- [ ] 4.1 In `WeekLogsController#show`, compute `StreakCalculator.publishing_streak(current_user)` and include as top-level `publishing_streak`
-- [ ] 4.2 In `WeekLogsController#update`, compute after persisting; include in response
-- [ ] 4.3 Ensure `WeekLogsController#index` does NOT include the streak field
-- [ ] 4.4 Update existing controller specs (from `add-weekly-publishing`) to assert the `publishing_streak` field is present on `show`/`update` responses for both `weekly` and `biweekly` users
+- [x] 4.1 In `WeekLogsController#show`, compute `StreakCalculator.publishing_streak(current_user)` and include as top-level `publishing_streak`
+- [x] 4.2 In `WeekLogsController#update`, compute after persisting; include in response
+- [x] 4.3 Ensure `WeekLogsController#index` does NOT include the streak field
+- [x] 4.4 Update existing controller specs (from `add-weekly-publishing`) to assert the `publishing_streak` field is present on `show`/`update` responses for both `weekly` and `biweekly` users
 
 ## 5. Frontend — Wire streak into the writing card
 

@@ -15,7 +15,7 @@ class WeekLogsController < ApplicationController
     end
 
     log = current_user.week_logs.find_by(week_start_date: date)
-    render json: serialize(log, week_start_date: date)
+    render json: serialize(log, week_start_date: date).merge(publishing_streak: StreakCalculator.publishing_streak(current_user))
   end
 
   def update
@@ -32,7 +32,7 @@ class WeekLogsController < ApplicationController
     apply_changes!(log)
     log.save!
 
-    render json: serialize(log, week_start_date: date)
+    render json: serialize(log, week_start_date: date).merge(publishing_streak: StreakCalculator.publishing_streak(current_user))
   end
 
   def index
