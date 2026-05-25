@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :magic_links, dependent: :destroy
   has_many :daily_logs, dependent: :destroy
   has_many :week_logs, dependent: :destroy
+  has_many :push_subscriptions, dependent: :destroy
+  has_many :reminder_logs, dependent: :destroy
 
   before_validation :normalize_email
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_24_060937) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_150139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_060937) do
     t.index ["user_id"], name: "index_magic_links_on_user_id"
   end
 
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.string "auth_key", null: false
+    t.datetime "created_at", null: false
+    t.string "endpoint", null: false
+    t.string "p256dh_key", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "endpoint"], name: "index_push_subscriptions_on_user_id_and_endpoint", unique: true
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
+  end
+
+  create_table "reminder_logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.datetime "sent_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "date"], name: "index_reminder_logs_on_user_id_and_date", unique: true
+    t.index ["user_id"], name: "index_reminder_logs_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -63,5 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_060937) do
 
   add_foreign_key "daily_logs", "users"
   add_foreign_key "magic_links", "users"
+  add_foreign_key "push_subscriptions", "users"
+  add_foreign_key "reminder_logs", "users"
   add_foreign_key "week_logs", "users"
 end

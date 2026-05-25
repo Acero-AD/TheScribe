@@ -8,13 +8,13 @@
 
 ## 2. Backend — Schema & models
 
-- [ ] 2.1 Generate migration for `push_subscriptions` (`user:references`, `endpoint:string`, `p256dh_key:string`, `auth_key:string`, timestamps)
-- [ ] 2.2 Add unique composite index on `(user_id, endpoint)`
-- [ ] 2.3 Generate migration for `reminder_logs` (`user:references`, `date:date`, `sent_at:datetime`, timestamps)
-- [ ] 2.4 Add unique composite index on `(user_id, date)` — load-bearing for idempotency
-- [ ] 2.5 Run migrations
-- [ ] 2.6 Add `PushSubscription` model with `belongs_to :user`, validations on the three string fields
-- [ ] 2.7 Add `ReminderLog` model with `belongs_to :user`, validations on `date` and `sent_at`
+- [x] 2.1 Generate migration for `push_subscriptions` (`user:references`, `endpoint:string`, `p256dh_key:string`, `auth_key:string`, timestamps)
+- [x] 2.2 Add unique composite index on `(user_id, endpoint)`
+- [x] 2.3 Generate migration for `reminder_logs` (`user:references`, `date:date`, `sent_at:datetime`, timestamps)
+- [x] 2.4 Add unique composite index on `(user_id, date)` — load-bearing for idempotency
+- [x] 2.5 Run migrations
+- [x] 2.6 Add `PushSubscription` model with `belongs_to :user`, validations on the three string fields
+- [x] 2.7 Add `ReminderLog` model with `belongs_to :user`, validations on `date` and `sent_at`
 
 ## 3. Backend — Push subscription controller
 
