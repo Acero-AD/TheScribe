@@ -80,11 +80,11 @@
 
 ## 11. Frontend — usePushSubscription hook
 
-- [ ] 11.1 Build `usePushSubscription()` hook returning `{ status, subscribe, unsubscribe, error }`
-- [ ] 11.2 `status` is computed from: `Notification.permission`, `pushManager.getSubscription()`, iOS-PWA detection — possible values: `'unsupported'`, `'install-required'`, `'denied'`, `'subscribed'`, `'unsubscribed'`, `'transitioning'`
-- [ ] 11.3 `subscribe()`: requestPermission → pushManager.subscribe → POST /push_subscriptions; transitions through `'transitioning'`; resolves to new status
-- [ ] 11.4 `unsubscribe()`: pushManager.getSubscription → unsubscribe → DELETE /push_subscriptions/current; resolves to new status
-- [ ] 11.5 iOS-install detection helper: `isIOSStandaloneRequired()` returns true on iOS Safari without `navigator.standalone`
+- [x] 11.1 Build `usePushSubscription()` hook returning `{ status, subscribe, unsubscribe, error }`
+- [x] 11.2 `status` is computed from: `Notification.permission`, `pushManager.getSubscription()`, iOS-PWA detection — possible values: `'unsupported'`, `'install-required'`, `'denied'`, `'subscribed'`, `'unsubscribed'`, `'transitioning'`
+- [x] 11.3 `subscribe()`: requestPermission → pushManager.subscribe → POST /push_subscriptions; transitions through `'transitioning'`; resolves to new status
+- [x] 11.4 `unsubscribe()`: pushManager.getSubscription → unsubscribe → DELETE /push_subscriptions/current; resolves to new status
+- [x] 11.5 iOS-install detection helper: `isIOSStandaloneRequired()` returns true on iOS Safari without `navigator.standalone`
 
 ## 12. Frontend — Settings toggle row
 
