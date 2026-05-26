@@ -215,6 +215,28 @@ the server's. `unsubscribe()` walks the reverse: `getSubscription()` →
 DELETE is idempotent server-side, so a transient network failure there is
 not surfaced — the UI still reflects the local unsubscribe.
 
+### Installing as a PWA
+
+`public/manifest.webmanifest` declares the Web App Manifest (name, scope,
+icons, theme color). It's linked from `index.html` together with the iOS
+`apple-mobile-web-app-*` meta tags. With the manifest, a service worker,
+and the page served from a secure origin (HTTPS or `localhost`), Android
+Chrome lists Scoreboard under "Add to Home Screen" in the menu — and will
+surface an automatic install banner on subsequent visits.
+
+Icons live in `public/icons/`. They're flat-color placeholders today
+(`icon-192.png`, `icon-512.png`, plus a `icon-512-maskable.png` with extra
+padding for Android's adaptive-icon system). Replace with real artwork when
+the brand has one.
+
+To test the install flow from a phone, the dev server must be reachable
+over **HTTPS** — `localhost` is a secure origin but your laptop's LAN IP
+is not, and both SW registration and `PushManager.subscribe` refuse to run
+on insecure origins. A `cloudflared tunnel --url http://localhost:5173`
+(plus a second tunnel for the `:3000` backend, with that public URL added
+to the backend's CORS allowlist and `VITE_BACKEND_URL`) is the smallest
+setup that works.
+
 ### iOS install requirement
 
 iOS 16.4+ supports Web Push, but only for PWAs that have been added to the

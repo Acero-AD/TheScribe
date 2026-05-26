@@ -30,6 +30,12 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(focusOrOpen())
 })
 
+// A no-op fetch listener. Older Chrome versions only treat the app as
+// "installable" (Add to Home Screen banner) when the SW has a fetch handler.
+// We intentionally do not call event.respondWith — the browser falls back to
+// its default network behaviour.
+self.addEventListener('fetch', () => {})
+
 function parsePayload(event) {
   if (!event.data) return {}
   try {

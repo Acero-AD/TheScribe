@@ -47,7 +47,7 @@ function stubBrowserApis(opts: StubOptions = {}) {
     subscribe: vi.fn().mockResolvedValue(subscribeResult),
   }
   const registration = { pushManager } as unknown as ServiceWorkerRegistration
-  Object.defineProperty(global.navigator, 'serviceWorker', {
+  Object.defineProperty(globalThis.navigator, 'serviceWorker', {
     configurable: true,
     value: { ready: Promise.resolve(registration) },
   })
