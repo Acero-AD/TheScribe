@@ -222,6 +222,82 @@ the workers (`bin/jobs`) is enough to make reminders fire locally.
 Production also runs `clear_solid_queue_finished_jobs` hourly to keep the
 finished-jobs table from growing without bound.
 
+## Daily-reminder pipeline
+
+The end-to-end flow, in dependency order:
+
+1. **VAPID keys** (above) are loaded into `Rails.application.config.x.vapid`.
+2. **`GET /push_config`** returns `{ vapid_public_key }` so the frontend can
+   subscribe without a build-time env var. Runtime delivery means rotation is
+   "edit credentials, deploy, let old subs 410 out" — no bundle rebuild.
+3. **`POST /push_subscriptions`** registers a device. `find_or_initialize_by`
+   on `(user_id, endpoint)` makes a re-subscribe from the same device a key
+   refresh, not a duplicate row. Each user has one row per browser/device.
+4. **`ReminderDispatcherJob`** runs every minute (Solid Queue recurring) and
+   enqueues `SendReminderJob` for users who are "due."
+5. **`SendReminderJob`** performs the actual `web-push` delivery and writes
+   the `ReminderLog` row.
+
+### "Due" filter (dispatcher candidate set)
+
+A user is due when ALL of:
+
+- `reminder_time` and `timezone` are non-null.
+- The user has at least one `PushSubscription`.
+- No `DailyLog` for today with `wrote = true`.
+- No `ReminderLog` for today.
+- `Time.current.in_time_zone(user.timezone).strftime("%H:%M")` equals
+  `reminder_time` exactly. Minute-precision, no window — if the dispatcher
+  misses a minute (worker restart, lag), that day's reminder is lost.
+
+### Suppression rule
+
+The send job re-checks `DailyLog(today, wrote: true)` before doing anything,
+guarding the race where a user checks in between dispatch and send. The
+reminder is a nudge only for unfilled days; if the user already wrote, the
+job is a no-op and no `ReminderLog` row is written.
+
+### Idempotency
+
+`ReminderLog` has a unique composite index on `(user_id, date)`. The send job
+calls `ReminderLog.create!` before any `web-push` call; a uniqueness violation
+(either `RecordInvalid` from AR validation or `RecordNotUnique` from the DB
+constraint under contention) is caught and treated as "already sent today —
+skip." The intentional trade-off: if the row is created but the push call
+fails, the day is "done" — better one missed reminder than one duplicate.
+
+### 410-Gone cleanup
+
+`SendReminderJob`'s per-subscription rescue:
+
+- `WebPush::ExpiredSubscription` (HTTP 410) or `WebPush::InvalidSubscription`
+  (404) → `subscription.destroy`. The subscription is permanently invalid; we
+  remove the row so it stops being a candidate.
+- Any other exception is logged and swallowed. The `ReminderLog` row already
+  gates the day, so a retry would skip; rather than retry-loop a failing
+  endpoint, surface it in logs and move on.
+
+### Operational checks
+
+If reminders stop arriving, work down this list:
+
+1. **Recurring job alive?** `docker compose exec web bin/jobs` should show
+   `solid_queue` workers; `SolidQueue::RecurringExecution` rows for
+   `reminder_dispatcher` should be advancing minute-by-minute.
+2. **Credentials populated?** `Rails.application.config.x.vapid.public_key`
+   must be set; the frontend's `/push_config` request will surface a clear
+   error otherwise.
+3. **Subscriptions present?** `PushSubscription.where(user: u).any?` — if
+   empty, the user toggled off or their browser invalidated the sub. The
+   user re-toggles in Settings to re-register.
+4. **Logs?** `SendReminderJob` and `ReminderDispatcherJob` log at warn-level
+   on delivery failure and skip events. Grep for `[SendReminderJob]` in the
+   Rails log.
+5. **DST or timezone setting drift?** A user whose `reminder_time` falls in
+   the skipped hour of a DST transition gets no reminder that day; check
+   `user.timezone` against the IANA name and confirm `Time.current.in_time_zone(tz)`
+   yields the expected `HH:MM`.
+
 ## CORS, cookies, CSRF (dev vs prod)
 
 **Development** (frontend `:5173`, backend `:3000`):

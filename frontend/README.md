@@ -174,8 +174,10 @@ Notes for future contributors extending this:
 ## Daily-reminder service worker
 
 `public/sw.js` is the Scoreboard service worker. It is registered at scope `/`
-on app boot (after auth) and exists solely to make Web Push notifications
-work — there is no offline mode, no precache, no fetch handler.
+once the user is signed in (the `AuthProvider` triggers
+`registerPushServiceWorker()` when `status` flips to `signed-in`) and exists
+solely to make Web Push notifications work — there is no offline mode, no
+precache, no fetch handler.
 
 It listens for two events:
 
@@ -188,6 +190,40 @@ It listens for two events:
 
 Keep this file minimal. Anything beyond push handling belongs in a separate
 worker so the push path stays small and easy to reason about.
+
+### `usePushSubscription` status model
+
+`src/hooks/usePushSubscription.ts` is the single source of truth for "is THIS
+device subscribed?" — the Settings toggle reflects the hook's `status`, which
+takes one of six values:
+
+| Status              | Meaning                                                                    |
+| ------------------- | -------------------------------------------------------------------------- |
+| `unsupported`       | The runtime lacks Service Worker or PushManager (very old browser).        |
+| `install-required`  | iOS Safari, page is not running as an installed PWA.                       |
+| `denied`            | `Notification.permission === 'denied'`. Must be changed in browser settings. |
+| `unsubscribed`      | Supported, not denied, no current `PushManager.getSubscription()`.         |
+| `subscribed`        | Supported, granted, and an active subscription exists.                     |
+| `transitioning`     | A `subscribe()` or `unsubscribe()` call is in flight.                      |
+
+`subscribe()` walks `Notification.requestPermission()` →
+`pushManager.subscribe()` → `POST /push_subscriptions`. If the backend POST
+fails after a local subscription was created, the hook calls
+`subscription.unsubscribe()` so the browser-side state doesn't drift from
+the server's. `unsubscribe()` walks the reverse: `getSubscription()` →
+`subscription.unsubscribe()` → `DELETE /push_subscriptions/current`. The
+DELETE is idempotent server-side, so a transient network failure there is
+not surfaced — the UI still reflects the local unsubscribe.
+
+### iOS install requirement
+
+iOS 16.4+ supports Web Push, but only for PWAs that have been added to the
+Home Screen. `isIOSStandaloneRequired()` in `src/lib/push.ts` detects iOS
+Safari running in a regular tab (no `navigator.standalone`, no
+`display-mode: standalone`) and the hook returns `'install-required'` in
+that state. The Settings toggle then renders disabled with an inline
+"Add to Home Screen" message; once the user installs and reopens, the
+status drops back to `'unsubscribed'` and the toggle becomes interactive.
 
 ## Tests
 

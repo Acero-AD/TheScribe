@@ -119,6 +119,6 @@
 
 ## 15. Documentation
 
-- [ ] 15.1 In `backend/README.md`, document the entire reminder pipeline: VAPID setup, recurring config, the suppression rule, the idempotency model, the 410-cleanup behavior
-- [ ] 15.2 In `frontend/README.md`, document the service worker, the `usePushSubscription` hook's `status` model, and the iOS install requirement
-- [ ] 15.3 Add a brief operational guide for ops: what to check if reminders stop arriving (recurring job alive? credentials populated? subscriptions present? logs?)
+- [x] 15.1 In `backend/README.md`, document the entire reminder pipeline: VAPID setup, recurring config, the suppression rule, the idempotency model, the 410-cleanup behavior
+- [x] 15.2 In `frontend/README.md`, document the service worker, the `usePushSubscription` hook's `status` model, and the iOS install requirement
+- [x] 15.3 Add a brief operational guide for ops: what to check if reminders stop arriving (recurring job alive? credentials populated? subscriptions present? logs?)
