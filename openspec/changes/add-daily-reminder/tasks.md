@@ -57,14 +57,14 @@
 
 ## 8. Backend — Tests
 
-- [ ] 8.1 Model spec: `PushSubscription` validations and uniqueness
-- [ ] 8.2 Model spec: `ReminderLog` validations and `(user_id, date)` uniqueness
-- [ ] 8.3 Request spec: `POST /push_subscriptions` (new, update-existing, missing-fields, unauthenticated)
-- [ ] 8.4 Request spec: `DELETE /push_subscriptions/current` (existing, unknown, cross-user, unauthenticated)
-- [ ] 8.5 Request spec: `GET /push_config` (authenticated returns key, unauthenticated 401)
-- [ ] 8.6 Job spec for `SendReminderJob`: pre-flight skip when wrote=true, idempotency-skip when ReminderLog exists, success path creates ReminderLog and calls web-push (mock the gem), 410 deletes the subscription, transient error retries
-- [ ] 8.7 Job spec for `ReminderDispatcherJob`: due-user enqueues, wrote-today suppresses, sent-already suppresses, no-subscription suppresses, wrong-minute suppresses
-- [ ] 8.8 End-to-end style test: run dispatcher with a fixture of 5 users in different timezones at varying reminder_times; assert the right subset is enqueued
+- [x] 8.1 Model spec: `PushSubscription` validations and uniqueness
+- [x] 8.2 Model spec: `ReminderLog` validations and `(user_id, date)` uniqueness
+- [x] 8.3 Request spec: `POST /push_subscriptions` (new, update-existing, missing-fields, unauthenticated)
+- [x] 8.4 Request spec: `DELETE /push_subscriptions/current` (existing, unknown, cross-user, unauthenticated)
+- [x] 8.5 Request spec: `GET /push_config` (authenticated returns key, unauthenticated 401)
+- [x] 8.6 Job spec for `SendReminderJob`: pre-flight skip when wrote=true, idempotency-skip when ReminderLog exists, success path creates ReminderLog and calls web-push (mock the gem), 410 deletes the subscription, transient error retries
+- [x] 8.7 Job spec for `ReminderDispatcherJob`: due-user enqueues, wrote-today suppresses, sent-already suppresses, no-subscription suppresses, wrong-minute suppresses
+- [x] 8.8 End-to-end style test: run dispatcher with a fixture of 5 users in different timezones at varying reminder_times; assert the right subset is enqueued
 
 ## 9. Frontend — Service worker
 

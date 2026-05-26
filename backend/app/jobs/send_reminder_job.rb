@@ -28,6 +28,9 @@ class SendReminderJob < ApplicationJob
       ReminderLog.create!(user_id: user.id, date: today, sent_at: Time.current)
     rescue ActiveRecord::RecordNotUnique
       return
+    rescue ActiveRecord::RecordInvalid => e
+      return if e.record.errors.of_kind?(:date, :taken)
+      raise
     end
 
     deliver_to_subscriptions(user)
