@@ -97,12 +97,12 @@
 
 ## 13. Frontend — Tests
 
-- [ ] 13.1 Unit test: `urlBase64ToUint8Array` correctness on a known fixture
-- [ ] 13.2 Hook test: `usePushSubscription` reaches `'subscribed'` after a successful subscribe (mock the browser APIs and the backend POST)
-- [ ] 13.3 Hook test: `usePushSubscription` returns `'denied'` when permission is denied
-- [ ] 13.4 Hook test: `usePushSubscription` returns `'install-required'` on a simulated iOS-non-standalone environment
-- [ ] 13.5 Component test: the Settings toggle row renders correctly across all `status` values, and clicking dispatches the right action
-- [ ] 13.6 Component test: inline messaging appears for the expected statuses
+- [x] 13.1 Unit test: `urlBase64ToUint8Array` correctness on a known fixture
+- [x] 13.2 Hook test: `usePushSubscription` reaches `'subscribed'` after a successful subscribe (mock the browser APIs and the backend POST)
+- [x] 13.3 Hook test: `usePushSubscription` returns `'denied'` when permission is denied
+- [x] 13.4 Hook test: `usePushSubscription` returns `'install-required'` on a simulated iOS-non-standalone environment
+- [x] 13.5 Component test: the Settings toggle row renders correctly across all `status` values, and clicking dispatches the right action
+- [x] 13.6 Component test: inline messaging appears for the expected statuses
 
 ## 14. End-to-end verification (manual)
 
