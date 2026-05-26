@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { api, ApiError } from '../api/client'
+import { registerPushServiceWorker } from '../lib/push'
 import type { AuthState, CurrentUser } from './types'
 
 interface AuthContextValue extends AuthState {
@@ -41,6 +42,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     void refresh()
   }, [refresh])
+
+  useEffect(() => {
+    if (state.status !== 'signed-in') return
+    void registerPushServiceWorker()
+  }, [state.status])
 
   const signOut = useCallback(async () => {
     try {

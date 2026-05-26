@@ -74,9 +74,9 @@
 
 ## 10. Frontend — SW registration & push config fetch
 
-- [ ] 10.1 On app boot (after auth), if `'serviceWorker' in navigator` and `'PushManager' in window`, register `/sw.js` with scope `/`
-- [ ] 10.2 `getPushConfig()` API helper → `GET /push_config`, returns `{ vapid_public_key }`; cache the result for the session
-- [ ] 10.3 `urlBase64ToUint8Array(base64)` utility (standard Web Push helper) for converting the VAPID key for `pushManager.subscribe`
+- [x] 10.1 On app boot (after auth), if `'serviceWorker' in navigator` and `'PushManager' in window`, register `/sw.js` with scope `/`
+- [x] 10.2 `getPushConfig()` API helper → `GET /push_config`, returns `{ vapid_public_key }`; cache the result for the session
+- [x] 10.3 `urlBase64ToUint8Array(base64)` utility (standard Web Push helper) for converting the VAPID key for `pushManager.subscribe`
 
 ## 11. Frontend — usePushSubscription hook
 
