@@ -210,6 +210,18 @@ so rotating VAPID keys invalidates every existing subscription. The flow:
 
 Treat rotation as a heavy operation and avoid it unless a key was compromised.
 
+### Recurring dispatcher
+
+`config/recurring.yml` registers `ReminderDispatcherJob` to run every minute
+(cron `* * * * *`) on the `dispatcher` queue, both in development and
+production. The job scans candidate users whose local time matches their
+configured `reminder_time` and enqueues a per-user `SendReminderJob` for each
+match. Solid Queue picks up the recurring entries on worker boot, so starting
+the workers (`bin/jobs`) is enough to make reminders fire locally.
+
+Production also runs `clear_solid_queue_finished_jobs` hourly to keep the
+finished-jobs table from growing without bound.
+
 ## CORS, cookies, CSRF (dev vs prod)
 
 **Development** (frontend `:5173`, backend `:3000`):

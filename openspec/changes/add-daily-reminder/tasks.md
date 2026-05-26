@@ -53,7 +53,7 @@
 
 - [x] 7.1 Create `config/recurring.yml` (or v8 equivalent) with an entry for `ReminderDispatcherJob` running every minute (cron `* * * * *`)
 - [x] 7.2 Verify recurring jobs are loaded by Solid Queue in dev (start the workers, observe the dispatcher firing)
-- [ ] 7.3 Document the recurring config in `backend/README.md`
+- [x] 7.3 Document the recurring config in `backend/README.md`
 
 ## 8. Backend — Tests
 
