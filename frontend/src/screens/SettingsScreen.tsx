@@ -3,8 +3,10 @@ import { SB, SBfont } from '../lib/tokens'
 import { TabBar } from '../components/TabBar'
 import { SettingsGroup } from '../components/SettingsGroup'
 import { SettingsRow } from '../components/SettingsRow'
+import { Toggle } from '../components/Toggle'
 import { useCurrentUser } from '../auth/AuthContext'
 import { useAutoSaveField } from '../hooks/useAutoSaveField'
+import { usePushSubscription } from '../hooks/usePushSubscription'
 import { patchSettings } from '../api/settings'
 import type {
   CurrentUser,
@@ -63,6 +65,14 @@ export function SettingsScreen() {
   })
   const weekStart = useAutoSaveField<WeekStartsOn>(settings.week_starts_on, saveWeekStartsOn)
   const cadence = useAutoSaveField<PublishingCadence>(settings.publishing_cadence, saveCadence)
+  const push = usePushSubscription()
+  const pushOn = push.status === 'subscribed'
+  const pushDisabled =
+    push.status === 'transitioning' ||
+    push.status === 'unsupported' ||
+    push.status === 'install-required' ||
+    push.status === 'denied'
+  const pushMessage = pushStatusMessage(push.status, push.error)
 
   return (
     <main
@@ -105,6 +115,24 @@ export function SettingsScreen() {
       </header>
 
       <SettingsGroup header="Reminders">
+        <SettingsRow
+          label="Daily reminder"
+          sub="A nudge if you haven't checked in"
+          error={pushMessage !== null}
+          errorMessage={pushMessage ?? undefined}
+          right={
+            <Toggle
+              ariaLabel="Daily reminder"
+              on={pushOn}
+              disabled={pushDisabled}
+              busy={push.status === 'transitioning'}
+              onClick={() => {
+                if (pushDisabled) return
+                void (pushOn ? push.unsubscribe() : push.subscribe())
+              }}
+            />
+          }
+        />
         <SettingsRow
           label="Time"
           sub="When the daily nudge fires"
@@ -257,6 +285,21 @@ function Chevron() {
       />
     </svg>
   )
+}
+
+function pushStatusMessage(
+  status: ReturnType<typeof usePushSubscription>['status'],
+  error: string | null,
+): string | null {
+  if (error) return error
+  switch (status) {
+    case 'denied':
+      return 'Notifications are blocked. Enable them in your browser site settings to turn this on.'
+    case 'install-required':
+      return 'Add Scoreboard to your Home Screen to enable notifications on iOS.'
+    default:
+      return null
+  }
 }
 
 const pillShellStyle: React.CSSProperties = {

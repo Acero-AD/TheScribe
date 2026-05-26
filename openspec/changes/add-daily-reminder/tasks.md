@@ -88,12 +88,12 @@
 
 ## 12. Frontend — Settings toggle row
 
-- [ ] 12.1 Update the Settings screen (introduced in `add-user-settings`) to render a "Daily reminder" `SettingsRow` ABOVE the existing Time row, with subtitle "A nudge if you haven't checked in"
-- [ ] 12.2 Right-side control is the `Toggle` component (already styled in `docs/design/settings.jsx`)
-- [ ] 12.3 Wire toggle state to `usePushSubscription().status`: ON when `subscribed`, OFF otherwise; disabled while `transitioning` or `unsupported` or `install-required`
-- [ ] 12.4 On user click: dispatch to `subscribe()` or `unsubscribe()` based on current state
-- [ ] 12.5 Render inline error/info messages beneath the row for `'denied'`, `'install-required'`, and any subscribe/unsubscribe errors
-- [ ] 12.6 The Time row remains as before; document that changing time only matters once the toggle is ON
+- [x] 12.1 Update the Settings screen (introduced in `add-user-settings`) to render a "Daily reminder" `SettingsRow` ABOVE the existing Time row, with subtitle "A nudge if you haven't checked in"
+- [x] 12.2 Right-side control is the `Toggle` component (already styled in `docs/design/settings.jsx`)
+- [x] 12.3 Wire toggle state to `usePushSubscription().status`: ON when `subscribed`, OFF otherwise; disabled while `transitioning` or `unsupported` or `install-required`
+- [x] 12.4 On user click: dispatch to `subscribe()` or `unsubscribe()` based on current state
+- [x] 12.5 Render inline error/info messages beneath the row for `'denied'`, `'install-required'`, and any subscribe/unsubscribe errors
+- [x] 12.6 The Time row remains as before; document that changing time only matters once the toggle is ON
 
 ## 13. Frontend — Tests
 
