@@ -68,9 +68,9 @@
 
 ## 9. Frontend — Service worker
 
-- [ ] 9.1 Create `public/sw.js` with handlers for `push` (parse payload, `self.registration.showNotification(title, { body })`) and `notificationclick` (focus existing client at `/`, else `clients.openWindow('/')`)
-- [ ] 9.2 Keep the SW minimal: no offline strategy, no caching beyond what the browser handles by default
-- [ ] 9.3 Document the SW's role in `frontend/README.md`
+- [x] 9.1 Create `public/sw.js` with handlers for `push` (parse payload, `self.registration.showNotification(title, { body })`) and `notificationclick` (focus existing client at `/`, else `clients.openWindow('/')`)
+- [x] 9.2 Keep the SW minimal: no offline strategy, no caching beyond what the browser handles by default
+- [x] 9.3 Document the SW's role in `frontend/README.md`
 
 ## 10. Frontend — SW registration & push config fetch
 

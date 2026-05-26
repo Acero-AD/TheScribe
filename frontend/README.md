@@ -171,6 +171,24 @@ Notes for future contributors extending this:
   reduced opacity when they have no activity (so the calendar fades into the
   future). Past months never apply this fade.
 
+## Daily-reminder service worker
+
+`public/sw.js` is the Scoreboard service worker. It is registered at scope `/`
+on app boot (after auth) and exists solely to make Web Push notifications
+work — there is no offline mode, no precache, no fetch handler.
+
+It listens for two events:
+
+- **`push`** — parses the JSON payload the backend's `SendReminderJob` sends
+  and calls `self.registration.showNotification(title, { body })` with the
+  app's favicon. Falls back to "Did you write today?" / "A nudge from
+  Scoreboard." if the payload is missing fields.
+- **`notificationclick`** — closes the notification, then focuses an existing
+  app window if one is open, otherwise opens `/` in a new tab.
+
+Keep this file minimal. Anything beyond push handling belongs in a separate
+worker so the push path stays small and easy to reason about.
+
 ## Tests
 
 ```sh
