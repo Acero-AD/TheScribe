@@ -38,6 +38,22 @@ Rails.application.configure do
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
+  # When tunneling the dev app to a public URL (see docs/testing-on-phone.md),
+  # set DEV_PUBLIC_HOST so URLs generated for the user point at the tunnel
+  # instead of localhost:
+  #   - ActionMailer's url helpers (magic-link button in the email)
+  #   - The routes table's default_url_options
+  #   - config.frontend_url (used by ApplicationController#frontend_url to
+  #     build the post-verify redirect target)
+  if ENV["DEV_PUBLIC_HOST"].present?
+    public_host_opts = { host: ENV["DEV_PUBLIC_HOST"], protocol: "https" }
+    config.action_mailer.default_url_options = public_host_opts
+    config.frontend_url = "https://#{ENV['DEV_PUBLIC_HOST']}"
+    config.after_initialize do
+      Rails.application.routes.default_url_options = public_host_opts
+    end
+  end
+
   # Browse and click magic-link emails at http://localhost:3000/letter_opener
   config.action_mailer.delivery_method = :letter_opener_web
   config.action_mailer.perform_deliveries = true

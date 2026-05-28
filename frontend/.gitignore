@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+# Local-only dev configs for tunneled phone testing (see docs/testing-on-phone.md)
+vite.config.local.ts
 
 # Editor directories and files
 .vscode/*

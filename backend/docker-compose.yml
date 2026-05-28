@@ -47,6 +47,10 @@ services:
       DATABASE_PASSWORD: scoreboard
       DATABASE_NAME: scoreboard_development
       BINDING: 0.0.0.0
+      # Forwarded from the host when tunneling for phone testing — see
+      # docs/testing-on-phone.md. Empty by default; when set, ActionMailer
+      # generates magic-link URLs pointing at the tunnel host.
+      DEV_PUBLIC_HOST: ${DEV_PUBLIC_HOST:-}
     ports:
       - "3000:3000"
     volumes:
