@@ -87,8 +87,8 @@ cp .env.local.example .env.local
 ```
 
 What's in those files:
-- **`vite.config.local.ts`** — extends the base Vite config with a `server.proxy` block that forwards `/me`, `/magic_links`, `/sessions`, `/daily_logs`, `/week_logs`, and `/push_subscriptions` to Rails on `:3000`. The phone sees one HTTPS origin, so there's no CORS to fight and the session cookie is first-party.
-- **`.env.local`** — sets `VITE_BACKEND_URL=` (empty) so the API client builds relative URLs that route through the proxy. Vite auto-loads `.env.local` for every mode.
+- **`vite.config.local.ts`** — extends the base Vite config with a `server.proxy` block that forwards `/me`, `/magic_links`, `/sessions`, `/daily_logs`, `/week_logs`, and `/push_subscriptions` to Rails on `:3000`. The phone sees one HTTPS origin, so there's no CORS to fight and the session cookie is first-party. This file only takes effect when you start Vite with `--config vite.config.local.ts`, so it can sit on disk without affecting plain `npm run dev`.
+- **`.env.local`** — sets `VITE_BACKEND_URL=` (empty) so the API client builds relative URLs that route through the proxy. **The line is commented out by default**, because Vite auto-loads `.env.local` for *every* mode (including plain `npm run dev`) and an empty backend URL silently breaks the normal local dev flow. **Uncomment the `VITE_BACKEND_URL=` line when you start a tunneling session, re-comment it when you're done.**
 
 If you need to tweak something (proxy a new route, change the backend port, swap the API target), edit the copies — the originals stay as templates for future setups.
 
