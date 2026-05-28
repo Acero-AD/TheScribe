@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { SB, SBfont } from '../lib/tokens'
+import { ScreenHeader } from '../components/ScreenHeader'
 import { TabBar } from '../components/TabBar'
 import { SettingsGroup } from '../components/SettingsGroup'
 import { SettingsRow } from '../components/SettingsRow'
@@ -85,34 +86,7 @@ export function SettingsScreen() {
         position: 'relative',
       }}
     >
-      <header style={{ padding: '64px 24px 0' }}>
-        <div
-          style={{
-            fontFamily: SBfont.mono,
-            fontSize: 11,
-            letterSpacing: 1.6,
-            textTransform: 'uppercase',
-            color: SB.inkMuted,
-            fontWeight: 500,
-          }}
-        >
-          The dial.
-        </div>
-        <h1
-          style={{
-            fontFamily: SBfont.display,
-            fontSize: 56,
-            lineHeight: 1,
-            letterSpacing: -0.5,
-            color: SB.ink,
-            marginTop: 6,
-            marginBottom: 0,
-            fontWeight: 400,
-          }}
-        >
-          Settings<span style={{ fontStyle: 'italic', color: SB.accent }}>.</span>
-        </h1>
-      </header>
+      <ScreenHeader eyebrow="The dial." title="Settings" />
 
       <SettingsGroup header="Reminders">
         <SettingsRow

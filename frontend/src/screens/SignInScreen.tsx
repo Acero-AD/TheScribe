@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api, ApiError } from '../api/client'
 import { SB, SBfont } from '../lib/tokens'
+import { ScreenHeader } from '../components/ScreenHeader'
 
 type Submission = 'idle' | 'submitting' | 'sent' | 'error'
 
@@ -44,12 +45,7 @@ export function SignInScreen() {
   if (submission === 'sent') {
     return (
       <main style={pageStyle}>
-        <header style={headerStyle}>
-          <div style={eyebrowStyle}>CHECK YOUR INBOX</div>
-          <h1 style={headlineStyle}>
-            Check your email<span style={periodStyle}>.</span>
-          </h1>
-        </header>
+        <ScreenHeader eyebrow="CHECK YOUR INBOX" title="Check your email" />
         <section style={sectionStyle}>
           <p style={bodyStyle}>
             If an account exists for <strong>{email}</strong>, we just sent a sign-in link.
@@ -68,12 +64,7 @@ export function SignInScreen() {
 
   return (
     <main style={pageStyle}>
-      <header style={headerStyle}>
-        <div style={eyebrowStyle}>SCOREBOARD</div>
-        <h1 style={headlineStyle}>
-          Sign in<span style={periodStyle}>.</span>
-        </h1>
-      </header>
+      <ScreenHeader eyebrow="SCOREBOARD" title="Sign in" />
       <section style={sectionStyle}>
         {urlError && (
           <p role="alert" style={alertStyle}>
@@ -126,35 +117,6 @@ const pageStyle: React.CSSProperties = {
   fontFamily: SBfont.ui,
   paddingBottom: 64,
   position: 'relative',
-}
-
-const headerStyle: React.CSSProperties = {
-  padding: '64px 24px 0',
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  fontFamily: SBfont.mono,
-  fontSize: 11,
-  letterSpacing: 1.6,
-  textTransform: 'uppercase',
-  color: SB.inkMuted,
-  fontWeight: 500,
-}
-
-const headlineStyle: React.CSSProperties = {
-  fontFamily: SBfont.display,
-  fontSize: 56,
-  lineHeight: 1,
-  letterSpacing: -0.5,
-  color: SB.ink,
-  marginTop: 6,
-  marginBottom: 0,
-  fontWeight: 400,
-}
-
-const periodStyle: React.CSSProperties = {
-  fontStyle: 'italic',
-  color: SB.accent,
 }
 
 const sectionStyle: React.CSSProperties = {

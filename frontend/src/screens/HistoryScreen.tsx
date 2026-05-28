@@ -5,6 +5,7 @@ import { useCurrentMonth } from '../hooks/useCurrentMonth'
 import { useHistory } from '../hooks/useHistory'
 import { monthOf, shiftMonth } from '../lib/month'
 import { SB, SBfont } from '../lib/tokens'
+import { ScreenHeader } from '../components/ScreenHeader'
 import { TabBar } from '../components/TabBar'
 import { StreakChip } from '../components/StreakChip'
 import { CalendarMonth } from '../components/CalendarMonth'
@@ -83,34 +84,7 @@ export function HistoryScreen() {
         position: 'relative',
       }}
     >
-      <header style={{ padding: '64px 24px 0' }}>
-        <div
-          style={{
-            fontFamily: SBfont.mono,
-            fontSize: 11,
-            letterSpacing: 1.6,
-            textTransform: 'uppercase',
-            color: SB.inkMuted,
-            fontWeight: 500,
-          }}
-        >
-          The record.
-        </div>
-        <h1
-          style={{
-            fontFamily: SBfont.display,
-            fontSize: 56,
-            lineHeight: 1,
-            letterSpacing: -0.5,
-            color: SB.ink,
-            marginTop: 6,
-            marginBottom: 0,
-            fontWeight: 400,
-          }}
-        >
-          History<span style={{ fontStyle: 'italic', color: SB.accent }}>.</span>
-        </h1>
-      </header>
+      <ScreenHeader eyebrow="The record." title="History" />
 
       <section
         aria-label="Streaks"
