@@ -1,14 +1,36 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <p>Hi,</p>
-    <p>Click the link below to sign in to Scoreboard. The link is valid for 15 minutes and can only be used once.</p>
-    <p><a href="<%= @url %>">Sign in to Scoreboard</a></p>
-    <p style="font-size: 12px; color: #666;">
-      If the button does not work, paste this URL into your browser:<br>
-      <%= @url %>
-    </p>
-    <p>If you did not request this email, you can safely ignore it.</p>
-    <p>— Scoreboard</p>
-  </body>
-</html>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #F2EEE5;">
+  <tr>
+    <td align="center" style="padding: 48px 16px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width: 480px; width: 100%;">
+        <tr>
+          <td style="background: #FFFDF8; padding: 40px 32px; border-radius: 12px; box-shadow: 0 0 0 1px rgba(26,23,20,0.08);">
+            <div style="font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace; font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: #6B635A; font-weight: 500;">
+              SCOREBOARD
+            </div>
+            <h1 style="font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif; font-size: 48px; line-height: 1; letter-spacing: -0.5px; color: #1A1714; margin: 6px 0 0; font-weight: 400;">
+              Sign in<span style="font-style: italic; color: #2EA168;">.</span>
+            </h1>
+            <p style="font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.5; color: #1A1714; margin: 24px 0 0;">
+              Tap the button below to finish signing in. The link is valid for 15 minutes and can only be used once.
+            </p>
+            <p style="margin: 28px 0 0;">
+              <a href="<%= @url %>" style="display: inline-block; padding: 12px 24px; background: #2EA168; color: #FFFDF8; border-radius: 999px; font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; letter-spacing: 0.2px;">
+                Sign in to Scoreboard
+              </a>
+            </p>
+            <div style="height: 1px; background: rgba(26,23,20,0.08); margin: 32px 0 24px;"></div>
+            <p style="font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 12px; line-height: 1.5; color: #6B635A; margin: 0;">
+              If the button doesn't work, paste this URL into your browser:
+            </p>
+            <p style="font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace; font-size: 12px; line-height: 1.5; margin: 6px 0 0; word-break: break-all;">
+              <a href="<%= @url %>" style="color: #1F7A4D; text-decoration: none;"><%= @url %></a>
+            </p>
+            <p style="font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 12px; line-height: 1.5; color: #A8A097; margin: 24px 0 0;">
+              If you didn't request this email, you can safely ignore it.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
