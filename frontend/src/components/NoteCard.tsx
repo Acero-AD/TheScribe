@@ -13,12 +13,19 @@ export function NoteCard({ note, onSave, error = false, onRetry }: NoteCardProps
   const [value, setValue] = useState(initial)
   const persistedRef = useRef(initial)
 
+  // Sync the editable value to the incoming note when it changes (unless the
+  // last save errored, so the user's text isn't clobbered). Render-time
+  // adjustment instead of syncing state in an effect.
+  const [prevSync, setPrevSync] = useState({ note, error })
+  if (prevSync.note !== note || prevSync.error !== error) {
+    setPrevSync({ note, error })
+    if (!error) setValue(note ?? '')
+  }
+
+  // Track the last persisted value (used to detect changes on blur). A ref
+  // update doesn't trigger a render, so this stays in an effect.
   useEffect(() => {
-    if (!error) {
-      const next = note ?? ''
-      persistedRef.current = next
-      setValue(next)
-    }
+    if (!error) persistedRef.current = note ?? ''
   }, [note, error])
 
   const handleBlur = (event: FocusEvent<HTMLTextAreaElement>) => {

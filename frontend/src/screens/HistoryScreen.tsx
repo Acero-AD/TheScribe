@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useCurrentUser } from '../auth/AuthContext'
 import { useTodayDate } from '../hooks/useTodayDate'
 import { useCurrentMonth } from '../hooks/useCurrentMonth'
@@ -50,12 +50,13 @@ export function HistoryScreen() {
   const { data, status } = useHistory(selectedMonth)
 
   // When the selected month changes, fall back to a sensible default day.
-  useEffect(() => {
-    if (monthOf(selectedDay) === selectedMonth) return
+  // Adjusted during render (the mismatch condition is self-correcting once the
+  // day is reset) rather than synchronised inside an effect.
+  if (monthOf(selectedDay) !== selectedMonth) {
     setSelectedDay(pickDefaultDay(selectedMonth, currentMonth, currentDay))
-  }, [selectedMonth, selectedDay, currentMonth, currentDay])
+  }
 
-  const dailyLogs = data?.daily_logs ?? []
+  const dailyLogs = useMemo(() => data?.daily_logs ?? [], [data])
   const weekLogs = data?.week_logs ?? []
 
   const selectedNote = useMemo(() => {

@@ -18,5 +18,11 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // The build doesn't run the React Compiler, so its "manual memoization
+      // could not be preserved" advisory is informational rather than a hard
+      // failure. Keep it visible as a warning.
+      'react-hooks/preserve-manual-memoization': 'warn',
+    },
   },
 ])

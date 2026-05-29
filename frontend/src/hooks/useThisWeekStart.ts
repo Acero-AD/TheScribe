@@ -21,8 +21,16 @@ export function useThisWeekStart(): {
   )
   const [weekStartDate, setWeekStartDate] = useState(compute)
 
-  useEffect(() => {
+  // Recompute immediately when timezone or week-start preference changes
+  // (`compute` is memoised on both). Render-time adjustment instead of syncing
+  // state inside the effect.
+  const [trackedCompute, setTrackedCompute] = useState(() => compute)
+  if (trackedCompute !== compute) {
+    setTrackedCompute(() => compute)
     setWeekStartDate(compute())
+  }
+
+  useEffect(() => {
     const refresh = () => setWeekStartDate(compute())
 
     const interval = window.setInterval(refresh, REFRESH_INTERVAL_MS)

@@ -98,7 +98,7 @@ describe('TodayScreen — optimistic toggle', () => {
   it('shows the prior streak during the in-flight window then the server value', async () => {
     vi.spyOn(dailyLogsApi, 'getDailyLog').mockResolvedValue(defaultLog({ writing_streak: 4 }))
 
-    let resolvePut: ((value: DailyLog) => void) | null = null
+    let resolvePut!: (value: DailyLog) => void
     vi.spyOn(dailyLogsApi, 'putDailyLog').mockImplementation(
       () =>
         new Promise<DailyLog>((resolve) => {
@@ -120,7 +120,7 @@ describe('TodayScreen — optimistic toggle', () => {
     expect(button).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByLabelText(/day streak/i)).toHaveTextContent('04')
 
-    resolvePut?.(defaultLog({ wrote: true, wrote_at: '2026-05-23T12:00:00Z', writing_streak: 5 }))
+    resolvePut(defaultLog({ wrote: true, wrote_at: '2026-05-23T12:00:00Z', writing_streak: 5 }))
 
     await waitFor(() => {
       expect(screen.getByLabelText(/day streak/i)).toHaveTextContent('05')
@@ -256,7 +256,7 @@ describe('TodayScreen — weekly publish toggle', () => {
       defaultWeekLog({ publishing_streak: 2 }),
     )
 
-    let resolvePut: ((value: WeekLog) => void) | null = null
+    let resolvePut!: (value: WeekLog) => void
     vi.spyOn(weekLogsApi, 'putWeekLog').mockImplementation(
       () =>
         new Promise<WeekLog>((resolve) => {
@@ -280,7 +280,7 @@ describe('TodayScreen — weekly publish toggle', () => {
     // Prior streak is preserved mid-flight.
     expect(screen.getByLabelText(/week streak/i)).toHaveTextContent('02')
 
-    resolvePut?.(defaultWeekLog({ published: true, publishing_streak: 3 }))
+    resolvePut(defaultWeekLog({ published: true, publishing_streak: 3 }))
 
     await waitFor(() => {
       expect(screen.getByLabelText(/week streak/i)).toHaveTextContent('03')

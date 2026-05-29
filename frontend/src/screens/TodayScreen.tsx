@@ -50,10 +50,23 @@ export function TodayScreen() {
   const publishInFlightRef = useRef(false)
   const queuedPublishRef = useRef<boolean | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
+  // Clear transient error flags when the day/week being viewed changes
+  // (render-time adjustment instead of resetting inside the fetch effects).
+  const [prevDate, setPrevDate] = useState(date)
+  if (prevDate !== date) {
+    setPrevDate(date)
     setToggleError(false)
     setNoteError(false)
+  }
+
+  const [prevWeekStart, setPrevWeekStart] = useState(weekStartDate)
+  if (prevWeekStart !== weekStartDate) {
+    setPrevWeekStart(weekStartDate)
+    setPublishError(false)
+  }
+
+  useEffect(() => {
+    let cancelled = false
     const controller = new AbortController()
 
     getDailyLog(date, controller.signal)
@@ -132,7 +145,6 @@ export function TodayScreen() {
 
   useEffect(() => {
     let cancelled = false
-    setPublishError(false)
     const controller = new AbortController()
 
     getWeekLog(weekStartDate, controller.signal)
