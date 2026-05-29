@@ -123,11 +123,11 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - name: Install system packages (libvips for Active Storage)
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips
-
       - name: Checkout code
         uses: actions/checkout@v6
+
+      - name: Install system packages (libvips for Active Storage)
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
