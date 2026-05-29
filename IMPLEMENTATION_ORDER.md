@@ -1,6 +1,6 @@
 # V1 Implementation Order
 
-The 7 OpenSpec changes that make up Scoreboard V1, in the order they should be implemented. Each step's dependencies are already satisfied by the prior steps, so each can land independently on its own branch.
+The 7 OpenSpec changes that make up The Scribe V1, in the order they should be implemented. Each step's dependencies are already satisfied by the prior steps, so each can land independently on its own branch.
 
 | # | Change | Depends on | Why this order |
 |---|---|---|---|

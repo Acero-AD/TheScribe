@@ -1,4 +1,4 @@
-# Scoreboard frontend
+# The Scribe frontend
 
 React 19 + TypeScript + Vite. Talks to the Rails backend over a credentialed
 `fetch` so the session cookie is sent on every authenticated request.
@@ -173,7 +173,7 @@ Notes for future contributors extending this:
 
 ## Daily-reminder service worker
 
-`public/sw.js` is the Scoreboard service worker. It is registered at scope `/`
+`public/sw.js` is the Scribe service worker. It is registered at scope `/`
 once the user is signed in (the `AuthProvider` triggers
 `registerPushServiceWorker()` when `status` flips to `signed-in`) and exists
 solely to make Web Push notifications work — there is no offline mode, no
@@ -184,7 +184,7 @@ It listens for two events:
 - **`push`** — parses the JSON payload the backend's `SendReminderJob` sends
   and calls `self.registration.showNotification(title, { body })` with the
   app's favicon. Falls back to "Did you write today?" / "A nudge from
-  Scoreboard." if the payload is missing fields.
+  The Scribe." if the payload is missing fields.
 - **`notificationclick`** — closes the notification, then focuses an existing
   app window if one is open, otherwise opens `/` in a new tab.
 
@@ -221,7 +221,7 @@ not surfaced — the UI still reflects the local unsubscribe.
 icons, theme color). It's linked from `index.html` together with the iOS
 `apple-mobile-web-app-*` meta tags. With the manifest, a service worker,
 and the page served from a secure origin (HTTPS or `localhost`), Android
-Chrome lists Scoreboard under "Add to Home Screen" in the menu — and will
+Chrome lists Scribe under "Add to Home Screen" in the menu — and will
 surface an automatic install banner on subsequent visits.
 
 Icons live in `public/icons/`. They're flat-color placeholders today

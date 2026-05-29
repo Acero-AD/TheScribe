@@ -1,4 +1,4 @@
-# Testing Scoreboard on your phone
+# Testing The Scribe on your phone
 
 A practical guide to running the local dev app on a real phone — first as a quick visual check on your Wi-Fi, then as a fully-installed PWA with working push notifications.
 
@@ -122,15 +122,15 @@ You should see the warm sign-in screen, served over HTTPS.
 **iOS (Safari 16.4+):**
 1. Tap the Share button (square with up-arrow)
 2. Scroll the share sheet down to **Add to Home Screen**
-3. Confirm — Scoreboard now lives on your Home Screen with the cream icon
+3. Confirm — The Scribe now lives on your Home Screen with the cream icon
 4. **Open it from the Home Screen** (not from Safari). It launches in standalone mode without the browser chrome.
 
-> Push notifications on iOS only work for installed PWAs. The Settings screen's "Daily reminder" toggle will stay disabled with an "Add Scoreboard to your Home Screen" message until you do this step.
+> Push notifications on iOS only work for installed PWAs. The Settings screen's "Daily reminder" toggle will stay disabled with an "Add Scribe to your Home Screen" message until you do this step.
 
 **Android (Chrome):**
 1. Chrome usually shows an "Install app" prompt in the address bar after a few seconds
 2. If it doesn't, open the menu (⋮) → **Install app** / **Add to Home screen**
-3. Confirm — Scoreboard appears in your launcher
+3. Confirm — Scribe appears in your launcher
 
 ### 6. Clean up
 
@@ -175,7 +175,7 @@ docker compose exec web env | grep DEV_PUBLIC_HOST
 Now:
 1. On the phone, submit your email
 2. On the laptop, open `http://localhost:3000/letter_opener`
-3. See the rendered email — the **Sign in to Scoreboard** button links to `https://random-words-1234.trycloudflare.com/magic_links/<TOKEN>`
+3. See the rendered email — the **Sign in to Scribe** button links to `https://random-words-1234.trycloudflare.com/magic_links/<TOKEN>`
 4. Either tap the link in `letter_opener` and continue on the laptop, or send the URL to your phone (text, AirDrop, paste) and tap it there — same-origin redirect, the session cookie sticks.
 
 When the tunnel URL rotates (every `cloudflared --url` restart), `export DEV_PUBLIC_HOST=<new>` and `docker compose up -d` again.
@@ -222,7 +222,7 @@ The LAN origin isn't in `cors.rb` allowlist, or you forgot to restart Rails afte
 **iOS shows "This site can't be downloaded as an app"**
 You're trying to install from a non-HTTPS origin. iOS only allows install from HTTPS. Switch to Path B.
 
-**iOS push toggle is disabled with "Add Scoreboard to your Home Screen"**
+**iOS push toggle is disabled with "Add Scribe to your Home Screen"**
 Expected. iOS only supports Web Push for installed PWAs. Add to Home Screen, then open the installed app — the toggle becomes interactive.
 
 **Service worker is serving stale content after a code change**

@@ -40,7 +40,7 @@ module Backend
     # header and break sign-in.
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore,
-                          key: "_scoreboard_session",
+                          key: "_scribe_session",
                           same_site: :lax,
                           secure: Rails.env.production?,
                           httponly: true

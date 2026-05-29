@@ -1,8 +1,5 @@
-# ui-primitives Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change extract-screen-header-primitive. Update Purpose after archive.
-## Requirements
 ### Requirement: Frontend SHALL provide a `ScreenHeader` primitive for screen-level headers
 
 The frontend SHALL provide a `ScreenHeader` React component (at `frontend/src/components/ScreenHeader.tsx`) that renders the shared screen-header pattern: a `<header>` element containing a mono uppercase eyebrow above an Instrument Serif `<h1>` headline ending in an italic green period span. The component SHALL accept `eyebrow: string`, `title: string`, and an optional `eyebrowAriaLabel: string`. All screen-level routes that today copy this pattern inline SHALL be migrated to use the primitive.
@@ -26,15 +23,3 @@ The frontend SHALL provide a `ScreenHeader` React component (at `frontend/src/co
 #### Scenario: Period is rendered automatically, not provided by the caller
 - **WHEN** a consumer renders `<ScreenHeader title="History" ... />` (title does NOT include a trailing period)
 - **THEN** the headline still renders `History` followed by an italic green `.` — the period is the primitive's responsibility, not the caller's
-
-### Requirement: All screen-level routes SHALL render their header through the `ScreenHeader` primitive
-
-`TodayScreen`, `SettingsScreen`, `HistoryScreen`, and `SignInScreen` (both idle and sent states) SHALL render their top-of-screen `<header>` via `<ScreenHeader>` rather than copying the inline pattern. Any future screen-level route that needs the same header chrome SHALL also use the primitive; deviations from the canonical header SHALL drop back to inline JSX rather than parameterize the primitive.
-
-#### Scenario: All four current screens delegate to the primitive
-- **WHEN** the rendered tree of `TodayScreen`, `SettingsScreen`, `HistoryScreen`, or `SignInScreen` is inspected
-- **THEN** the screen's top `<header>` is rendered by `<ScreenHeader>` and the screen file does not contain an inline copy of the mono-eyebrow + serif-headline + italic-period style block
-
-#### Scenario: Existing accessibility and test queries are preserved
-- **WHEN** existing screen tests query the rendered output (by `role="heading"` + name, by `aria-label`, by text content)
-- **THEN** the queries continue to match the same elements they matched before this change — the primitive emits an equivalent DOM tree

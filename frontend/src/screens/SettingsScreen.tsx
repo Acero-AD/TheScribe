@@ -270,7 +270,7 @@ function pushStatusMessage(
     case 'denied':
       return 'Notifications are blocked. Enable them in your browser site settings to turn this on.'
     case 'install-required':
-      return 'Add Scoreboard to your Home Screen to enable notifications on iOS.'
+      return 'Add Scribe to your Home Screen to enable notifications on iOS.'
     default:
       return null
   }

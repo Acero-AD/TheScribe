@@ -141,7 +141,7 @@ The `/sign-in` route SHALL present its UI using the warm-tone (SB) design langua
 
 #### Scenario: Idle state renders with SB chrome
 - **WHEN** an unauthenticated user opens `/sign-in`
-- **THEN** the screen displays warm beige page background (`SB.bg`), a mono uppercase eyebrow `SCOREBOARD`, an Instrument Serif headline `Sign in` ending in an italic green period (`SB.accent`), a hairline-ring email input with a `EMAIL` mono uppercase label, and a green pill-shaped submit button labelled `Send sign-in link`
+- **THEN** the screen displays warm beige page background (`SB.bg`), a mono uppercase eyebrow `SCRIBE`, an Instrument Serif headline `Sign in` ending in an italic green period (`SB.accent`), a hairline-ring email input with a `EMAIL` mono uppercase label, and a green pill-shaped submit button labelled `Send sign-in link`
 
 #### Scenario: Sent state renders with SB chrome
 - **WHEN** the user submits a valid email and the request succeeds

@@ -5,7 +5,7 @@ class UserMailer < ApplicationMailer
 
     mail(
       to: user.email,
-      subject: "Sign in to Scoreboard"
+      subject: "Sign in to Scribe"
     )
   end
 end

@@ -15,7 +15,7 @@ class SendReminderJob < ApplicationJob
   queue_as :reminders
 
   NOTIFICATION_TITLE = "Did you write today?"
-  NOTIFICATION_BODY = "A nudge from Scoreboard."
+  NOTIFICATION_BODY = "A nudge from The Scribe."
 
   def perform(user_id)
     user = User.find_by(id: user_id)

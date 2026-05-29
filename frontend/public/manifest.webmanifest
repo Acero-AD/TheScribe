@@ -1,6 +1,6 @@
 {
-  "name": "Scoreboard",
-  "short_name": "Scoreboard",
+  "name": "The Scribe",
+  "short_name": "Scribe",
   "description": "A daily writing nudge.",
   "start_url": "/",
   "scope": "/",
