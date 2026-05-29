@@ -40,6 +40,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   useEffect(() => {
+    // Fetching the session on mount is a legitimate effect: refresh() resolves
+    // the /me request and sets state in its async continuation, not
+    // synchronously in the effect body.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh()
   }, [refresh])
 
@@ -68,6 +72,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// The context hook is intentionally colocated with its provider; this only
+// affects Fast Refresh (HMR), not runtime behaviour.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCurrentUser(): AuthContextValue {
   const context = useContext(AuthContext)
   if (context === undefined) {
