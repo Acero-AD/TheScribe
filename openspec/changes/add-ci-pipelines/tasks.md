@@ -38,4 +38,4 @@
 - [x] 7.2 Lint the workflow YAML locally (e.g. `actionlint` if available) and confirm valid syntax — `actionlint` not installed; confirmed both YAML files parse cleanly via `yaml.safe_load`
 - [x] 7.3 Open a PR touching only `frontend/`; confirm frontend jobs run, backend jobs are skipped, and `ci-success` passes — verified on PR #1 (frontend jobs green, backend skipped, ci-success green)
 - [x] 7.4 Open a PR touching only `backend/`; confirm backend jobs (incl. Postgres-backed tests) run, frontend jobs are skipped, and `ci-success` passes — verified on PR #19 (backend incl. Postgres tests green in 37s, frontend skipped, ci-success green)
-- [ ] 7.5 In GitHub branch protection for `master`, require only the `ci-success` status check (document this manual step in the PR description) — manual GitHub setting, do after master is green
+- [x] 7.5 In GitHub branch protection for `master`, require only the `ci-success` status check — applied: required check `CI success` + strict (up to date); no required reviews; enforce_admins off
