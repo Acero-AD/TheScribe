@@ -30,11 +30,11 @@
 
 ## 5. Backend — Kamal configuration
 
-- [ ] 5.1 Set the real production host (Hetzner IP) in `config/deploy.yml`
-- [ ] 5.2 Switch the registry to GHCR (image name, server, `KAMAL_REGISTRY_PASSWORD`)
-- [ ] 5.3 Configure the proxy block for TLS on `<app>-api` (kamal-proxy Let's Encrypt)
-- [ ] 5.4 Add required secrets to `.kamal/secrets` references: `RAILS_MASTER_KEY`, `DATABASE_URL`, Resend credential (no values committed)
-- [ ] 5.5 Confirm the persistent storage volume for Active Storage is configured
+- [x] 5.1 Set the real production host (Hetzner IP) in `config/deploy.yml` — host wired via `ENV["KAMAL_DEPLOY_IP"]`; the actual IP is supplied at deploy time, not hardcoded
+- [x] 5.2 Switch the registry to GHCR (image name, server, `KAMAL_REGISTRY_PASSWORD`)
+- [x] 5.3 Configure the proxy block for TLS on `<app>-api` (kamal-proxy Let's Encrypt) — `proxy.host` = `ENV["APP_HOST"]`
+- [x] 5.4 Add required secrets to `.kamal/secrets` references: `RAILS_MASTER_KEY`, `DATABASE_URL`, Resend credential (no values committed)
+- [x] 5.5 Confirm the persistent storage volume for Active Storage is configured
 
 ## 6. Backend — bootstrap deploy (manual first run)
 
