@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# Development image for the Scoreboard backend. The production image
+# Development image for The Scribe backend. The production image
 # (`Dockerfile`) strips development gems and locks RAILS_ENV=production,
 # so it can't be reused for `docker compose up`.
 #

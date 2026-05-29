@@ -19,15 +19,15 @@
 
 ## 3. Backend code & identity (commit: "backend: rename module + identity to Scribe")
 
-- [ ] 3.1 `backend/config/application.rb`: rename `module Scoreboard` -> `module Scribe`
-- [ ] 3.2 Grep `backend/` case-sensitively for `Scoreboard` and update any remaining `Scoreboard::` references (e.g. `config/environment.rb`, `config.ru`)
-- [ ] 3.3 `backend/config/initializers/vapid.rb`: update the VAPID subject / identity name reference
-- [ ] 3.4 `backend/app/mailers/application_mailer.rb` + `user_mailer.rb`: update default `from` display name and the magic-link subject to use "Scribe" (e.g. "Your Scribe sign-in link" — no article)
-- [ ] 3.5 `backend/app/views/user_mailer/magic_link.html.erb` + `.text.erb`: update name references in the email body
-- [ ] 3.6 `backend/app/jobs/send_reminder_job.rb`: update the push-notification title to "Scribe"
-- [ ] 3.7 `backend/Dockerfile.dev`: update any `scoreboard` references (paths/labels)
-- [ ] 3.8 `backend/test/integration/magic_links_show_test.rb`: update any asserted copy/name strings
-- [ ] 3.9 `backend/README.md`: update product-name references
+- [x] 3.1 ~~rename `module Scoreboard` -> `module Scribe`~~ — N/A: the Rails module is `Backend`, not `Scoreboard`. The real "scoreboard" code identifier is the session cookie key `_scoreboard_session` in `config/application.rb`; renamed it to `_scribe_session`
+- [x] 3.2 Grep `backend/` case-sensitively for `Scoreboard` — no `Scoreboard::` constant references exist; updated the cookie-key assertion in `test/integration/magic_links_show_test.rb` to `_scribe_session`
+- [x] 3.3 `backend/config/initializers/vapid.rb`: VAPID subject -> `mailto:reminders@scribe.local`
+- [x] 3.4 `backend/app/mailers/application_mailer.rb` + `user_mailer.rb`: `from` -> "The Scribe <no-reply@scribe.local>", subject -> "Sign in to Scribe"
+- [x] 3.5 `backend/app/views/user_mailer/magic_link.html.erb` + `.text.erb`: eyebrow `SCRIBE`, button "Sign in to Scribe", body + "— The Scribe" sign-off
+- [x] 3.6 `backend/app/jobs/send_reminder_job.rb`: `NOTIFICATION_BODY` -> "A nudge from The Scribe." (title was already generic "Did you write today?")
+- [x] 3.7 `backend/Dockerfile.dev`: comment -> "The Scribe backend"
+- [x] 3.8 `backend/test/integration/magic_links_show_test.rb`: cookie assertion updated (3.2); no copy/name strings asserted
+- [x] 3.9 `backend/README.md`: H1 -> "# The Scribe backend" (db-name references deferred to layer 4 with `database.yml`)
 
 ## 4. Database & infra rename (commit: "infra: rename databases scoreboard_* -> scribe_*")
 

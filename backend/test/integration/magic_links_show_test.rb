@@ -19,7 +19,7 @@ class MagicLinksShowTest < ActionDispatch::IntegrationTest
     # the in-process session jar — or real browsers won't receive it.
     set_cookie = response.headers["Set-Cookie"]
     assert set_cookie.present?, "expected a Set-Cookie header on the verify response"
-    assert_match(/_scoreboard_session=/, Array(set_cookie).join("\n"))
+    assert_match(/_scribe_session=/, Array(set_cookie).join("\n"))
 
     # Subsequent /me should be authenticated.
     get current_user_path

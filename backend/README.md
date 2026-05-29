@@ -1,4 +1,4 @@
-# Scoreboard backend
+# The Scribe backend
 
 Rails 8.1, PostgreSQL, API-only. Sessions and cookies are added back manually
 because the magic-link flow needs them (see `config/application.rb`).
