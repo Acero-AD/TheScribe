@@ -23,10 +23,10 @@
 
 ## 4. Backend — email and CORS
 
-- [ ] 4.1 Wire `config.action_mailer.smtp_settings` in `production.rb` from credentials/env (Resend); set the production mailer default URL host
-- [ ] 4.2 Add/configure CORS (e.g. `rack-cors`) to allow the `<app>` frontend origin
-- [ ] 4.3 Point the magic-link redirect target (`config/application.rb`) at the `<app>` frontend origin
-- [ ] 4.4 Set `config.assume_ssl` and `config.force_ssl` in production
+- [x] 4.1 Wire `config.action_mailer.smtp_settings` in `production.rb` from credentials/env (Resend); set the production mailer default URL host
+- [x] 4.2 Add/configure CORS (e.g. `rack-cors`) to allow the `<app>` frontend origin — already wired: `config/initializers/cors.rb` reads `ENV["FRONTEND_URL"]` in production
+- [x] 4.3 Point the magic-link redirect target (`config/application.rb`) at the `<app>` frontend origin — already wired: `config.frontend_url = ENV.fetch("FRONTEND_URL")`
+- [x] 4.4 Set `config.assume_ssl` and `config.force_ssl` in production
 
 ## 5. Backend — Kamal configuration
 
