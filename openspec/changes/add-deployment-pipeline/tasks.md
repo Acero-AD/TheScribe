@@ -44,7 +44,7 @@
 
 ## 7. Frontend — Cloudflare Pages
 
-- [ ] 7.1 Configure SPA fallback so unknown paths serve the entry point (e.g. `_redirects`/`404` → index)
+- [x] 7.1 Configure SPA fallback so unknown paths serve the entry point (e.g. `_redirects`/`404` → index)
 - [ ] 7.2 Define the production build with `VITE_BACKEND_URL` set to the `<app>-api` domain
 - [ ] 7.3 Do a first `wrangler pages deploy` of the build; point Cloudflare `<app>` at the Pages project
 - [ ] 7.4 Smoke-test: load the app at `<app>`, confirm it reaches the API and login works end-to-end
