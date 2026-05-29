@@ -17,9 +17,9 @@
 
 ## 3. Backend — remove Solid Cable
 
-- [ ] 3.1 Remove the `solid_cable` gem from `Gemfile` and update `Gemfile.lock`
-- [ ] 3.2 Delete `config/cable.yml` and its cable migrations; remove the cable database wiring
-- [ ] 3.3 Confirm the app boots with no Action Cable adapter and no channels referenced
+- [x] 3.1 Remove the `solid_cable` gem from `Gemfile` and update `Gemfile.lock`
+- [x] 3.2 Delete `config/cable.yml` and its cable migrations; remove the cable database wiring
+- [x] 3.3 Confirm the app boots with no Action Cable adapter and no channels referenced
 
 ## 4. Backend — email and CORS
 
