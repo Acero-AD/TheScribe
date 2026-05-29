@@ -10,10 +10,10 @@
 ## 2. Backend — collapse to a single database
 
 - [ ] 2.1 Take a Neon branch/snapshot as a rollback point before config changes
-- [ ] 2.2 Edit `config/database.yml` production block to a single `primary` database driven by `DATABASE_URL` (remove `cache`, `queue`, `cable` entries)
-- [ ] 2.3 Remove the per-gem `connects_to` for queue/cache in `config/environments/production.rb`
-- [ ] 2.4 Fold Solid Queue and Solid Cache migrations into the primary migration path; run them against the primary database
-- [ ] 2.5 Verify locally that the app boots, jobs enqueue/run, and caching works against one database
+- [x] 2.2 Edit `config/database.yml` production block to a single `primary` database driven by `DATABASE_URL` (remove `cache`, `queue`, `cable` entries)
+- [x] 2.3 Remove the per-gem `connects_to` for queue/cache in `config/environments/production.rb`
+- [x] 2.4 Fold Solid Queue and Solid Cache migrations into the primary migration path; run them against the primary database
+- [x] 2.5 Verify locally that the app boots, jobs enqueue/run, and caching works against one database
 
 ## 3. Backend — remove Solid Cable
 

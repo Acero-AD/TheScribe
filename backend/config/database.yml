@@ -4,10 +4,9 @@
 # defaults below match those env values; override any of them with the named
 # env vars when running against a different host.
 #
-# Production uses four databases on the same Postgres host (one for the app,
-# three for the Solid* gems). Configure them with DATABASE_URL plus
-# CACHE_DATABASE_URL / QUEUE_DATABASE_URL / CABLE_DATABASE_URL, or by
-# overriding the per-key host/user/password env vars below.
+# Production uses a single database, provided via DATABASE_URL (e.g. Neon).
+# Solid Queue and Solid Cache share this primary database — there are no
+# separate cache/queue/cable databases.
 
 default: &default
   adapter: postgresql
@@ -27,22 +26,5 @@ test:
   database: <%= ENV.fetch("DATABASE_NAME") { "scribe_test" } %>
 
 production:
-  primary:
-    <<: *default
-    url: <%= ENV["DATABASE_URL"] %>
-    database: <%= ENV.fetch("DATABASE_NAME") { "scribe_production" } %>
-  cache:
-    <<: *default
-    url: <%= ENV["CACHE_DATABASE_URL"] %>
-    database: <%= ENV.fetch("CACHE_DATABASE_NAME") { "scribe_production_cache" } %>
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *default
-    url: <%= ENV["QUEUE_DATABASE_URL"] %>
-    database: <%= ENV.fetch("QUEUE_DATABASE_NAME") { "scribe_production_queue" } %>
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *default
-    url: <%= ENV["CABLE_DATABASE_URL"] %>
-    database: <%= ENV.fetch("CABLE_DATABASE_NAME") { "scribe_production_cable" } %>
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
