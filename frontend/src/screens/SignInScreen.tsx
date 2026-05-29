@@ -64,7 +64,7 @@ export function SignInScreen() {
 
   return (
     <main style={pageStyle}>
-      <ScreenHeader eyebrow="SCOREBOARD" title="Sign in" />
+      <ScreenHeader eyebrow="SCRIBE" title="Sign in" />
       <section style={sectionStyle}>
         {urlError && (
           <p role="alert" style={alertStyle}>

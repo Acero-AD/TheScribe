@@ -1,4 +1,4 @@
-// Scoreboard daily-reminder service worker.
+// The Scribe daily-reminder service worker.
 //
 // Two responsibilities, intentionally narrow:
 //   1. `push`              → render a system notification with the payload's
@@ -14,7 +14,7 @@ const APP_ROOT = '/'
 self.addEventListener('push', (event) => {
   const payload = parsePayload(event)
   const title = payload.title ?? 'Did you write today?'
-  const body = payload.body ?? 'A nudge from Scoreboard.'
+  const body = payload.body ?? 'A nudge from The Scribe.'
   event.waitUntil(
     self.registration.showNotification(title, {
       body,

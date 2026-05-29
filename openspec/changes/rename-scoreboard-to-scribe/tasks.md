@@ -8,14 +8,14 @@
 
 ## 2. Frontend copy & UI (commit: "frontend: rebrand to The Scribe / Scribe")
 
-- [ ] 2.1 `frontend/public/manifest.webmanifest`: set `name` to "The Scribe" and `short_name` to "Scribe"
-- [ ] 2.2 `frontend/index.html`: set `<title>` to "The Scribe" and any meta description/name references
-- [ ] 2.3 `frontend/public/sw.js`: update notification title and any cache-name string containing `scoreboard` (cache-key bump is acceptable pre-deploy)
-- [ ] 2.4 `frontend/src/screens/SignInScreen.tsx`: change the brand eyebrow from `SCOREBOARD` to `SCRIBE` (per the account-access delta spec)
-- [ ] 2.5 `frontend/src/screens/SettingsScreen.tsx`: update any visible name/eyebrow references to "Scribe"
-- [ ] 2.6 `frontend/src/components/__tests__/ScreenHeader.test.tsx`: update the `SCOREBOARD` test value to `SCRIBE` (per the ui-primitives delta spec)
-- [ ] 2.7 `frontend/README.md`: update product-name references
-- [ ] 2.8 Check for any `scoreboard` localStorage keys or constants in `frontend/src`; rename to `scribe` (resetting local state is acceptable pre-deploy)
+- [x] 2.1 `frontend/public/manifest.webmanifest`: set `name` to "The Scribe" and `short_name` to "Scribe"
+- [x] 2.2 `frontend/index.html`: set `<title>` to "The Scribe" and any meta description/name references
+- [x] 2.3 `frontend/public/sw.js`: update notification title and any cache-name string containing `scoreboard` (cache-key bump is acceptable pre-deploy) — no cache-name referenced the old name; updated the comment and notification-body fallback
+- [x] 2.4 `frontend/src/screens/SignInScreen.tsx`: change the brand eyebrow from `SCOREBOARD` to `SCRIBE` (per the account-access delta spec)
+- [x] 2.5 `frontend/src/screens/SettingsScreen.tsx`: update any visible name/eyebrow references to "Scribe"
+- [x] 2.6 `frontend/src/components/__tests__/ScreenHeader.test.tsx`: update the `SCOREBOARD` test value to `SCRIBE` (per the ui-primitives delta spec)
+- [x] 2.7 `frontend/README.md`: update product-name references
+- [x] 2.8 Check for any `scoreboard` localStorage keys or constants in `frontend/src`; rename to `scribe` (resetting local state is acceptable pre-deploy) — none found
 
 ## 3. Backend code & identity (commit: "backend: rename module + identity to Scribe")
 

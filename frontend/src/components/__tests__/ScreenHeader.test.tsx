@@ -22,8 +22,8 @@ describe('ScreenHeader', () => {
   })
 
   it('does not set an aria-label on the eyebrow when none is provided', () => {
-    render(<ScreenHeader eyebrow="SCOREBOARD" title="Sign in" />)
-    expect(screen.getByText('SCOREBOARD')).not.toHaveAttribute('aria-label')
+    render(<ScreenHeader eyebrow="SCRIBE" title="Sign in" />)
+    expect(screen.getByText('SCRIBE')).not.toHaveAttribute('aria-label')
   })
 
   it('exposes the headline by role with accessible name matching title plus period', () => {
