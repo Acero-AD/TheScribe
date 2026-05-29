@@ -20,7 +20,7 @@ The frontend SHALL provide a `ScreenHeader` React component (at `frontend/src/co
 - **THEN** the eyebrow `<div>` has `aria-label="Today's date"` so a screen reader announces the contextual label rather than reading the raw date string
 
 #### Scenario: No aria-label is applied when none is supplied
-- **WHEN** a consumer renders `<ScreenHeader eyebrow="SCOREBOARD" title="Sign in" />` without `eyebrowAriaLabel`
+- **WHEN** a consumer renders `<ScreenHeader eyebrow="SCRIBE" title="Sign in" />` without `eyebrowAriaLabel`
 - **THEN** the eyebrow `<div>` does not have an `aria-label` attribute
 
 #### Scenario: Period is rendered automatically, not provided by the caller
