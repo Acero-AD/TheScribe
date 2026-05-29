@@ -45,16 +45,16 @@
 ## 7. Frontend — Cloudflare Pages
 
 - [x] 7.1 Configure SPA fallback so unknown paths serve the entry point (e.g. `_redirects`/`404` → index)
-- [ ] 7.2 Define the production build with `VITE_BACKEND_URL` set to the `<app>-api` domain
+- [x] 7.2 Define the production build with `VITE_BACKEND_URL` set to the `<app>-api` domain — `deploy-frontend` build step reads `vars.VITE_BACKEND_URL`
 - [ ] 7.3 Do a first `wrangler pages deploy` of the build; point Cloudflare `<app>` at the Pages project
 - [ ] 7.4 Smoke-test: load the app at `<app>`, confirm it reaches the API and login works end-to-end
 
 ## 8. CI — independent deploy on green master
 
 - [ ] 8.1 Add GitHub Actions secrets: GHCR token, deploy SSH key, `RAILS_MASTER_KEY`, `DATABASE_URL`, Resend credential, `CLOUDFLARE_API_TOKEN` + account/project IDs, `VITE_BACKEND_URL`
-- [ ] 8.2 Add a `deploy-backend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.backend == 'true'`, and `needs` on backend test/lint/scan jobs; it builds, pushes to GHCR, and runs `kamal deploy`
-- [ ] 8.3 Add a `deploy-frontend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.frontend == 'true'`, and `needs` on frontend lint/test/build jobs; it builds and runs `wrangler pages deploy`
-- [ ] 8.4 Ensure the deploy jobs are excluded from the `ci-success` aggregate and not added to required branch-protection checks
+- [x] 8.2 Add a `deploy-backend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.backend == 'true'`, and `needs` on backend test/lint/scan jobs; it builds, pushes to GHCR, and runs `kamal deploy`
+- [x] 8.3 Add a `deploy-frontend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.frontend == 'true'`, and `needs` on frontend lint/test/build jobs; it builds and runs `wrangler pages deploy`
+- [x] 8.4 Ensure the deploy jobs are excluded from the `ci-success` aggregate and not added to required branch-protection checks
 
 ## 9. Verify
 
