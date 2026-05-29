@@ -1,0 +1,245 @@
+name: CI
+
+# Single workflow for the monorepo. It always runs, then a change-detection
+# gate decides which pipeline's jobs execute. Branch protection should require
+# ONLY the `ci-success` job — see openspec/changes/add-ci-pipelines/design.md.
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Filter changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+
+  # ---------------------------------------------------------------------------
+  # Backend pipeline (Rails) — runs only when backend/** changed
+  # ---------------------------------------------------------------------------
+  backend-scan:
+    name: Backend · security scan
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+
+      - name: Scan for Rails security vulnerabilities (Brakeman)
+        run: bin/brakeman --no-pager
+
+      - name: Audit gems for known CVEs (bundler-audit)
+        run: bin/bundler-audit
+
+  backend-lint:
+    name: Backend · RuboCop
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      RUBOCOP_CACHE_ROOT: tmp/rubocop
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+
+      - name: Prepare RuboCop cache
+        uses: actions/cache@v4
+        env:
+          DEPENDENCIES_HASH: ${{ hashFiles('backend/.ruby-version', 'backend/**/.rubocop.yml', 'backend/**/.rubocop_todo.yml', 'backend/Gemfile.lock') }}
+        with:
+          path: backend/tmp/rubocop
+          key: rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-${{ github.ref_name == github.event.repository.default_branch && github.run_id || 'default' }}
+          restore-keys: |
+            rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
+
+      - name: Lint Ruby for consistent style
+        run: bin/rubocop -f github
+
+  backend-test:
+    name: Backend · tests
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: scoreboard
+          POSTGRES_PASSWORD: scoreboard
+          POSTGRES_DB: scoreboard_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U scoreboard -d scoreboard_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RAILS_ENV: test
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_USER: scoreboard
+      DATABASE_PASSWORD: scoreboard
+      DATABASE_NAME: scoreboard_test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Install system packages (libvips for Active Storage)
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+
+      - name: Prepare test database and run tests
+        run: bin/rails db:test:prepare test
+
+  # ---------------------------------------------------------------------------
+  # Frontend pipeline (Vite/React) — runs only when frontend/** changed
+  # ---------------------------------------------------------------------------
+  frontend-lint:
+    name: Frontend · ESLint
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+  frontend-test:
+    name: Frontend · tests
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+  frontend-build:
+    name: Frontend · build
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (type-check + bundle)
+        run: npm run build
+
+  # ---------------------------------------------------------------------------
+  # Aggregate gate — the ONLY check to mark required in branch protection.
+  # Passes when every pipeline job succeeded or was skipped; fails if any
+  # failed or was cancelled. This keeps path-filtered PRs from hanging on
+  # jobs that never started.
+  # ---------------------------------------------------------------------------
+  ci-success:
+    name: CI success
+    if: ${{ always() }}
+    needs:
+      - changes
+      - backend-scan
+      - backend-lint
+      - backend-test
+      - frontend-lint
+      - frontend-test
+      - frontend-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any pipeline job failed or was cancelled
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: |
+          echo "One or more CI jobs failed or were cancelled."
+          exit 1
+
+      - name: Report success
+        run: echo "All pipeline jobs passed or were skipped."
