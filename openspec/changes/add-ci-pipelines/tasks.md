@@ -1,7 +1,7 @@
 ## 1. Clean up misplaced config
 
-- [ ] 1.1 Remove `backend/.github/workflows/ci.yml`
-- [ ] 1.2 Remove `backend/.github/dependabot.yml` and the now-empty `backend/.github/` directory
+- [x] 1.1 Remove `backend/.github/workflows/ci.yml`
+- [x] 1.2 Remove `backend/.github/dependabot.yml` and the now-empty `backend/.github/` directory
 
 ## 2. Root workflow scaffold
 
