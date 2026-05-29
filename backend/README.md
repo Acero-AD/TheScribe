@@ -19,7 +19,7 @@ To wipe the database (drops the volume):
 docker compose down -v
 ```
 
-The defaults (`scoreboard` / `scoreboard` / `localhost:5432`) match the env
+The defaults (`scribe` / `scribe` / `localhost:5432`) match the env
 fallbacks in `config/database.yml`. Override with `DATABASE_HOST`,
 `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME` if you
 point Rails at a different Postgres.
@@ -326,7 +326,7 @@ If reminders stop arriving, work down this list:
 - Force HTTPS (`config.force_ssl = true`).
 - Configure a real mail provider (`config.action_mailer.smtp_settings`).
 - Provision four databases on the production Postgres
-  (`scoreboard_production`, `_cache`, `_queue`, `_cable`) and supply the
+  (`scribe_production`, `_cache`, `_queue`, `_cable`) and supply the
   matching `DATABASE_URL` / `CACHE_DATABASE_URL` / `QUEUE_DATABASE_URL` /
   `CABLE_DATABASE_URL`. The Solid* gems each run on their own database.
 

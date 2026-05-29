@@ -1,4 +1,4 @@
-# Local development infrastructure for the Scoreboard backend.
+# Local development infrastructure for The Scribe backend.
 #
 #   docker compose up -d           # start Postgres + Rails in the background
 #   docker compose logs -f web     # tail the Rails server
@@ -14,18 +14,18 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: scoreboard-postgres
+    container_name: scribe-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: scoreboard
-      POSTGRES_PASSWORD: scoreboard
-      POSTGRES_DB: scoreboard_development
+      POSTGRES_USER: scribe
+      POSTGRES_PASSWORD: scribe
+      POSTGRES_DB: scribe_development
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U scoreboard -d scoreboard_development"]
+      test: ["CMD-SHELL", "pg_isready -U scribe -d scribe_development"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -34,7 +34,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: scoreboard-web
+    container_name: scribe-web
     restart: unless-stopped
     depends_on:
       postgres:
@@ -43,9 +43,9 @@ services:
       RAILS_ENV: development
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      DATABASE_USER: scoreboard
-      DATABASE_PASSWORD: scoreboard
-      DATABASE_NAME: scoreboard_development
+      DATABASE_USER: scribe
+      DATABASE_PASSWORD: scribe
+      DATABASE_NAME: scribe_development
       BINDING: 0.0.0.0
       # Forwarded from the host when tunneling for phone testing — see
       # docs/testing-on-phone.md. Empty by default; when set, ActionMailer

@@ -31,9 +31,9 @@
 
 ## 4. Database & infra rename (commit: "infra: rename databases scoreboard_* -> scribe_*")
 
-- [ ] 4.1 `backend/config/database.yml`: rename all `scoreboard_*` database names to `scribe_*` (development, test, production, and the solid_* secondary DBs)
-- [ ] 4.2 `backend/docker-compose.yml`: update `POSTGRES_DB`, service/container name, and named volume from `scoreboard` to `scribe`
-- [ ] 4.3 Inspect `.github/workflows/ci.yml`; update only if it references a `scoreboard_*` database name, otherwise leave unchanged
+- [x] 4.1 `backend/config/database.yml`: renamed all `scoreboard_*` database names to `scribe_*` and the default user/password `scoreboard` -> `scribe`
+- [x] 4.2 `backend/docker-compose.yml`: updated `POSTGRES_DB`/`POSTGRES_USER`/`POSTGRES_PASSWORD`, the `DATABASE_*` web env, the healthcheck, and container names (`scribe-postgres`/`scribe-web`). The named volumes (`postgres-data`/`bundle-cache`/`rails-tmp`) never referenced the old name
+- [x] 4.3 `.github/workflows/ci.yml` referenced `scoreboard_test` + creds; renamed to `scribe_test` + `scribe` to keep CI green. Also fixed a missed product-name reference in `IMPLEMENTATION_ORDER.md`
 - [ ] 4.4 Rebuild dev databases via docker compose: `docker compose down && docker compose up -d`, then run `db:prepare` through `docker compose`
 
 ## 5. Verification & residual sweep
