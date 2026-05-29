@@ -12,17 +12,23 @@ export interface UseHistoryResult {
 // in-flight requests on unmount or month change.
 export function useHistory(month: string): UseHistoryResult {
   const [data, setData] = useState<History | null>(null)
-  const [status, setStatus] = useState<HistoryStatus>('idle')
+  const [status, setStatus] = useState<HistoryStatus>(month ? 'loading' : 'idle')
+
+  // Reflect month changes at render time — loading when a month is selected,
+  // idle when cleared — instead of synchronising status inside the effect.
+  // The effect below only performs the async fetch and resolves to
+  // ready/error in its callbacks.
+  const [prevMonth, setPrevMonth] = useState(month)
+  if (prevMonth !== month) {
+    setPrevMonth(month)
+    setStatus(month ? 'loading' : 'idle')
+  }
 
   useEffect(() => {
-    if (!month) {
-      setStatus('idle')
-      return
-    }
+    if (!month) return
 
     let cancelled = false
     const controller = new AbortController()
-    setStatus('loading')
 
     getHistory(month, controller.signal)
       .then((payload) => {

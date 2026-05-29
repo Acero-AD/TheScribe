@@ -11,8 +11,16 @@ export function useTodayDate(): { date: string; timezone: string } {
   const compute = useCallback(() => todayInTimezone(timezone), [timezone])
   const [date, setDate] = useState(compute)
 
-  useEffect(() => {
+  // Recompute immediately when the timezone changes. This is the React-
+  // recommended render-time adjustment instead of synchronising state inside
+  // an effect (which triggers cascading renders).
+  const [trackedTimezone, setTrackedTimezone] = useState(timezone)
+  if (trackedTimezone !== timezone) {
+    setTrackedTimezone(timezone)
     setDate(compute())
+  }
+
+  useEffect(() => {
     const refresh = () => setDate(compute())
 
     const interval = window.setInterval(refresh, REFRESH_INTERVAL_MS)
