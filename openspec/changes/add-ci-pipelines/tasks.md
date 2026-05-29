@@ -30,7 +30,7 @@
 
 ## 6. Dependabot
 
-- [ ] 6.1 Create `.github/dependabot.yml` with a `bundler` ecosystem entry for `/backend` and an `npm` ecosystem entry for `/frontend` (weekly schedule)
+- [x] 6.1 Create `.github/dependabot.yml` with a `bundler` ecosystem entry for `/backend` and an `npm` ecosystem entry for `/frontend` (weekly schedule)
 
 ## 7. Verify
 
