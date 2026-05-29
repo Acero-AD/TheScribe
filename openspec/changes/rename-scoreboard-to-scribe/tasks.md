@@ -34,11 +34,11 @@
 - [x] 4.1 `backend/config/database.yml`: renamed all `scoreboard_*` database names to `scribe_*` and the default user/password `scoreboard` -> `scribe`
 - [x] 4.2 `backend/docker-compose.yml`: updated `POSTGRES_DB`/`POSTGRES_USER`/`POSTGRES_PASSWORD`, the `DATABASE_*` web env, the healthcheck, and container names (`scribe-postgres`/`scribe-web`). The named volumes (`postgres-data`/`bundle-cache`/`rails-tmp`) never referenced the old name
 - [x] 4.3 `.github/workflows/ci.yml` referenced `scoreboard_test` + creds; renamed to `scribe_test` + `scribe` to keep CI green. Also fixed a missed product-name reference in `IMPLEMENTATION_ORDER.md`
-- [ ] 4.4 Rebuild dev databases via docker compose: `docker compose down && docker compose up -d`, then run `db:prepare` through `docker compose`
+- [x] 4.4 Rebuilt dev databases via docker compose. The old Postgres volume only had the `scoreboard` role, so a `down -v` + `up` reinit was required to create the `scribe` role + `scribe_development`. This also surfaced a pre-existing stale bundle (the image predated the solid_cable 4.0 / puma 8 / image_processing 2.0 bumps) — fixed with `bundle install` into the cache volume
 
 ## 5. Verification & residual sweep
 
-- [ ] 5.1 Backend: run the test suite via `docker compose`; confirm green
-- [ ] 5.2 Frontend: `npm run build` + test suite; confirm green
-- [ ] 5.3 Boot the app and confirm the sign-in screen renders the `SCRIBE` eyebrow and the magic-link email reads "Scribe"
-- [ ] 5.4 Final sweep: `grep -ri scoreboard` excluding `node_modules`, `.git`, and `openspec/changes/archive/` returns no hits (archived proposals are intentionally left frozen)
+- [x] 5.1 Backend test suite green via docker compose: 189 runs, 491 assertions, 0 failures/errors (incl. the renamed `_scribe_session` cookie test)
+- [x] 5.2 Frontend green: `npm run build` (tsc + vite) succeeds and the test suite passes (104 tests)
+- [x] 5.3 App boots (`/up` 200, Puma listening); sign-in eyebrow renders `SCRIBE` (SignInScreen + ScreenHeader tests); rendered magic-link email shows subject "Sign in to Scribe", from "The Scribe <no-reply@scribe.local>", "— The Scribe" sign-off, and zero "scoreboard"
+- [x] 5.4 Final sweep clean: the only `scoreboard` matches in source are the two active specs (`account-access`, `ui-primitives`), which `openspec archive` rewrites from this change's delta specs; archived proposals left frozen by design
