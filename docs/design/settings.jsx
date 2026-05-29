@@ -161,7 +161,7 @@ function SettingsScreen() {
       }}>
         “You only measure what you control.”
         <div style={{ fontFamily: SBfont.mono, fontSize: 10, letterSpacing: 1.4, textTransform: 'uppercase', color: SB.inkFaint, marginTop: 6 }}>
-          Scoreboard · v1
+          Scribe · v1
         </div>
       </div>
 

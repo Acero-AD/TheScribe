@@ -1,4 +1,4 @@
-// screens.jsx — Scoreboard, four iOS screens.
+// screens.jsx — The Scribe, four iOS screens.
 // Modern · fun · minimalist. Warm cream + a single confident green.
 // Type: Instrument Serif (display, italic) · Geist (UI) · JetBrains Mono (numbers).
 

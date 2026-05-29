@@ -1,10 +1,10 @@
 ## 1. Docs & top-level README (commit: "docs: rename Scoreboard -> The Scribe")
 
-- [ ] 1.1 Update `README.md`: H1 to `# The Scribe`, body prose to "The Scribe" / "Scribe", and the `docs/scoreboard-app.md` link to `docs/scribe-app.md`
-- [ ] 1.2 `git mv docs/scoreboard-app.md docs/scribe-app.md` and update the product name inside it
-- [ ] 1.3 Update `docs/testing-on-phone.md` name references
-- [ ] 1.4 Rename `docs/design/Scoreboard.html` -> `docs/design/Scribe.html` (`git mv`) and update name references in `docs/design/*.jsx` + the renamed HTML
-- [ ] 1.5 Confirm no broken intra-doc links remain (grep docs/ for `scoreboard-app` and `Scoreboard.html`)
+- [x] 1.1 Update `README.md`: H1 to `# The Scribe`, body prose to "The Scribe" / "Scribe", and the `docs/scoreboard-app.md` link to `docs/scribe-app.md`
+- [x] 1.2 `git mv docs/scoreboard-app.md docs/scribe-app.md` and update the product name inside it
+- [x] 1.3 Update `docs/testing-on-phone.md` name references
+- [x] 1.4 Rename `docs/design/Scoreboard.html` -> `docs/design/Scribe.html` (`git mv`) and update name references in `docs/design/*.jsx` + the renamed HTML
+- [x] 1.5 Confirm no broken intra-doc links remain (grep docs/ for `scoreboard-app` and `Scoreboard.html`)
 
 ## 2. Frontend copy & UI (commit: "frontend: rebrand to The Scribe / Scribe")
 

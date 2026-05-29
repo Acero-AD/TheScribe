@@ -1,4 +1,4 @@
-// today.jsx — Today / Home screen for Scoreboard
+// today.jsx — Today / Home screen for The Scribe
 
 function TodayScreen() {
   const [wroteToday, setWroteToday] = React.useState(true);

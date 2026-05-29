@@ -1,4 +1,4 @@
-# Scoreboard — App Design Document
+# The Scribe — App Design Document
 
 ## The Idea
 
@@ -6,7 +6,7 @@ Most content creators fail not because they lack talent or ideas, but because th
 
 The essay *The Ride Is the Point* captures the real mechanic: growth happens through consistent, honest effort over time. The discovery comes from doing, not from waiting until you're ready. But knowing this isn't enough — you need a system that reinforces it daily.
 
-**Scoreboard** is a private, distraction-free tracker built around a single principle: you only measure what you control. Two questions per day. A streak that tells the truth. Nothing else.
+**The Scribe** is a private, distraction-free tracker built around a single principle: you only measure what you control. Two questions per day. A streak that tells the truth. Nothing else.
 
 ---
 
@@ -14,7 +14,7 @@ The essay *The Ride Is the Point* captures the real mechanic: growth happens thr
 
 Give the writer/creator a daily ritual that keeps them honest without becoming another source of anxiety.
 
-The scoreboard must:
+The Scribe must:
 
 - Make showing up feel like winning, regardless of external results
 - Be fast enough that using it never becomes the task (under 30 seconds per check-in)
@@ -259,7 +259,7 @@ This is a simple app. Resist the urge to over-engineer it.
 - Not a goal-setting app — no targets, no percentages, no "you're 70% there"
 - Not an analytics dashboard — no graphs of engagement, reach, or growth
 
-The scoreboard only measures inputs, never outputs. That is the whole product.
+The Scribe only measures inputs, never outputs. That is the whole product.
 
 ---
 

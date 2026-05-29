@@ -1,4 +1,4 @@
-# Scoreboard
+# The Scribe
 
 A private, distraction-free tracker for writers who want to build the habit before they chase the result.
 
@@ -8,7 +8,7 @@ Two questions per day. A streak that tells the truth. Nothing else.
 
 Most people writing online measure themselves against things they don't control — views, follows, the algorithm. The feedback loop is broken: you do the work, a system decides the outcome, and you walk away feeling either lucky or defeated. Neither teaches you anything.
 
-Scoreboard flips it. You only measure what's yours to control:
+The Scribe flips it. You only measure what's yours to control:
 
 - **Did I write today?**
 - **Did I publish this week?**
@@ -24,7 +24,7 @@ That's it. Binary, honest, fast. If the streak holds, you held it. If it breaks,
 
 It installs to the Home Screen on iOS and Android and runs in standalone mode — no browser chrome, no tabs to lose it in.
 
-The full design rationale lives in [`docs/scoreboard-app.md`](docs/scoreboard-app.md).
+The full design rationale lives in [`docs/scribe-app.md`](docs/scribe-app.md).
 
 ## Stack
 

@@ -30,7 +30,7 @@ function PhoneFrame({ children, label }) {
 function App() {
   return (
     <DesignCanvas>
-      <DCSection id="main" title="Scoreboard" subtitle="Four screens for a private, two-question habit tracker.">
+      <DCSection id="main" title="The Scribe" subtitle="Four screens for a private, two-question habit tracker.">
         <DCArtboard id="today"      label="Today"      width={SCREEN_W + 12} height={SCREEN_H + 12}>
           <PhoneFrame label="Today"><TodayScreen/></PhoneFrame>
         </DCArtboard>
