@@ -10,31 +10,31 @@
 ## 2. Backend — collapse to a single database
 
 - [ ] 2.1 Take a Neon branch/snapshot as a rollback point before config changes
-- [ ] 2.2 Edit `config/database.yml` production block to a single `primary` database driven by `DATABASE_URL` (remove `cache`, `queue`, `cable` entries)
-- [ ] 2.3 Remove the per-gem `connects_to` for queue/cache in `config/environments/production.rb`
-- [ ] 2.4 Fold Solid Queue and Solid Cache migrations into the primary migration path; run them against the primary database
-- [ ] 2.5 Verify locally that the app boots, jobs enqueue/run, and caching works against one database
+- [x] 2.2 Edit `config/database.yml` production block to a single `primary` database driven by `DATABASE_URL` (remove `cache`, `queue`, `cable` entries)
+- [x] 2.3 Remove the per-gem `connects_to` for queue/cache in `config/environments/production.rb`
+- [x] 2.4 Fold Solid Queue and Solid Cache migrations into the primary migration path; run them against the primary database
+- [x] 2.5 Verify locally that the app boots, jobs enqueue/run, and caching works against one database
 
 ## 3. Backend — remove Solid Cable
 
-- [ ] 3.1 Remove the `solid_cable` gem from `Gemfile` and update `Gemfile.lock`
-- [ ] 3.2 Delete `config/cable.yml` and its cable migrations; remove the cable database wiring
-- [ ] 3.3 Confirm the app boots with no Action Cable adapter and no channels referenced
+- [x] 3.1 Remove the `solid_cable` gem from `Gemfile` and update `Gemfile.lock`
+- [x] 3.2 Delete `config/cable.yml` and its cable migrations; remove the cable database wiring
+- [x] 3.3 Confirm the app boots with no Action Cable adapter and no channels referenced
 
 ## 4. Backend — email and CORS
 
-- [ ] 4.1 Wire `config.action_mailer.smtp_settings` in `production.rb` from credentials/env (Resend); set the production mailer default URL host
-- [ ] 4.2 Add/configure CORS (e.g. `rack-cors`) to allow the `<app>` frontend origin
-- [ ] 4.3 Point the magic-link redirect target (`config/application.rb`) at the `<app>` frontend origin
-- [ ] 4.4 Set `config.assume_ssl` and `config.force_ssl` in production
+- [x] 4.1 Wire `config.action_mailer.smtp_settings` in `production.rb` from credentials/env (Resend); set the production mailer default URL host
+- [x] 4.2 Add/configure CORS (e.g. `rack-cors`) to allow the `<app>` frontend origin — already wired: `config/initializers/cors.rb` reads `ENV["FRONTEND_URL"]` in production
+- [x] 4.3 Point the magic-link redirect target (`config/application.rb`) at the `<app>` frontend origin — already wired: `config.frontend_url = ENV.fetch("FRONTEND_URL")`
+- [x] 4.4 Set `config.assume_ssl` and `config.force_ssl` in production
 
 ## 5. Backend — Kamal configuration
 
-- [ ] 5.1 Set the real production host (Hetzner IP) in `config/deploy.yml`
-- [ ] 5.2 Switch the registry to GHCR (image name, server, `KAMAL_REGISTRY_PASSWORD`)
-- [ ] 5.3 Configure the proxy block for TLS on `<app>-api` (kamal-proxy Let's Encrypt)
-- [ ] 5.4 Add required secrets to `.kamal/secrets` references: `RAILS_MASTER_KEY`, `DATABASE_URL`, Resend credential (no values committed)
-- [ ] 5.5 Confirm the persistent storage volume for Active Storage is configured
+- [x] 5.1 Set the real production host (Hetzner IP) in `config/deploy.yml` — host wired via `ENV["KAMAL_DEPLOY_IP"]`; the actual IP is supplied at deploy time, not hardcoded
+- [x] 5.2 Switch the registry to GHCR (image name, server, `KAMAL_REGISTRY_PASSWORD`)
+- [x] 5.3 Configure the proxy block for TLS on `<app>-api` (kamal-proxy Let's Encrypt) — `proxy.host` = `ENV["APP_HOST"]`
+- [x] 5.4 Add required secrets to `.kamal/secrets` references: `RAILS_MASTER_KEY`, `DATABASE_URL`, Resend credential (no values committed)
+- [x] 5.5 Confirm the persistent storage volume for Active Storage is configured
 
 ## 6. Backend — bootstrap deploy (manual first run)
 
@@ -44,17 +44,17 @@
 
 ## 7. Frontend — Cloudflare Pages
 
-- [ ] 7.1 Configure SPA fallback so unknown paths serve the entry point (e.g. `_redirects`/`404` → index)
-- [ ] 7.2 Define the production build with `VITE_BACKEND_URL` set to the `<app>-api` domain
+- [x] 7.1 Configure SPA fallback so unknown paths serve the entry point (e.g. `_redirects`/`404` → index)
+- [x] 7.2 Define the production build with `VITE_BACKEND_URL` set to the `<app>-api` domain — `deploy-frontend` build step reads `vars.VITE_BACKEND_URL`
 - [ ] 7.3 Do a first `wrangler pages deploy` of the build; point Cloudflare `<app>` at the Pages project
 - [ ] 7.4 Smoke-test: load the app at `<app>`, confirm it reaches the API and login works end-to-end
 
 ## 8. CI — independent deploy on green master
 
 - [ ] 8.1 Add GitHub Actions secrets: GHCR token, deploy SSH key, `RAILS_MASTER_KEY`, `DATABASE_URL`, Resend credential, `CLOUDFLARE_API_TOKEN` + account/project IDs, `VITE_BACKEND_URL`
-- [ ] 8.2 Add a `deploy-backend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.backend == 'true'`, and `needs` on backend test/lint/scan jobs; it builds, pushes to GHCR, and runs `kamal deploy`
-- [ ] 8.3 Add a `deploy-frontend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.frontend == 'true'`, and `needs` on frontend lint/test/build jobs; it builds and runs `wrangler pages deploy`
-- [ ] 8.4 Ensure the deploy jobs are excluded from the `ci-success` aggregate and not added to required branch-protection checks
+- [x] 8.2 Add a `deploy-backend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.backend == 'true'`, and `needs` on backend test/lint/scan jobs; it builds, pushes to GHCR, and runs `kamal deploy`
+- [x] 8.3 Add a `deploy-frontend` job gated on `github.ref == refs/heads/master`, `needs.changes.outputs.frontend == 'true'`, and `needs` on frontend lint/test/build jobs; it builds and runs `wrangler pages deploy`
+- [x] 8.4 Ensure the deploy jobs are excluded from the `ci-success` aggregate and not added to required branch-protection checks
 
 ## 9. Verify
 
