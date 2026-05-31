@@ -11,4 +11,4 @@
 ## 3. Verify
 
 - [x] 3.1 Run backend integration tests for magic links and sessions via Docker Compose; all green.
-- [ ] 3.2 Manually sign in, close and reopen the browser (or PWA), and confirm `/me` still returns 200 without a new magic link. (Behavior is covered by the persistent-cookie integration test; left for manual smoke confirmation.)
+- [x] 3.2 Manually sign in, close and reopen the browser (or PWA), and confirm `/me` still returns 200 without a new magic link.
