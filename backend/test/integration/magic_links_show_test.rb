@@ -19,7 +19,16 @@ class MagicLinksShowTest < ActionDispatch::IntegrationTest
     # the in-process session jar — or real browsers won't receive it.
     set_cookie = response.headers["Set-Cookie"]
     assert set_cookie.present?, "expected a Set-Cookie header on the verify response"
-    assert_match(/_scribe_session=/, Array(set_cookie).join("\n"))
+    cookie_header = Array(set_cookie).join("\n")
+    assert_match(/_scribe_session=/, cookie_header)
+    if cookie_header =~ /max-age=(\d+)/i
+      assert_equal 90.days.to_i, Regexp.last_match(1).to_i
+    elsif cookie_header =~ /expires=([^;]+)/i
+      expires_at = Time.httpdate(Regexp.last_match(1).strip)
+      assert_in_delta 90.days.from_now, expires_at, 5.seconds
+    else
+      flunk "expected a persistent session cookie with max-age or expires"
+    end
 
     # Subsequent /me should be authenticated.
     get current_user_path
