@@ -276,6 +276,7 @@ jobs:
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
       APP_HOST: ${{ vars.APP_HOST }}
       FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+      MAILER_FROM: ${{ vars.MAILER_FROM }}
       RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
