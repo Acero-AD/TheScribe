@@ -303,7 +303,9 @@ jobs:
       - name: Trust the deploy host
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H "$KAMAL_DEPLOY_IP" >> ~/.ssh/known_hosts
+          # No -H: kamal's net-ssh mishandles HASHED known_hosts entries and
+          # raises HostKeyMismatch even for the correct key. Plain entries match.
+          ssh-keyscan "$KAMAL_DEPLOY_IP" >> ~/.ssh/known_hosts
 
       - name: Add SSH deploy key
         uses: webfactory/ssh-agent@v0.9.0
