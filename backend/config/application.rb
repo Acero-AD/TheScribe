@@ -54,7 +54,7 @@ module Backend
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore,
                           key: "_scribe_session",
-                          expire_after: 90.days,
+                          expire_after: 89.days,
                           same_site: :lax,
                           secure: Rails.env.production?,
                           httponly: true

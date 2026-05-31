@@ -22,10 +22,10 @@ class MagicLinksShowTest < ActionDispatch::IntegrationTest
     cookie_header = Array(set_cookie).join("\n")
     assert_match(/_scribe_session=/, cookie_header)
     if cookie_header =~ /max-age=(\d+)/i
-      assert_equal 90.days.to_i, Regexp.last_match(1).to_i
+      assert_equal 89.days.to_i, Regexp.last_match(1).to_i
     elsif cookie_header =~ /expires=([^;]+)/i
       expires_at = Time.httpdate(Regexp.last_match(1).strip)
-      assert_in_delta 90.days.from_now, expires_at, 5.seconds
+      assert_in_delta 89.days.from_now, expires_at, 5.seconds
     else
       flunk "expected a persistent session cookie with max-age or expires"
     end
