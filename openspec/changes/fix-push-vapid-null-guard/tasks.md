@@ -12,11 +12,11 @@
 
 ## 3. Tests
 
-- [ ] 3.1 `backend/test/integration/push_config_test.rb`: add a case asserting 503 + error body when no VAPID public key is configured; keep the configured-case test passing.
-- [ ] 3.2 `frontend/src/hooks/__tests__/usePushSubscription.test.tsx`: add a case where `getPushConfig` resolves with a null/empty key (and/or rejects with a 503) and assert the toggle ends OFF with an inline error and NO unhandled `TypeError`.
-- [ ] 3.3 `frontend/src/lib/__tests__/push.test.ts`: leave `urlBase64ToUint8Array` covering valid strings (decoder stays pure; null handling lives at the call site).
+- [x] 3.1 `backend/test/integration/push_config_test.rb`: add a case asserting 503 + error body when no VAPID public key is configured; keep the configured-case test passing.
+- [x] 3.2 `frontend/src/hooks/__tests__/usePushSubscription.test.tsx`: add a case where `getPushConfig` resolves with a null/empty key (and/or rejects with a 503) and assert the toggle ends OFF with an inline error and NO unhandled `TypeError`.
+- [x] 3.3 `frontend/src/lib/__tests__/push.test.ts`: leave `urlBase64ToUint8Array` covering valid strings (decoder stays pure; null handling lives at the call site).
 
 ## 4. Verify
 
-- [ ] 4.1 Run frontend tests (`npm test` / vitest) and backend tests; all green.
-- [ ] 4.2 Manually toggle Daily reminder with VAPID unconfigured and confirm a clear inline message appears instead of a crash; with VAPID configured, confirm enable/disable still works.
+- [x] 4.1 Run frontend tests (`npm test` / vitest) and backend tests; all green. Backend run via Docker Compose (`docker compose exec -e RAILS_ENV=test -e DATABASE_NAME=scribe_test web bin/rails test`): 190 runs, 0 failures. Frontend (`npx vitest run`): 106 tests passed.
+- [ ] 4.2 Manually toggle Daily reminder with VAPID unconfigured and confirm a clear inline message appears instead of a crash; with VAPID configured, confirm enable/disable still works. (Behavior is covered by automated tests; left for manual smoke confirmation by the user.)
