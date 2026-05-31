@@ -81,6 +81,9 @@ export function usePushSubscription(): UsePushSubscriptionResult {
       }
 
       const { vapid_public_key } = await getPushConfig()
+      if (!vapid_public_key) {
+        throw new Error("Notifications aren't available right now.")
+      }
       const registration = await navigator.serviceWorker.ready
       const sub = await registration.pushManager.subscribe({
         userVisibleOnly: true,

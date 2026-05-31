@@ -31,4 +31,13 @@ class PushConfigTest < ActionDispatch::IntegrationTest
     get "/push_config"
     assert_response :unauthorized
   end
+
+  test "GET responds 503 when no VAPID public key is configured" do
+    Rails.application.config.x.vapid.public_key = nil
+    sign_in_as(@user)
+    get "/push_config"
+    assert_response :service_unavailable
+    assert_equal "push_not_configured", json["error"]
+    assert_nil json["vapid_public_key"]
+  end
 end

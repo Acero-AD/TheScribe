@@ -124,6 +124,42 @@ describe('usePushSubscription', () => {
     await waitFor(() => expect(result.current.status).toBe('unsupported'))
   })
 
+  it('stays OFF with an inline error when the VAPID key is empty (no TypeError)', async () => {
+    const { pushManager } = stubBrowserApis()
+    vi.spyOn(pushConfigApi, 'getPushConfig').mockResolvedValue({
+      vapid_public_key: '',
+    })
+
+    const { result } = renderHook(() => usePushSubscription())
+    await waitFor(() => expect(result.current.status).toBe('unsubscribed'))
+
+    await act(async () => {
+      await result.current.subscribe()
+    })
+
+    expect(result.current.status).toBe('unsubscribed')
+    expect(result.current.error).toBe("Notifications aren't available right now.")
+    expect(pushManager.subscribe).not.toHaveBeenCalled()
+  })
+
+  it('stays OFF with an inline error when push config is unavailable (503)', async () => {
+    const { pushManager } = stubBrowserApis()
+    vi.spyOn(pushConfigApi, 'getPushConfig').mockRejectedValue(
+      new Error("Notifications aren't available right now."),
+    )
+
+    const { result } = renderHook(() => usePushSubscription())
+    await waitFor(() => expect(result.current.status).toBe('unsubscribed'))
+
+    await act(async () => {
+      await result.current.subscribe()
+    })
+
+    expect(result.current.status).toBe('unsubscribed')
+    expect(result.current.error).toBe("Notifications aren't available right now.")
+    expect(pushManager.subscribe).not.toHaveBeenCalled()
+  })
+
   it('walks to "unsubscribed" after unsubscribe() and calls DELETE', async () => {
     const existing = makeFakeSubscription()
     stubBrowserApis({ existing })
