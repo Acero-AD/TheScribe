@@ -5,10 +5,10 @@
 
 ## 2. Frontend: guard the VAPID key before decoding
 
-- [ ] 2.1 In `src/hooks/usePushSubscription.ts` `subscribe()`, after destructuring `vapid_public_key` from `getPushConfig()`, throw a clear `Error` (e.g. "Notifications aren't available right now.") when the value is falsy/empty, before calling `urlBase64ToUint8Array`.
-- [ ] 2.2 Confirm the thrown error flows into the existing `catch (err)` block so `setError` shows the message and `setStatus` resets via `readStatus()` (toggle stays OFF).
-- [ ] 2.3 In `src/api/pushConfig.ts`, ensure the 503 "not configured" response rejects with an intelligible message (and the existing cache reset on error still runs).
-- [ ] 2.4 In `src/screens/SettingsScreen.tsx`, verify the inline error wording reads sensibly for the unavailable/unconfigured case (adjust copy if needed); keep `urlBase64ToUint8Array` in `src/lib/push.ts` as a pure decoder (no signature change).
+- [x] 2.1 In `src/hooks/usePushSubscription.ts` `subscribe()`, after destructuring `vapid_public_key` from `getPushConfig()`, throw a clear `Error` (e.g. "Notifications aren't available right now.") when the value is falsy/empty, before calling `urlBase64ToUint8Array`.
+- [x] 2.2 Confirm the thrown error flows into the existing `catch (err)` block so `setError` shows the message and `setStatus` resets via `readStatus()` (toggle stays OFF).
+- [x] 2.3 In `src/api/pushConfig.ts`, ensure the 503 "not configured" response rejects with an intelligible message (and the existing cache reset on error still runs).
+- [x] 2.4 In `src/screens/SettingsScreen.tsx`, verify the inline error wording reads sensibly for the unavailable/unconfigured case (adjust copy if needed); keep `urlBase64ToUint8Array` in `src/lib/push.ts` as a pure decoder (no signature change). No code change needed: `pushStatusMessage` already surfaces `push.error` first.
 
 ## 3. Tests
 
