@@ -36,6 +36,11 @@ env:
     - RAILS_MASTER_KEY
     - DATABASE_URL
     - RESEND_API_KEY
+    # VAPID keypair for Web Push (daily-reminder). Without these,
+    # GET /push_config returns 503 and the reminder toggle stays off.
+    - VAPID_PUBLIC_KEY
+    - VAPID_PRIVATE_KEY
+    - VAPID_SUBJECT
   clear:
     # Run the Solid Queue Supervisor inside the web server's Puma process.
     SOLID_QUEUE_IN_PUMA: true
