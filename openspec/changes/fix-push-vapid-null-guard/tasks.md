@@ -1,7 +1,7 @@
 ## 1. Backend: signal unconfigured push
 
-- [ ] 1.1 In `app/controllers/push_config_controller.rb`, read `Rails.application.config.x.vapid.public_key` and, when blank (`.presence` is nil), render `503` with `{ error: "push_not_configured" }` instead of `{ vapid_public_key: null }`.
-- [ ] 1.2 Keep the 200 happy-path response unchanged when a key is configured.
+- [x] 1.1 In `app/controllers/push_config_controller.rb`, read `Rails.application.config.x.vapid.public_key` and, when blank (`.presence` is nil), render `503` with `{ error: "push_not_configured" }` instead of `{ vapid_public_key: null }`.
+- [x] 1.2 Keep the 200 happy-path response unchanged when a key is configured.
 
 ## 2. Frontend: guard the VAPID key before decoding
 
