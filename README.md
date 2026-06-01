@@ -22,6 +22,19 @@ That's it. Binary, honest, fast. If the streak holds, you held it. If it breaks,
 - **Settings** — daily reminder time, week-start day, weekly vs. bi-weekly publish cadence
 - **Daily reminder push** — an opt-in nudge at the time you choose, delivered as a system notification (PWA + Web Push)
 
+<p float="left", align="middle">
+  <img width="400" alt="Sign In" src="https://github.com/user-attachments/assets/276a9c0a-6fdf-4ea9-bc8b-6ef4df0b4d66" />
+  <img width="400" alt="Today page" src="https://github.com/user-attachments/assets/cc9e2697-bbf1-4e2b-b75c-bd2e5ccc3fc4" />
+</p>
+ 
+<p float="left", align="middle">
+  <img width="400" alt="History page" src="https://github.com/user-attachments/assets/60162e7b-0c9e-4b4c-b54f-ade105a7a877" />
+  <img width="400" alt="Settings page" src="https://github.com/user-attachments/assets/c302587b-709f-45b7-8e43-482ae7c2a924" />
+</p>
+
+
+
+
 It installs to the Home Screen on iOS and Android and runs in standalone mode — no browser chrome, no tabs to lose it in.
 
 The full design rationale lives in [`docs/scribe-app.md`](docs/scribe-app.md).
