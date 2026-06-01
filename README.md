@@ -15,6 +15,12 @@ The Scribe flips it. You only measure what's yours to control:
 
 That's it. Binary, honest, fast. If the streak holds, you held it. If it breaks, you broke it. No grading, no comparison, no social layer.
 
+## Philosophy
+
+The app isn't a productivity tool. It's a commitment device.
+
+It's built so showing up feels like winning, regardless of what the algorithm decides about your work. The bar is low enough to clear every day; the streak is the proof you cleared it.
+
 ## What's in the app
 
 - **Today** — the two daily check-ins, your current streaks, and a one-line note ("what did you write about?") that auto-saves
@@ -82,9 +88,3 @@ frontend/   React PWA — screens, components, design tokens, service worker
 docs/       Design document and operational playbooks
 openspec/   Active and archived change proposals (the spec-driven workflow)
 ```
-
-## Philosophy
-
-The app isn't a productivity tool. It's a commitment device.
-
-It's built so showing up feels like winning, regardless of what the algorithm decides about your work. The bar is low enough to clear every day; the streak is the proof you cleared it.
