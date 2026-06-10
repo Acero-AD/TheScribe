@@ -38,6 +38,9 @@ gem "ruby-vips", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 
+# Throttle abusive request rates (per-IP magic-link limit). See config/initializers/rack_attack.rb.
+gem "rack-attack"
+
 # Send VAPID-signed Web Push notifications for the daily reminder (`daily-reminder` capability).
 gem "web-push", "~> 3.0"
 

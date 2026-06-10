@@ -8,10 +8,10 @@
 
 ## 2. Magic-link throttling & deferred user creation — `account-access`
 
-- [ ] 2.1 Add `rack-attack` to the `Gemfile`; add `config/initializers/rack_attack.rb` using the Solid Cache store, throttling `POST /magic_links` per client IP over a rolling window.
-- [ ] 2.2 In `app/controllers/magic_links_controller.rb#create`, validate email format and look up an existing user; create the `User` only inside the issue path (after the per-email rate check passes) so over-limit / never-issued requests insert nothing.
-- [ ] 2.3 Preserve the generic 200 response for all rejected cases (format-valid but throttled) so account enumeration stays blocked; keep the 422 for malformed email.
-- [ ] 2.4 Tests: over-limit request for a brand-new email creates no `User`/`MagicLink` and sends no mail; per-IP throttle kicks in after the budget; happy path unchanged.
+- [x] 2.1 Add `rack-attack` to the `Gemfile`; add `config/initializers/rack_attack.rb` using the Solid Cache store, throttling `POST /magic_links` per client IP over a rolling window.
+- [x] 2.2 In `app/controllers/magic_links_controller.rb#create`, validate email format and look up an existing user; create the `User` only inside the issue path (after the per-email rate check passes) so over-limit / never-issued requests insert nothing.
+- [x] 2.3 Preserve the generic 200 response for all rejected cases (format-valid but throttled) so account enumeration stays blocked; keep the 422 for malformed email.
+- [x] 2.4 Tests: over-limit request for a brand-new email creates no `User`/`MagicLink` and sends no mail; per-IP throttle kicks in after the budget; happy path unchanged.
 
 ## 3. Prefetch-safe magic-link verification — `account-access`
 

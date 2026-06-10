@@ -10,12 +10,16 @@ class MagicLinksController < ApplicationController
       return render json: { errors: { email: [ "is invalid" ] } }, status: :unprocessable_content
     end
 
-    user = User.find_or_create_by!(email: email)
+    # Defer user creation until we actually issue a link. A rate-limited
+    # existing user (or any request that never issues) must not create rows,
+    # so anonymous traffic can't grow the users table unbounded.
+    user = User.find_by(email: email)
 
-    if rate_limited?(user)
+    if user && rate_limited?(user)
       return render json: { message: GENERIC_MESSAGE }, status: :ok
     end
 
+    user ||= User.create!(email: email)
     _link, raw_token = MagicLink.issue!(user: user)
     UserMailer.magic_link(user, raw_token).deliver_later
 

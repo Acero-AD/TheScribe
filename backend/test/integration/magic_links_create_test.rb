@@ -70,6 +70,40 @@ class MagicLinksCreateTest < ActionDispatch::IntegrationTest
     assert_equal MagicLinksController::GENERIC_MESSAGE, body["message"]
   end
 
+  test "rate-limited existing email creates no new user or link" do
+    user = User.create!(email: "limit2@example.com")
+    MagicLinksController::RATE_LIMIT.times { MagicLink.issue!(user: user) }
+
+    assert_no_difference [ "User.count", "MagicLink.count" ] do
+      assert_no_enqueued_emails do
+        post magic_links_path, params: { email: "limit2@example.com" }
+      end
+    end
+    assert_response :ok
+  end
+
+  test "per-IP throttle blocks a burst across many emails and creates no user" do
+    original_store = Rack::Attack.cache.store
+    Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    Rack::Attack.reset!
+
+    # The first 10 requests from this IP are under the limit and succeed,
+    # each for a distinct email (so the per-email limit never trips).
+    10.times do |i|
+      post magic_links_path, params: { email: "burst#{i}@example.com" }
+      assert_response :ok
+    end
+
+    # The 11th from the same IP is throttled and persists nothing.
+    assert_no_difference "User.count" do
+      post magic_links_path, params: { email: "burst-blocked@example.com" }
+    end
+    assert_response :too_many_requests
+  ensure
+    Rack::Attack.cache.store = original_store
+    Rack::Attack.reset!
+  end
+
   test "responses for new and existing emails are indistinguishable" do
     User.create!(email: "exists@example.com")
 
