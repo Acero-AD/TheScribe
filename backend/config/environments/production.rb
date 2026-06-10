@@ -57,7 +57,10 @@ Rails.application.configure do
   # Host used by links generated in mailer templates (the magic-link URL points
   # at this backend, which then redirects to the frontend). Set APP_HOST to the
   # backend's public domain (e.g. the `<app>-api` subdomain).
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost"), protocol: "https" }
+  # APP_HOST is required in production: magic-link emails embed an absolute URL
+  # built from it, and a silent "localhost" fallback would ship dead links.
+  # ENV.fetch with no default raises KeyError at boot if it is unset.
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST"), protocol: "https" }
 
   # Deliver magic-link email via Resend over SMTP. RESEND_API_KEY is injected
   # as a secret by Kamal; the username is always the literal "resend".
@@ -81,12 +84,9 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # Restrict the allowed `Host` to the backend's own domain to close
+  # DNS-rebinding and Host-header injection. The kamal-proxy health probe hits
+  # /up with a non-matching Host, so that path is excluded.
+  config.hosts << ENV.fetch("APP_HOST")
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

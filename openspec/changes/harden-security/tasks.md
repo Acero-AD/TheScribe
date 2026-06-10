@@ -22,9 +22,9 @@
 
 ## 4. Host authorization & mailer host — `deploy-backend`
 
-- [ ] 4.1 In `config/environments/production.rb`, set `config.hosts` to the backend's production domain and exclude the `/up` health check via `config.host_authorization`.
-- [ ] 4.2 Make the mailer host fail loudly: require `APP_HOST` (no silent `localhost` default) so production boot fails if it is unset.
-- [ ] 4.3 Tests/verify: request with the configured Host is served; an unexpected Host is rejected; `/up` still succeeds; booting without `APP_HOST` raises.
+- [x] 4.1 In `config/environments/production.rb`, set `config.hosts` to the backend's production domain and exclude the `/up` health check via `config.host_authorization`.
+- [x] 4.2 Make the mailer host fail loudly: require `APP_HOST` (no silent `localhost` default) so production boot fails if it is unset.
+- [ ] 4.3 Tests/verify: request with the configured Host is served; an unexpected Host is rejected; `/up` still succeeds; booting without `APP_HOST` raises. [needs deploy/prod-boot; ruby -c syntax verified]
 
 ## 5. Secret handling & rotation — `deploy-backend`
 
