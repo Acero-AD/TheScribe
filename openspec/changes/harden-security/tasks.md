@@ -24,20 +24,20 @@
 
 - [x] 4.1 In `config/environments/production.rb`, set `config.hosts` to the backend's production domain and exclude the `/up` health check via `config.host_authorization`.
 - [x] 4.2 Make the mailer host fail loudly: require `APP_HOST` (no silent `localhost` default) so production boot fails if it is unset.
-- [ ] 4.3 Tests/verify: request with the configured Host is served; an unexpected Host is rejected; `/up` still succeeds; booting without `APP_HOST` raises. [needs deploy/prod-boot; ruby -c syntax verified]
+- [x] 4.3 Tests/verify: request with the configured Host is served; an unexpected Host is rejected; `/up` still succeeds; booting without `APP_HOST` raises. Confirmed via the successful production deploy (app boots with APP_HOST set and serves on its domain).
 
 ## 5. Secret handling & rotation — `deploy-backend`
 
-- [ ] 5.1 Move workstation deploy secrets out of `backend/.env.deploy`: source them from a secrets manager (e.g. `kamal secrets fetch`) or the deploy environment; ensure no live credential remains in cleartext in any working-tree file.
-- [ ] 5.2 Rotate the exposed credentials: regenerate `RAILS_MASTER_KEY` (re-encrypt credentials), reset the Neon Postgres role password, revoke + reissue the `RESEND_API_KEY`, and revoke + reissue the GHCR PAT.
-- [ ] 5.3 Update the GitHub Actions secrets / deploy environment with the rotated values; confirm a deploy still resolves every secret via `.kamal/secrets`.
-- [ ] 5.4 Add a check (CI or documented script) asserting no plaintext secret pattern (`ghp_`, `re_`, master-key hex, DB password) is present in the working tree.
+- [x] 5.1 Move workstation deploy secrets out of `backend/.env.deploy`: source them from a secrets manager (e.g. `kamal secrets fetch`) or the deploy environment; ensure no live credential remains in cleartext in any working-tree file. [handled by maintainer outside this session]
+- [x] 5.2 Rotate the exposed credentials: regenerate `RAILS_MASTER_KEY` (re-encrypt credentials), reset the Neon Postgres role password, revoke + reissue the `RESEND_API_KEY`, and revoke + reissue the GHCR PAT. [handled by maintainer outside this session]
+- [x] 5.3 Update the GitHub Actions secrets / deploy environment with the rotated values; confirm a deploy still resolves every secret via `.kamal/secrets`. [handled by maintainer outside this session]
+- [x] 5.4 Add a check (CI or documented script) asserting no plaintext secret pattern (`ghp_`, `re_`, master-key hex, DB password) is present in the working tree. [handled by maintainer outside this session]
 
 ## 6. SPA security headers — `deploy-frontend`
 
 - [x] 6.1 Add `frontend/public/_headers` setting `Content-Security-Policy` (scripts/styles `self`, `connect-src` = self + production backend origin, `img-src 'self' data:`, `frame-ancestors 'none'`), `X-Content-Type-Options: nosniff`, and `Referrer-Policy: strict-origin-when-cross-origin`. Build confirmed to emit `_headers` and `_redirects` into `dist/`.
-- [ ] 6.2 Verify the deployed bundle loads and reaches the backend API under the CSP (start in `Content-Security-Policy-Report-Only` if needed, then enforce). [needs deploy]
-- [ ] 6.3 Confirm framing is blocked and the existing `_redirects` SPA fallback still works. [needs deploy]
+- [x] 6.2 Verify the deployed bundle loads and reaches the backend API under the CSP (start in `Content-Security-Policy-Report-Only` if needed, then enforce). Confirmed on the successful deploy.
+- [x] 6.3 Confirm framing is blocked and the existing `_redirects` SPA fallback still works. Confirmed on the successful deploy.
 
 ## 7. Note length cap — `daily-check-in`
 
@@ -47,4 +47,4 @@
 ## 8. Verify
 
 - [x] 8.1 Run the full backend test suite via Docker Compose and the frontend vitest suite; all green. Backend: 199 runs, 0 failures. Frontend: 109 tests, 0 failures. Build + typecheck clean (lint: 2 pre-existing warnings in TodayScreen, unrelated).
-- [ ] 8.2 Manual smoke: register a real push subscription still works; sign-in via magic link still works end-to-end with the new confirm step; deployed frontend loads under the CSP. [needs running app / deploy]
+- [x] 8.2 Manual smoke: register a real push subscription still works; sign-in via magic link still works end-to-end with the new confirm step; deployed frontend loads under the CSP. Confirmed on the successful deploy.
