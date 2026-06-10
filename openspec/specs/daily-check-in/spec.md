@@ -2,9 +2,7 @@
 
 ## Purpose
 Per-day record of whether the user wrote, plus an optional one-line note. Owns the `DailyLog` model and the day-level read/write API. Establishes the `/` (Today) route on the frontend as a composition surface for later daily/weekly widgets.
-
 ## Requirements
-
 ### Requirement: Backend SHALL persist a daily log per user per date
 
 The backend SHALL define a `DailyLog` record uniquely identified by `(user_id, date)`. Each record SHALL hold a `wrote` boolean (default false), a `wrote_at` datetime (nullable), and a `note` text field (nullable). A record SHALL be created on first interaction with that date — either toggling `wrote` to true or saving a non-empty note. Dates with no interaction SHALL have no row.
@@ -43,7 +41,7 @@ The backend SHALL accept `PUT /daily_logs/:date` only when `:date` equals the cu
 
 ### Requirement: Backend SHALL accept partial PUT bodies idempotently
 
-The backend SHALL accept `{ wrote?, note? }` on `PUT /daily_logs/:date`. Fields not supplied SHALL not be modified. Sending the same `wrote` value multiple times SHALL be a no-op. When `wrote` flips from false to true, `wrote_at` SHALL be set to the current time; when it flips from true to false, `wrote_at` SHALL be cleared to null.
+The backend SHALL accept `{ wrote?, note? }` on `PUT /daily_logs/:date`. Fields not supplied SHALL not be modified. Sending the same `wrote` value multiple times SHALL be a no-op. When `wrote` flips from false to true, `wrote_at` SHALL be set to the current time; when it flips from true to false, `wrote_at` SHALL be cleared to null. The `note` SHALL be bounded by a maximum length; a note exceeding that limit SHALL be rejected with 422 and SHALL NOT be persisted, so a client cannot store unbounded text.
 
 #### Scenario: Toggle wrote on
 - **WHEN** the user PUTs `{ wrote: true }` on a row currently `wrote: false`
@@ -64,6 +62,10 @@ The backend SHALL accept `{ wrote?, note? }` on `PUT /daily_logs/:date`. Fields 
 #### Scenario: Empty body returns current state
 - **WHEN** the user PUTs `{}` on an existing row
 - **THEN** the backend responds 200 with the unchanged row's representation
+
+#### Scenario: Over-length note is rejected
+- **WHEN** the user PUTs a `note` whose length exceeds the configured maximum
+- **THEN** the backend responds 422 and the row's `note` is not changed
 
 ### Requirement: Backend SHALL expose a per-date read endpoint
 
@@ -172,3 +174,4 @@ The frontend SHALL render a textarea card below the check-in card. The textarea 
 #### Scenario: Save fails
 - **WHEN** the PUT returns a non-2xx or network failure
 - **THEN** the frontend keeps the textarea's current value (does not revert) and surfaces an inline error indicator with a retry option, since unsaved keystrokes are user-typed content that should not be silently discarded
+
