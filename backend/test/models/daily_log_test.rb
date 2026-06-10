@@ -28,6 +28,17 @@ class DailyLogTest < ActiveSupport::TestCase
     assert_nil log.note
   end
 
+  test "accepts a note at the maximum length" do
+    log = DailyLog.new(user: @user, date: Date.current, wrote: false, note: "a" * DailyLog::NOTE_MAX_LENGTH)
+    assert log.valid?
+  end
+
+  test "rejects a note over the maximum length" do
+    log = DailyLog.new(user: @user, date: Date.current, wrote: false, note: "a" * (DailyLog::NOTE_MAX_LENGTH + 1))
+    refute log.valid?
+    assert log.errors[:note].any?
+  end
+
   test "enforces uniqueness on (user_id, date)" do
     DailyLog.create!(user: @user, date: Date.new(2026, 5, 8), wrote: false)
     duplicate = DailyLog.new(user: @user, date: Date.new(2026, 5, 8), wrote: false)

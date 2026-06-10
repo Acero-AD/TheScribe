@@ -41,8 +41,8 @@
 
 ## 7. Note length cap — `daily-check-in`
 
-- [ ] 7.1 Add a `note` length validation to `app/models/daily_log.rb` (a few-KB cap) returning 422 on violation.
-- [ ] 7.2 Tests: an over-length note is rejected with 422 and not persisted; a normal note still saves.
+- [x] 7.1 Add a `note` length validation to `app/models/daily_log.rb` (a few-KB cap) returning 422 on violation.
+- [x] 7.2 Tests: an over-length note is rejected with 422 and not persisted; a normal note still saves.
 
 ## 8. Verify
 

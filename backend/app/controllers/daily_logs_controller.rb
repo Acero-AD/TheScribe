@@ -30,7 +30,10 @@ class DailyLogsController < ApplicationController
 
     log = current_user.daily_logs.find_or_initialize_by(date: date)
     apply_changes!(log)
-    log.save!
+    unless log.save
+      return render json: { error: { code: "invalid_log", message: log.errors.full_messages.to_sentence } },
+                    status: :unprocessable_content
+    end
 
     render json: serialize(log, date: date).merge(writing_streak: StreakCalculator.writing_streak(current_user))
   end

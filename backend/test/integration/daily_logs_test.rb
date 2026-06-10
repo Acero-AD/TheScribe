@@ -85,6 +85,16 @@ class DailyLogsTest < ActionDispatch::IntegrationTest
     assert_equal "first thought", json["note"]
   end
 
+  test "PUT update rejects an over-length note with 422 and persists nothing" do
+    sign_in_as(@user)
+    assert_no_difference "DailyLog.count" do
+      put "/daily_logs/#{@today.iso8601}",
+          params: { note: "a" * (DailyLog::NOTE_MAX_LENGTH + 1) }, as: :json
+    end
+    assert_response :unprocessable_content
+    assert_equal "invalid_log", json["error"]["code"]
+  end
+
   test "PUT update toggling wrote off clears wrote_at" do
     sign_in_as(@user)
     DailyLog.create!(user: @user, date: @today, wrote: true, wrote_at: Time.current)
