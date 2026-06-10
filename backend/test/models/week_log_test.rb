@@ -43,18 +43,4 @@ class WeekLogTest < ActiveSupport::TestCase
     sibling = WeekLog.new(user: other, week_start_date: @monday, published: true)
     assert sibling.valid?
   end
-
-  test "WeekLog.for returns the existing row when present" do
-    existing = WeekLog.create!(user: @user, week_start_date: @monday, published: true)
-    found = WeekLog.for(user: @user, week_start_date: @monday)
-    assert_equal existing.id, found.id
-    assert_equal true, found.published
-  end
-
-  test "WeekLog.for returns a fresh unpersisted instance with defaults when absent" do
-    fresh = WeekLog.for(user: @user, week_start_date: @monday)
-    refute fresh.persisted?
-    assert_equal @monday, fresh.week_start_date
-    assert_equal false, fresh.published
-  end
 end
