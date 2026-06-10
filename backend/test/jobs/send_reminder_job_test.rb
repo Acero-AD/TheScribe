@@ -11,7 +11,7 @@ class SendReminderJobTest < ActiveJob::TestCase
     @today = Date.new(2026, 5, 20)
     @subscription = PushSubscription.create!(
       user: @user,
-      endpoint: "https://push.example/one",
+      endpoint: "https://fcm.googleapis.com/fcm/send/one",
       p256dh_key: "p256",
       auth_key: "auth"
     )
@@ -61,7 +61,7 @@ class SendReminderJobTest < ActiveJob::TestCase
 
   test "creates a ReminderLog row and delivers to every subscription on the happy path" do
     second = PushSubscription.create!(
-      user: @user, endpoint: "https://push.example/two", p256dh_key: "p", auth_key: "a"
+      user: @user, endpoint: "https://fcm.googleapis.com/fcm/send/two", p256dh_key: "p", auth_key: "a"
     )
 
     with_web_push_stub do |calls|

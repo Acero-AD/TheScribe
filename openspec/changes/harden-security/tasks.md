@@ -1,10 +1,10 @@
 ## 1. Push endpoint validation (SSRF) — `daily-reminder`
 
-- [ ] 1.1 Add a push-endpoint validator (e.g. `app/models/push_subscription.rb` validation or a `PushEndpointValidator` service) that accepts only absolute `https` URLs whose host matches a configured provider allowlist (FCM `*.googleapis.com`/`fcm.googleapis.com`, Mozilla `*.push.services.mozilla.com`, WNS `*.notify.windows.com`, Apple `*.push.apple.com`).
-- [ ] 1.2 Reject any endpoint whose host is loopback, link-local, or a private range, and any host not on the allowlist.
-- [ ] 1.3 Put the allowlist in config (e.g. `config/initializers/` or an app config) so providers can be added without code changes.
-- [ ] 1.4 In `app/controllers/push_subscriptions_controller.rb#create`, return 422 (`invalid_subscription`) when validation fails, before persisting.
-- [ ] 1.5 Tests: 201 for an allowlisted https endpoint; 422 for `http://`, for a non-allowlisted host, and for loopback/link-local/private hosts (e.g. `169.254.169.254`, `localhost`, `10.0.0.5`); assert no row is persisted and no outbound request is made.
+- [x] 1.1 Add a push-endpoint validator (e.g. `app/models/push_subscription.rb` validation or a `PushEndpointValidator` service) that accepts only absolute `https` URLs whose host matches a configured provider allowlist (FCM `*.googleapis.com`/`fcm.googleapis.com`, Mozilla `*.push.services.mozilla.com`, WNS `*.notify.windows.com`, Apple `*.push.apple.com`).
+- [x] 1.2 Reject any endpoint whose host is loopback, link-local, or a private range, and any host not on the allowlist. (Allowlist-only inherently rejects these — covered by tests.)
+- [x] 1.3 Put the allowlist in config (e.g. `config/initializers/` or an app config) so providers can be added without code changes. (`config/initializers/push_providers.rb`)
+- [x] 1.4 In `app/controllers/push_subscriptions_controller.rb#create`, return 422 (`invalid_subscription`) when validation fails, before persisting.
+- [x] 1.5 Tests: 201 for an allowlisted https endpoint; 422 for `http://`, for a non-allowlisted host, and for loopback/link-local/private hosts (e.g. `169.254.169.254`, `localhost`, `10.0.0.5`); assert no row is persisted and no outbound request is made.
 
 ## 2. Magic-link throttling & deferred user creation — `account-access`
 

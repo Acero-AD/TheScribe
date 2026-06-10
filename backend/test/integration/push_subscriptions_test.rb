@@ -5,7 +5,7 @@ class PushSubscriptionsTest < ActionDispatch::IntegrationTest
     @user = User.create!(email: "push-user@example.com")
     @other = User.create!(email: "push-other@example.com")
     @attrs = {
-      endpoint: "https://push.example/abc",
+      endpoint: "https://fcm.googleapis.com/fcm/send/abc",
       p256dh_key: "key-p256",
       auth_key: "key-auth"
     }
@@ -57,6 +57,17 @@ class PushSubscriptionsTest < ActionDispatch::IntegrationTest
     assert_equal "invalid_subscription", json["error"]["code"]
   end
 
+  test "POST with an untrusted endpoint responds 422 and persists nothing" do
+    sign_in_as(@user)
+    assert_no_difference "PushSubscription.count" do
+      post "/push_subscriptions",
+           params: @attrs.merge(endpoint: "http://169.254.169.254/latest/meta-data"),
+           as: :json
+    end
+    assert_response :unprocessable_content
+    assert_equal "invalid_subscription", json["error"]["code"]
+  end
+
   test "POST when unauthenticated responds 401" do
     post "/push_subscriptions", params: @attrs, as: :json
     assert_response :unauthorized
@@ -76,7 +87,7 @@ class PushSubscriptionsTest < ActionDispatch::IntegrationTest
   test "DELETE with an unknown endpoint is idempotent (200)" do
     sign_in_as(@user)
     assert_no_difference "PushSubscription.count" do
-      delete "/push_subscriptions/current", params: { endpoint: "https://push.example/unknown" }
+      delete "/push_subscriptions/current", params: { endpoint: "https://fcm.googleapis.com/fcm/send/unknown" }
     end
     assert_response :ok
   end

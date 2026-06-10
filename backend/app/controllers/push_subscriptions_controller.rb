@@ -6,18 +6,18 @@ class PushSubscriptionsController < ApplicationController
   # 201 when a new row is persisted, 200 when an existing row is updated.
   def create
     attrs = subscription_params
-    if attrs[:endpoint].blank? || attrs[:p256dh_key].blank? || attrs[:auth_key].blank?
-      return render json: { error: { code: "invalid_subscription", message: "endpoint, p256dh_key, and auth_key are required." } },
-                    status: :unprocessable_content
-    end
 
-    subscription = current_user.push_subscriptions.find_or_initialize_by(endpoint: attrs[:endpoint])
+    subscription = current_user.push_subscriptions.find_or_initialize_by(endpoint: attrs[:endpoint].to_s)
     was_new = subscription.new_record?
     subscription.p256dh_key = attrs[:p256dh_key]
     subscription.auth_key = attrs[:auth_key]
-    subscription.save!
 
-    render json: { id: subscription.id }, status: was_new ? :created : :ok
+    if subscription.save
+      render json: { id: subscription.id }, status: was_new ? :created : :ok
+    else
+      render json: { error: { code: "invalid_subscription", message: subscription.errors.full_messages.to_sentence } },
+             status: :unprocessable_content
+    end
   end
 
   # DELETE /push_subscriptions/current

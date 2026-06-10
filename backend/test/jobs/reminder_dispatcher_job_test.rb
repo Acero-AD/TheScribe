@@ -12,7 +12,7 @@ class ReminderDispatcherJobTest < ActiveJob::TestCase
     user = User.create!(email: email, reminder_time: reminder_time, timezone: timezone)
     if subscribe
       PushSubscription.create!(
-        user: user, endpoint: "https://push.example/#{user.id}",
+        user: user, endpoint: "https://fcm.googleapis.com/fcm/send/#{user.id}",
         p256dh_key: "p", auth_key: "a"
       )
     end
