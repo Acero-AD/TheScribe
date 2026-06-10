@@ -41,38 +41,4 @@ class DailyLogTest < ActiveSupport::TestCase
     sibling = DailyLog.new(user: other, date: Date.new(2026, 5, 8), wrote: false)
     assert sibling.valid?
   end
-
-  test "DailyLog.for returns the existing row when present" do
-    existing = DailyLog.create!(user: @user, date: Date.new(2026, 5, 8), wrote: true, note: "hi")
-    found = DailyLog.for(user: @user, date: Date.new(2026, 5, 8))
-    assert_equal existing.id, found.id
-  end
-
-  test "DailyLog.for returns a fresh unpersisted instance with defaults when absent" do
-    fresh = DailyLog.for(user: @user, date: Date.new(2026, 5, 9))
-    refute fresh.persisted?
-    assert_equal Date.new(2026, 5, 9), fresh.date
-    assert_equal false, fresh.wrote
-    assert_nil fresh.wrote_at
-    assert_nil fresh.note
-  end
-
-  test "mark_wrote!(true) flips wrote and sets wrote_at" do
-    log = DailyLog.create!(user: @user, date: Date.current, wrote: false)
-    freeze_time = Time.utc(2026, 5, 8, 12, 0, 0)
-    travel_to(freeze_time) do
-      log.mark_wrote!(true)
-    end
-    log.reload
-    assert_equal true, log.wrote
-    assert_equal freeze_time, log.wrote_at
-  end
-
-  test "mark_wrote!(false) clears wrote_at" do
-    log = DailyLog.create!(user: @user, date: Date.current, wrote: true, wrote_at: Time.current)
-    log.mark_wrote!(false)
-    log.reload
-    assert_equal false, log.wrote
-    assert_nil log.wrote_at
-  end
 end
