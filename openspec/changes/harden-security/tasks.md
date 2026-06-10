@@ -35,9 +35,9 @@
 
 ## 6. SPA security headers — `deploy-frontend`
 
-- [ ] 6.1 Add `frontend/public/_headers` setting `Content-Security-Policy` (scripts/styles `self`, `connect-src` = self + production backend origin, `img-src 'self' data:`, `frame-ancestors 'none'`), `X-Content-Type-Options: nosniff`, and `Referrer-Policy: strict-origin-when-cross-origin`.
-- [ ] 6.2 Verify the deployed bundle loads and reaches the backend API under the CSP (start in `Content-Security-Policy-Report-Only` if needed, then enforce).
-- [ ] 6.3 Confirm framing is blocked and the existing `_redirects` SPA fallback still works.
+- [x] 6.1 Add `frontend/public/_headers` setting `Content-Security-Policy` (scripts/styles `self`, `connect-src` = self + production backend origin, `img-src 'self' data:`, `frame-ancestors 'none'`), `X-Content-Type-Options: nosniff`, and `Referrer-Policy: strict-origin-when-cross-origin`. Build confirmed to emit `_headers` and `_redirects` into `dist/`.
+- [ ] 6.2 Verify the deployed bundle loads and reaches the backend API under the CSP (start in `Content-Security-Policy-Report-Only` if needed, then enforce). [needs deploy]
+- [ ] 6.3 Confirm framing is blocked and the existing `_redirects` SPA fallback still works. [needs deploy]
 
 ## 7. Note length cap — `daily-check-in`
 

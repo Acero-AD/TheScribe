@@ -1,0 +1,11 @@
+# Security response headers for the SPA (Cloudflare Pages).
+#
+# The app is cookie-authenticated, so clickjacking + sniffing protection
+# matters. script-src stays strict ('self'); style-src allows inline because
+# React applies styles via element style props. connect-src must include the
+# production backend API origin the bundle talks to (VITE_BACKEND_URL).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://scribe-api.somosbytes.es; worker-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
