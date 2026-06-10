@@ -46,5 +46,5 @@
 
 ## 8. Verify
 
-- [ ] 8.1 Run the full backend test suite via Docker Compose and the frontend vitest suite; all green.
-- [ ] 8.2 Manual smoke: register a real push subscription still works; sign-in via magic link still works end-to-end with the new confirm step; deployed frontend loads under the CSP.
+- [x] 8.1 Run the full backend test suite via Docker Compose and the frontend vitest suite; all green. Backend: 199 runs, 0 failures. Frontend: 109 tests, 0 failures. Build + typecheck clean (lint: 2 pre-existing warnings in TodayScreen, unrelated).
+- [ ] 8.2 Manual smoke: register a real push subscription still works; sign-in via magic link still works end-to-end with the new confirm step; deployed frontend loads under the CSP. [needs running app / deploy]
