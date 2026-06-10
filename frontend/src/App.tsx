@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
 import { SignInScreen } from './screens/SignInScreen'
+import { ConfirmSignInScreen } from './screens/ConfirmSignInScreen'
 import { TodayScreen } from './screens/TodayScreen'
 import { HistoryScreen } from './screens/HistoryScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
@@ -12,6 +13,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/sign-in" element={<SignInScreen />} />
+          <Route path="/sign-in/confirm" element={<ConfirmSignInScreen />} />
           <Route
             path="/"
             element={

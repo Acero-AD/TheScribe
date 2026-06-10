@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   post "magic_links" => "magic_links#create", as: :magic_links
+  # GET validates only (prefetch-safe); the SPA confirm screen POSTs to consume.
   get  "magic_links/:token" => "magic_links#show", as: :magic_link
+  post "magic_links/:token/consume" => "magic_links#consume", as: :consume_magic_link
 
   get    "me" => "sessions#show", as: :current_user
   patch  "me/settings" => "me/settings#update", as: :current_user_settings

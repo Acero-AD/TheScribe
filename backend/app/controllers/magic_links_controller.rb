@@ -28,31 +28,46 @@ class MagicLinksController < ApplicationController
     render json: { errors: e.record.errors }, status: :unprocessable_content
   end
 
+  # GET is validate-only and never mutates: email-security scanners and
+  # link-prefetchers issue GETs, so consuming here would burn the one-time
+  # link before the user clicks. Invalid/expired/consumed links bounce to
+  # sign-in with an error; a still-valid link hands the (unused) token to the
+  # SPA confirm screen, which POSTs to #consume.
   def show
+    error = validation_error_for(MagicLink.find_by_raw_token(params[:token]))
+    if error
+      return redirect_to frontend_url("/sign-in", query: { error: error }),
+                         allow_other_host: true
+    end
+
+    redirect_to frontend_url("/sign-in/confirm", query: { token: params[:token] }),
+                allow_other_host: true
+  end
+
+  # POST consumes the link and establishes the session. Re-checks validity
+  # because the link may have expired or been consumed since the GET.
+  def consume
     link = MagicLink.find_by_raw_token(params[:token])
-
-    if link.nil?
-      return redirect_to frontend_url("/sign-in", query: { error: "invalid" }),
-                         allow_other_host: true
-    end
-
-    if link.consumed_at.present?
-      return redirect_to frontend_url("/sign-in", query: { error: "consumed" }),
-                         allow_other_host: true
-    end
-
-    unless link.expires_at.future?
-      return redirect_to frontend_url("/sign-in", query: { error: "expired" }),
-                         allow_other_host: true
+    error = validation_error_for(link)
+    if error
+      return render json: { error: { code: error } }, status: :unprocessable_content
     end
 
     link.consume!
     sign_in(link.user)
-
-    redirect_to frontend_url("/"), allow_other_host: true
+    render json: { ok: true }, status: :ok
   end
 
   private
+
+  # Returns an error code ("invalid" / "consumed" / "expired") when the link
+  # cannot be used, or nil when it is valid.
+  def validation_error_for(link)
+    return "invalid" if link.nil?
+    return "consumed" if link.consumed_at.present?
+    return "expired" unless link.expires_at.future?
+    nil
+  end
 
   def rate_limited?(user)
     user.magic_links.where("created_at > ?", RATE_WINDOW.ago).count >= RATE_LIMIT

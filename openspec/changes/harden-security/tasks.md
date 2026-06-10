@@ -15,10 +15,10 @@
 
 ## 3. Prefetch-safe magic-link verification — `account-access`
 
-- [ ] 3.1 Change `GET /magic_links/:token` to validate the token (exists, not expired, not consumed) WITHOUT consuming it or establishing a session — render/redirect to a confirmation step carrying the token.
-- [ ] 3.2 Add the consume action on an explicit `POST` (e.g. `POST /magic_links/:token/consume`) that marks `consumed_at`, signs the user in, and redirects to the app; keep the `invalid`/`expired`/`consumed` redirects.
-- [ ] 3.3 Update `config/routes.rb` for the new POST route; update `frontend/src/screens/SignInScreen.tsx` (and any confirm view) for the interstitial/confirm copy if the SPA drives the POST.
-- [ ] 3.4 Tests: a GET on a valid link leaves `consumed_at` null and creates no session; the POST consumes once and signs in; second POST shows "already used"; expired/invalid paths unchanged.
+- [x] 3.1 Change `GET /magic_links/:token` to validate the token (exists, not expired, not consumed) WITHOUT consuming it or establishing a session — redirects to the SPA `/sign-in/confirm?token=…` screen (errors still bounce to `/sign-in?error=…`).
+- [x] 3.2 Add the consume action on an explicit `POST /magic_links/:token/consume` that marks `consumed_at`, signs the user in (JSON `{ ok: true }` + session cookie), and re-checks validity; invalid/expired/consumed return 422 with an error code.
+- [x] 3.3 Update `config/routes.rb` for the new POST route; add `frontend/src/screens/ConfirmSignInScreen.tsx` + `/sign-in/confirm` route that POSTs to consume, refreshes auth, and navigates to the app (errors route to `/sign-in?error=…`).
+- [x] 3.4 Tests: GET on a valid link leaves `consumed_at` null and creates no session; POST consumes once and signs in; second POST returns "consumed"; expired/invalid paths covered. Frontend confirm screen success/error/missing-token covered. All integration sign-in helpers updated to POST consume.
 
 ## 4. Host authorization & mailer host — `deploy-backend`
 

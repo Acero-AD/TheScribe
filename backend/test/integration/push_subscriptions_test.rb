@@ -13,7 +13,7 @@ class PushSubscriptionsTest < ActionDispatch::IntegrationTest
 
   def sign_in_as(user)
     _link, raw_token = MagicLink.issue!(user: user)
-    get magic_link_path(token: raw_token)
+    post consume_magic_link_path(token: raw_token)
   end
 
   def json
