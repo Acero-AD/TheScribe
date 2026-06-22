@@ -57,7 +57,12 @@ jobs:
       - name: Scan for Rails security vulnerabilities (Brakeman)
         run: bin/brakeman --no-pager
 
+      # Gem CVEs (third-party, often not immediately fixable) are reported but
+      # MUST NOT block merges or deploys. `continue-on-error` surfaces the
+      # failure on the step while keeping the job — and thus `ci-success` and
+      # `deploy-backend` — green. Brakeman (our own code) stays blocking.
       - name: Audit gems for known CVEs (bundler-audit)
+        continue-on-error: true
         run: bin/bundler-audit
 
   backend-lint:
