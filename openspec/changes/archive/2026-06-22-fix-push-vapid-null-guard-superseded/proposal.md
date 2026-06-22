@@ -1,3 +1,8 @@
+> **SUPERSEDED (2026-06-22) — NOT IMPLEMENTED.** This change patched a bug inside
+> the `daily-reminder` capability, which has since been removed in full by the
+> `remove-daily-reminder` change. The crash it fixed can no longer occur (there is
+> no push toggle / VAPID endpoint). Archived for history only; do not implement.
+
 ## Why
 
 Enabling the "Daily reminder" toggle crashes with `TypeError: Cannot read properties of null (reading 'length')`. When the backend's VAPID public key is unconfigured, `GET /push_config` returns `{ vapid_public_key: null }`; the frontend trusts its `string` type and passes the `null` straight into `urlBase64ToUint8Array`, where `base64.length` throws. The user sees a cryptic, unactionable error instead of a clear message, and a misconfigured server fails silently until a user happens to toggle notifications.

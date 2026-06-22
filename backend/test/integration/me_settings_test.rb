@@ -19,7 +19,7 @@ class MeSettingsTest < ActionDispatch::IntegrationTest
     patch current_user_settings_path, params: { publishing_cadence: "biweekly" }, as: :json
     assert_response :ok
     assert_equal(
-      { "reminder_time" => nil, "week_starts_on" => 1, "publishing_cadence" => "biweekly", "timezone" => nil },
+      { "week_starts_on" => 1, "publishing_cadence" => "biweekly", "timezone" => nil },
       json
     )
     @user.reload
@@ -30,11 +30,10 @@ class MeSettingsTest < ActionDispatch::IntegrationTest
   test "PATCH /me/settings updates multiple fields atomically" do
     sign_in_user
     patch current_user_settings_path,
-          params: { reminder_time: "08:30", week_starts_on: 0, publishing_cadence: "weekly", timezone: "Europe/Madrid" },
+          params: { week_starts_on: 0, publishing_cadence: "weekly", timezone: "Europe/Madrid" },
           as: :json
     assert_response :ok
     @user.reload
-    assert_equal "08:30", @user.reminder_time
     assert_equal 0, @user.week_starts_on
     assert_equal "weekly", @user.publishing_cadence
     assert_equal "Europe/Madrid", @user.timezone
@@ -49,14 +48,14 @@ class MeSettingsTest < ActionDispatch::IntegrationTest
     assert_equal "UTC", json["timezone"]
   end
 
-  test "PATCH /me/settings allows clearing reminder_time with null" do
-    @user.update!(reminder_time: "20:00")
+  test "PATCH /me/settings allows clearing timezone with null" do
+    @user.update!(timezone: "Europe/Madrid")
     sign_in_user
-    patch current_user_settings_path, params: { reminder_time: nil }, as: :json
+    patch current_user_settings_path, params: { timezone: nil }, as: :json
     assert_response :ok
-    assert_nil json["reminder_time"]
+    assert_nil json["timezone"]
     @user.reload
-    assert_nil @user.reminder_time
+    assert_nil @user.timezone
   end
 
   test "PATCH /me/settings rejects week_starts_on outside {0,1}" do
@@ -73,14 +72,6 @@ class MeSettingsTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_content
     @user.reload
     assert_equal "weekly", @user.publishing_cadence
-  end
-
-  test "PATCH /me/settings rejects malformed reminder_time" do
-    sign_in_user
-    patch current_user_settings_path, params: { reminder_time: "8:30 PM" }, as: :json
-    assert_response :unprocessable_content
-    patch current_user_settings_path, params: { reminder_time: "25:00" }, as: :json
-    assert_response :unprocessable_content
   end
 
   test "PATCH /me/settings rejects unknown IANA timezone" do

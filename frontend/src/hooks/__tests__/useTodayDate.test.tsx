@@ -9,7 +9,6 @@ function mockUserWithTimezone(timezone: string | undefined) {
       id: 1,
       email: 'me@example.com',
       settings: {
-        reminder_time: null,
         week_starts_on: 1,
         publishing_cadence: 'weekly',
         timezone: timezone ?? null,
