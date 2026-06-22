@@ -146,6 +146,36 @@ jobs:
   # ---------------------------------------------------------------------------
   # Frontend pipeline (Vite/React) — runs only when frontend/** changed
   # ---------------------------------------------------------------------------
+  frontend-scan:
+    name: Frontend · security scan
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '25'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # npm CVEs (third-party, often not immediately fixable) are reported but
+      # MUST NOT block merges or deploys. `continue-on-error` surfaces the
+      # failure on the step while keeping the job — and thus `ci-success` —
+      # green. Dependabot still raises PRs for actual upgrades.
+      - name: Audit npm dependencies for known CVEs
+        continue-on-error: true
+        run: npm audit
+
   frontend-lint:
     name: Frontend · ESLint
     needs: changes
@@ -235,6 +265,7 @@ jobs:
       - backend-scan
       - backend-lint
       - backend-test
+      - frontend-scan
       - frontend-lint
       - frontend-test
       - frontend-build
