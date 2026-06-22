@@ -32,11 +32,6 @@ Rails.application.routes.draw do
   # history: bundled read endpoint for the History screen.
   get "history" => "history#show", as: :history
 
-  # daily-reminder push subscription lifecycle + VAPID key delivery.
-  post   "push_subscriptions"         => "push_subscriptions#create",          as: :push_subscriptions
-  delete "push_subscriptions/current" => "push_subscriptions#destroy_current", as: :current_push_subscription
-  get    "push_config"                => "push_config#show",                   as: :push_config
-
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end

@@ -18,19 +18,19 @@ class SessionsTest < ActionDispatch::IntegrationTest
     assert_equal @user.id, body["id"]
     assert_equal @user.email, body["email"]
     assert_equal(
-      { "reminder_time" => nil, "week_starts_on" => 1, "publishing_cadence" => "weekly", "timezone" => nil },
+      { "week_starts_on" => 1, "publishing_cadence" => "weekly", "timezone" => nil },
       body["settings"]
     )
   end
 
   test "GET /me reflects the user's persisted settings" do
-    @user.update!(reminder_time: "20:00", week_starts_on: 0, publishing_cadence: "biweekly", timezone: "Europe/Madrid")
+    @user.update!(week_starts_on: 0, publishing_cadence: "biweekly", timezone: "Europe/Madrid")
     sign_in_user
     get current_user_path
     assert_response :ok
     body = JSON.parse(response.body)
     assert_equal(
-      { "reminder_time" => "20:00", "week_starts_on" => 0, "publishing_cadence" => "biweekly", "timezone" => "Europe/Madrid" },
+      { "week_starts_on" => 0, "publishing_cadence" => "biweekly", "timezone" => "Europe/Madrid" },
       body["settings"]
     )
   end

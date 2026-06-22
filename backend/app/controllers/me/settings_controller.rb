@@ -1,6 +1,6 @@
 module Me
   class SettingsController < ApplicationController
-    PERMITTED_FIELDS = %i[reminder_time week_starts_on publishing_cadence timezone].freeze
+    PERMITTED_FIELDS = %i[week_starts_on publishing_cadence timezone].freeze
 
     before_action :authenticate!
 

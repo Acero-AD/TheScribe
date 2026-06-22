@@ -29,7 +29,6 @@ class UserTest < ActiveSupport::TestCase
     user = User.create!(email: "defaults@example.com")
     assert_equal 1, user.week_starts_on
     assert_equal "weekly", user.publishing_cadence
-    assert_nil user.reminder_time
     assert_nil user.timezone
   end
 
@@ -59,26 +58,6 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "accepts a nil reminder_time" do
-    user = User.new(email: "nil_time@example.com", reminder_time: nil)
-    assert user.valid?, user.errors.full_messages.to_sentence
-  end
-
-  test "rejects a malformed reminder_time" do
-    [ "8:30 PM", "25:00", "12:60", "abc", "" ].each do |bad|
-      user = User.new(email: "bad_time#{bad.object_id}@example.com", reminder_time: bad)
-      refute user.valid?, "expected #{bad.inspect} to be invalid"
-      assert user.errors[:reminder_time].any?
-    end
-  end
-
-  test "accepts a well-formed reminder_time" do
-    [ "00:00", "08:30", "20:00", "23:59" ].each do |good|
-      user = User.new(email: "good#{good}@example.com", reminder_time: good)
-      assert user.valid?, user.errors.full_messages.to_sentence
-    end
-  end
-
   test "accepts a nil timezone" do
     user = User.new(email: "nil_tz@example.com", timezone: nil)
     assert user.valid?, user.errors.full_messages.to_sentence
@@ -95,10 +74,10 @@ class UserTest < ActiveSupport::TestCase
     assert user.valid?, user.errors.full_messages.to_sentence
   end
 
-  test "settings_attributes returns the four settings fields" do
-    user = User.create!(email: "attrs@example.com", reminder_time: "20:00", timezone: "Europe/Madrid")
+  test "settings_attributes returns the settings fields" do
+    user = User.create!(email: "attrs@example.com", timezone: "Europe/Madrid")
     assert_equal(
-      { reminder_time: "20:00", week_starts_on: 1, publishing_cadence: "weekly", timezone: "Europe/Madrid" },
+      { week_starts_on: 1, publishing_cadence: "weekly", timezone: "Europe/Madrid" },
       user.settings_attributes
     )
   end
