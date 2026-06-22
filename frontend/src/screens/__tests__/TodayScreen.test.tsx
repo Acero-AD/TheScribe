@@ -38,7 +38,6 @@ function mockCurrentUser(cadence: PublishingCadence = 'weekly') {
       id: 1,
       email: 'me@example.com',
       settings: {
-        reminder_time: null,
         week_starts_on: 1,
         publishing_cadence: cadence,
         timezone: TIMEZONE,

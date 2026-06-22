@@ -4,10 +4,8 @@ import { ScreenHeader } from '../components/ScreenHeader'
 import { TabBar } from '../components/TabBar'
 import { SettingsGroup } from '../components/SettingsGroup'
 import { SettingsRow } from '../components/SettingsRow'
-import { Toggle } from '../components/Toggle'
 import { useCurrentUser } from '../auth/AuthContext'
 import { useAutoSaveField } from '../hooks/useAutoSaveField'
-import { usePushSubscription } from '../hooks/usePushSubscription'
 import { patchSettings } from '../api/settings'
 import type {
   CurrentUser,
@@ -17,7 +15,6 @@ import type {
 } from '../auth/types'
 
 const DEFAULT_SETTINGS: UserSettings = {
-  reminder_time: null,
   week_starts_on: 1,
   publishing_cadence: 'weekly',
   timezone: null,
@@ -36,15 +33,6 @@ export function SettingsScreen() {
     [user, setUser],
   )
 
-  const saveReminderTime = useCallback(
-    async (raw: string) => {
-      const value = raw === '' ? null : raw
-      const updated = await patchSettings({ reminder_time: value })
-      syncUser(updated)
-    },
-    [syncUser],
-  )
-
   const saveWeekStartsOn = useCallback(
     async (value: WeekStartsOn) => {
       const updated = await patchSettings({ week_starts_on: value })
@@ -61,19 +49,8 @@ export function SettingsScreen() {
     [syncUser],
   )
 
-  const time = useAutoSaveField(settings.reminder_time ?? '', saveReminderTime, {
-    debounceMs: 200,
-  })
   const weekStart = useAutoSaveField<WeekStartsOn>(settings.week_starts_on, saveWeekStartsOn)
   const cadence = useAutoSaveField<PublishingCadence>(settings.publishing_cadence, saveCadence)
-  const push = usePushSubscription()
-  const pushOn = push.status === 'subscribed'
-  const pushDisabled =
-    push.status === 'transitioning' ||
-    push.status === 'unsupported' ||
-    push.status === 'install-required' ||
-    push.status === 'denied'
-  const pushMessage = pushStatusMessage(push.status, push.error)
 
   return (
     <main
@@ -87,41 +64,6 @@ export function SettingsScreen() {
       }}
     >
       <ScreenHeader eyebrow="The dial." title="Settings" />
-
-      <SettingsGroup header="Reminders">
-        <SettingsRow
-          label="Daily reminder"
-          sub="A nudge if you haven't checked in"
-          error={pushMessage !== null}
-          errorMessage={pushMessage ?? undefined}
-          right={
-            <Toggle
-              ariaLabel="Daily reminder"
-              on={pushOn}
-              disabled={pushDisabled}
-              busy={push.status === 'transitioning'}
-              onClick={() => {
-                if (pushDisabled) return
-                void (pushOn ? push.unsubscribe() : push.subscribe())
-              }}
-            />
-          }
-        />
-        <SettingsRow
-          label="Time"
-          sub="When the daily nudge fires"
-          isLast
-          error={time.error}
-          errorMessage="Couldn't save the time."
-          right={
-            <PillTimeInput
-              ariaLabel="Reminder time"
-              value={time.displayed}
-              onChange={time.setLocal}
-            />
-          }
-        />
-      </SettingsGroup>
 
       <SettingsGroup header="Schedule">
         <SettingsRow
@@ -206,40 +148,6 @@ function PillSelect({ ariaLabel, value, onChange, options }: PillSelectProps) {
   )
 }
 
-interface PillTimeInputProps {
-  ariaLabel: string
-  value: string
-  onChange: (value: string) => void
-}
-
-function PillTimeInput({ ariaLabel, value, onChange }: PillTimeInputProps) {
-  return (
-    <span style={pillShellStyle}>
-      <input
-        type="time"
-        aria-label={ariaLabel}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        step={60}
-        style={{
-          appearance: 'none',
-          WebkitAppearance: 'none',
-          border: 0,
-          background: 'transparent',
-          fontFamily: SBfont.mono,
-          fontSize: 12,
-          color: SB.ink,
-          fontWeight: 500,
-          letterSpacing: 0.2,
-          padding: 0,
-          outline: 0,
-          minWidth: 64,
-        }}
-      />
-    </span>
-  )
-}
-
 function Chevron() {
   return (
     <svg
@@ -259,21 +167,6 @@ function Chevron() {
       />
     </svg>
   )
-}
-
-function pushStatusMessage(
-  status: ReturnType<typeof usePushSubscription>['status'],
-  error: string | null,
-): string | null {
-  if (error) return error
-  switch (status) {
-    case 'denied':
-      return 'Notifications are blocked. Enable them in your browser site settings to turn this on.'
-    case 'install-required':
-      return 'Add Scribe to your Home Screen to enable notifications on iOS.'
-    default:
-      return null
-  }
 }
 
 const pillShellStyle: React.CSSProperties = {
