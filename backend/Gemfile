@@ -41,9 +41,6 @@ gem "rack-cors"
 # Throttle abusive request rates (per-IP magic-link limit). See config/initializers/rack_attack.rb.
 gem "rack-attack"
 
-# Send VAPID-signed Web Push notifications for the daily reminder (`daily-reminder` capability).
-gem "web-push", "~> 3.0"
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
