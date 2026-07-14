@@ -30,7 +30,7 @@
 
 ## 6. Decommission & follow-up
 
-- [ ] 6.1 Grace period: leave the Neon database connected-but-unused as a cold fallback for ~1 week of stable operation (do not delete yet)
-- [ ] 6.2 After the grace period, decommission the Neon project `TheScribe` and remove the old Neon `DATABASE_URL` from env/CI; update the `neon-database` memory note
-- [ ] 6.3 Create the follow-up change `add-db-backups` (nightly `pg_dump` → Cloudflare R2) — backups are a known deferred risk and MUST be scheduled before this is considered operationally complete
-- [ ] 6.4 Update OpenSpec specs/docs to reflect the self-hosted database (archive this change)
+- [x] 6.1 Grace period: leave the Neon database connected-but-unused as a cold fallback for ~1 week of stable operation (do not delete yet)
+- [x] 6.2 After the grace period, decommission the Neon project `TheScribe` and remove the old Neon `DATABASE_URL` from env/CI; update the `neon-database` memory note
+- [x] 6.3 Create the follow-up change `add-db-backups` (nightly `pg_dump` → Cloudflare R2) — backups are a known deferred risk and MUST be scheduled before this is considered operationally complete
+- [x] 6.4 Update OpenSpec specs/docs to reflect the self-hosted database (archive this change)
